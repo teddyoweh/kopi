@@ -1,5 +1,13 @@
+import base64
+import hashlib
+import hmac
 import json
+import time
 
+import pytest
+
+from kopi.api.app import create_app
+from kopi.config import Settings
 from kopi.models import SearchResponse
 
 
@@ -62,4 +70,16 @@ def test_access_code_gate(gated_client):
     ok = gated_client.get("/search", params={"q": "cleaning"}, headers={"Authorization": f"Bearer {token}"})
     assert ok.status_code == 200
     forged = token[:-2] + ("AA" if not token.endswith("AA") else "BB")
+    assert gated_client.get("/search", params={"q": "x"}, headers={"Authorization": f"Bearer {forged}"}).status_code == 401
+
+
+def test_access_codes_without_a_signing_key_refuse_to_start(store):
+    with pytest.raises(ValueError, match="KOPI_SIGNING_KEY"):
+        create_app(store, Settings(access_codes=["kopi-demo"], signing_key=None))
+
+
+def test_a_token_signed_with_an_empty_key_is_rejected(gated_client):
+    payload = base64.urlsafe_b64encode(json.dumps({"sub": "x", "scope": "app", "exp": int(time.time()) + 600}).encode()).rstrip(b"=")
+    signature = base64.urlsafe_b64encode(hmac.new(b"", payload, hashlib.sha256).digest()).rstrip(b"=")
+    forged = f"{payload.decode()}.{signature.decode()}"
     assert gated_client.get("/search", params={"q": "x"}, headers={"Authorization": f"Bearer {forged}"}).status_code == 401

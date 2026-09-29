@@ -38,3 +38,12 @@ public text.
   removed before commit.
 - The worktree was cut before the web scaffold landed on main, so `make types` could
   not write into `web/` here; KP-5 runs it.
+
+## Review fix (reviewer: Agent 3)
+- **Concern:** with `KOPI_ACCESS_CODES` set and `KOPI_SIGNING_KEY` unset, `require_token`
+  verified against an empty HMAC key, so anyone could forge a token. The reviewer
+  reproduced it. **Fixed:** `create_app` refuses to start in that state, and `verify()`
+  rejects an empty key as well. Two tests cover it, including the reviewer's forged token.
+- **Also found here:** `.gitignore`'s `data/` matched every `data/` directory, including
+  `backend/tests/data/` and `backend/kopi/data/`. Now anchored: `/data/`, `/out/`,
+  `/backend/data/`.

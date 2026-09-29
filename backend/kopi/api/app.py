@@ -43,6 +43,8 @@ class Filters:
 
 def create_app(store: Store | None = None, settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings()
+    if settings.auth_required and not settings.signing_key:
+        raise ValueError("KOPI_ACCESS_CODES is set but KOPI_SIGNING_KEY is not: refusing to start with a forgeable gate")
     app = FastAPI(title="Kopi API", version="0.1.0", description="A copilot for Singapore government tenders.")
     app.state.settings = settings
     app.state.store = store or FixtureStore()

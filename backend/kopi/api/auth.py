@@ -32,6 +32,8 @@ def issue(key: str, subject: str, scope: str = "app", ttl: timedelta = TOKEN_TTL
 
 
 def verify(key: str, token: str) -> dict:
+    if not key:
+        raise ValueError("no signing key")
     try:
         payload, signature = token.split(".")
     except ValueError:
@@ -57,7 +59,7 @@ def require_token(request: Request) -> dict:
     header = request.headers.get("authorization", "")
     token = header.removeprefix("Bearer ").strip()
     try:
-        return verify(settings.signing_key or "", token)
+        return verify(settings.signing_key, token)
     except (ValueError, KeyError):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "sign in with an access code") from None
 

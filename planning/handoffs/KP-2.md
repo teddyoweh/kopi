@@ -68,3 +68,14 @@ pages that copy GeBIZ's structure.
   had one closing date, so every notice looked amended. It was a fake bug, not a
   scraper bug. Fixed by giving each fake notice the listing's closing date. I also
   dropped a title comparison that added nothing.
+
+## Review fix (reviewer: Agent 4)
+- **Concern:** the check failed on main (9 failed) because `backend/tests/data/gebiz/*`
+  was never committed: `.gitignore`'s unanchored `data/` swallowed it, and `git add -A`
+  dropped it without a word. My "9 passed" was true only in the worktree, which was then
+  deleted. **Fixed:** the ignore pattern is anchored and the three synthetic pages are
+  regenerated and committed.
+- Added the two asserts the reviewer found missing: `delivery_location`, and `type`
+  read from the notice when there is no listing card.
+- **Lesson for every task:** after committing, run `git ls-files` on your fixtures, or
+  run the check from main.

@@ -58,6 +58,11 @@ def test_detail_fields():
     assert notice.published == datetime.fromisoformat("2026-09-28T10:05:00+08:00")
     assert notice.items == ["Section A1 System design and build", "Section A2 Maintenance for 24 months"]
     assert notice.url.endswith("docCode=TSTAGY0ETT26990002")
+    assert notice.delivery_location == "Example Statutory Board 1 Example Road Singapore 000001"
+
+
+def test_type_is_read_from_the_notice_when_no_listing_card():
+    assert parse_detail(read("detail.html")).type == "Tender"
 
 
 def test_gra_and_bca_heads_parse_capacity_and_grade():

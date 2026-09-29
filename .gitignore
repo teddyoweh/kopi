@@ -1,5 +1,6 @@
-data/
-out/
+/data/
+/out/
+/backend/data/
 .env
 .env.*
 !.env.example
