@@ -50,12 +50,36 @@ export function dateTime(iso: string): string {
   return `${text} SGT`;
 }
 
-const sgd = new Intl.NumberFormat("en-SG", { style: "currency", currency: "SGD", maximumFractionDigits: 0 });
-const sgdCompact = new Intl.NumberFormat("en-SG", { style: "currency", currency: "SGD", notation: "compact", maximumFractionDigits: 1 });
+/**
+ * The last moment of the Singapore calendar day `daysAhead` days from today, as ISO.
+ * `closing_before: sgDayEnd(7)` matches Overview's "Closing in 7 days" exactly.
+ */
+export function sgDayEnd(daysAhead: number, now = Date.now()): string {
+  return new Date((sgDay(now) + daysAhead + 1) * DAY_MS - SGT_OFFSET_MS - 1).toISOString();
+}
 
+const grouped = new Intl.NumberFormat("en-SG", { maximumFractionDigits: 0 });
+
+/** `value / unit` with one decimal while it is below `decimalsBelow`, dropping a trailing ".0". */
+function scaled(value: number, unit: number, suffix: string, decimalsBelow: number): string {
+  const n = value / unit;
+  return `${n < decimalsBelow ? n.toFixed(1).replace(/\.0$/, "") : Math.round(n)}${suffix}`;
+}
+
+/** "S$950", "S$84k", "S$410k", "S$1.2M", "S$18.7M"; never "S$1000k". en-SG writes a bare "$". */
+export function moneyShort(value: number): string {
+  const sign = value < 0 ? "-" : "";
+  const abs = Math.abs(value);
+  if (abs < 1_000) return `${sign}S$${Math.round(abs)}`;
+  if (abs < 999_500) return `${sign}S$${scaled(abs, 1e3, "k", 10)}`;
+  if (abs < 999_950_000) return `${sign}S$${scaled(abs, 1e6, "M", 100)}`;
+  return `${sign}S$${scaled(abs, 1e9, "B", 100)}`;
+}
+
+/** "S$410,000", or "S$410k" when compact. */
 export function money(value: number | null | undefined, compact = false): string {
   if (value === null || value === undefined) return "—";
-  return (compact ? sgdCompact : sgd).format(value);
+  return compact ? moneyShort(value) : `${value < 0 ? "-" : ""}S$${grouped.format(Math.abs(value))}`;
 }
 
 /** "IT&Telecommunication ⇒ Software Development" → "Software Development". */

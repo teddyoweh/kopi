@@ -23,6 +23,7 @@ import type {
   TenderFilters,
 } from "./api";
 import { ApiError } from "./api";
+import { closingLabel, dateTime } from "./format";
 
 type AwardRow = {
   tender_no: string;
@@ -37,7 +38,18 @@ const notices = noticesJson as unknown as Notice[];
 const awards = awardsJson as AwardRow[];
 const licenceList = licencesJson as Licence[];
 
-const tokens = (text: string) => text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+// kopi.search.tokens: lower-case words, stopwords dropped.
+const STOPWORDS = new Set("a an and at for from in of on or the to with by".split(" "));
+const tokens = (text: string) => (text.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((t) => !STOPWORDS.has(t));
+
+/** kopi.search.rerank's highlights: the title's words that are in the query, first seen first. */
+function highlights(query: string[], title: string): string[] {
+  const wanted = new Set(query);
+  return [...new Set(tokens(title).filter((word) => wanted.has(word)))];
+}
+
+/** Live data says "Open Quotation" where the fixtures say "Quotation"; compare without "Open". */
+const method = (text: string) => text.toLowerCase().replace(/^open\s+/, "").trim();
 
 function overlap(query: string[], text: string): number {
   if (!query.length) return 0;
@@ -56,7 +68,7 @@ function matches(n: Notice, f: TenderFilters): boolean {
     (!status || n.status === status) &&
     (!f.agency || n.agency.toLowerCase().includes(f.agency.toLowerCase())) &&
     (!f.category || (n.category ?? "").toLowerCase().includes(f.category.toLowerCase())) &&
-    (!f.method || (n.procurement_method ?? "").toLowerCase().includes(f.method.toLowerCase())) &&
+    (!f.method || method(n.procurement_method ?? "") === method(f.method)) &&
     (!f.closing_after || n.closing >= f.closing_after) &&
     (!f.closing_before || n.closing <= f.closing_before)
   );
@@ -99,7 +111,7 @@ export class MockApi implements KopiApi {
       .map((n) => ({
         notice: summary(n),
         score: Math.round(overlap(terms, `${n.title} ${n.title} ${n.agency} ${n.category} ${n.description}`) * 1000) / 1000,
-        highlights: [],
+        highlights: highlights(terms, n.title),
       }))
       .filter((hit) => hit.score > 0 || !terms.length)
       .sort((a, b) => b.score - a.score || a.notice.closing.localeCompare(b.notice.closing));
@@ -129,23 +141,52 @@ export class MockApi implements KopiApi {
     const checks: EligibilityCheck[] = [
       {
         kind: "closing",
-        requirement: `Closes ${new Date(notice.closing).toLocaleString("en-SG")}`,
+        requirement: `Closes ${dateTime(notice.closing)}`,
         status: open ? "met" : "unmet",
-        reason: open ? "Still open" : "Closing date has passed",
+        reason: open ? `Open; ${closingLabel(notice.closing).toLowerCase()}` : "Closed; submissions are no longer accepted",
+        source_url: notice.url,
       },
     ];
-    const held = new Set((profile.gra_registrations ?? []).map((r) => r.code));
+    const graKnown = profile.gra_registrations != null;
+    const graHeld = new Set((profile.gra_registrations ?? []).map((r) => r.code));
     for (const head of notice.gra_heads ?? []) {
-      const known = profile.gra_registrations != null;
       checks.push({
         kind: "gra",
-        requirement: `${head.code} ${head.grade ?? ""}`.trim(),
-        status: !known ? "unknown" : held.has(head.code) ? "met" : "unmet",
-        reason: !known
-          ? "Profile does not list GRA registrations"
-          : held.has(head.code)
+        requirement: `GRA ${head.code} ${head.label}${head.grade ? ` at ${head.grade}` : ""}`,
+        status: !graKnown ? "unknown" : graHeld.has(head.code) ? "met" : "unmet",
+        reason: !graKnown
+          ? "The profile does not list GRA registrations"
+          : graHeld.has(head.code)
             ? `Registered under ${head.code}`
             : `Not registered under ${head.code}`,
+        source_url: "https://www.gebiz.gov.sg/docs/Appln_Guidelines_for_Gov_Supp_Reg.pdf",
+      });
+    }
+    const bcaKnown = profile.bca_registrations != null;
+    const bcaHeld = new Set((profile.bca_registrations ?? []).map((r) => r.code));
+    for (const head of notice.bca_workheads ?? []) {
+      checks.push({
+        kind: "bca",
+        requirement: `BCA ${head.code}${head.grade ? ` at ${head.grade}` : ""}`,
+        status: !bcaKnown ? "unknown" : bcaHeld.has(head.code) ? "met" : "unmet",
+        reason: !bcaKnown
+          ? "The profile does not list BCA registrations"
+          : bcaHeld.has(head.code)
+            ? `Registered under ${head.code}`
+            : `Not registered under ${head.code}`,
+        source_url: "https://www.bca.gov.sg/bca-directory/",
+      });
+    }
+    const held = profile.licences_held;
+    for (const named of notice.licences_mentioned ?? []) {
+      const words = tokens(named.replace(/\(.*\)/, ""));
+      const match = held?.find((h) => words.every((w) => tokens(h).includes(w)));
+      checks.push({
+        kind: "licence",
+        requirement: named,
+        status: held == null ? "unknown" : match ? "met" : "unmet",
+        reason: held == null ? "The profile does not list licences held" : match ? `Held: ${match}` : "The notice names it and the profile does not list it",
+        source_url: "https://licensing.gobusiness.gov.sg/licence-directory",
       });
     }
     return checks;

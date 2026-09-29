@@ -13,28 +13,50 @@ import { daysUntil, isToday, longToday } from "@/lib/format";
 import { profileQuery } from "@/lib/profiles";
 import { useAsync } from "@/lib/use-async";
 
+/** The API's largest page, and how many pages to ask for at once (4 × 200 covers ~750 open). */
 const PAGE = 200;
+const BATCH = 4;
+/** The live API re-reads notices every 5 minutes; counts younger than that are current. */
+const FRESH_MS = 5 * 60 * 1000;
 
-/** Every open opportunity's summary, a page at a time; the counts need all of them. */
-async function allOpen(api: KopiApi): Promise<NoticeSummary[]> {
-  const all: NoticeSummary[] = [];
-  for (let offset = 0; ; offset += PAGE) {
-    const page = await api.tenders({ status: "open" }, PAGE, offset);
-    all.push(...page);
-    if (page.length < PAGE) return all;
+/**
+ * Every open opportunity's summary; the counts need all of them. Pages are fetched a batch
+ * at a time in parallel, so ~750 notices is one round trip instead of four in a row, and a
+ * notice that shifts across a page boundary between requests is counted once.
+ */
+async function fetchAllOpen(api: KopiApi): Promise<NoticeSummary[]> {
+  const byDoc = new Map<string, NoticeSummary>();
+  for (let start = 0; ; start += PAGE * BATCH) {
+    const pages = await Promise.all(
+      Array.from({ length: BATCH }, (_, i) => api.tenders({ status: "open" }, PAGE, start + i * PAGE)),
+    );
+    for (const page of pages) for (const notice of page) byDoc.set(notice.doc_no, notice);
+    if (pages.some((page) => page.length < PAGE)) return [...byDoc.values()];
   }
+}
+
+const openCache = new WeakMap<KopiApi, { at: number; promise: Promise<NoticeSummary[]> }>();
+
+/** fetchAllOpen, shared for FRESH_MS: coming back to Overview does not refetch ~750 notices. */
+function allOpen(api: KopiApi): Promise<NoticeSummary[]> {
+  const cached = openCache.get(api);
+  if (cached && Date.now() - cached.at < FRESH_MS) return cached.promise;
+  const promise = fetchAllOpen(api);
+  openCache.set(api, { at: Date.now(), promise });
+  promise.catch(() => openCache.delete(api));
+  return promise;
 }
 
 function Stat({ label, value, hint }: { label: string; value?: number; hint: string }) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-secondary px-5 py-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
+    <div className="flex flex-col gap-2 rounded-xl bg-secondary px-3.5 py-3.5 sm:px-5 sm:py-4">
+      <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
       {value === undefined ? (
-        <Skeleton className="h-8 w-16" />
+        <Skeleton className="h-6 w-12 sm:h-8 sm:w-16" />
       ) : (
-        <p className="text-[32px] leading-none font-semibold tracking-tight tabular-nums">{value.toLocaleString("en-SG")}</p>
+        <p className="mt-auto text-2xl leading-none font-semibold tracking-tight tabular-nums sm:mt-0 sm:text-[32px]">{value.toLocaleString("en-SG")}</p>
       )}
-      <p className="text-xs text-muted-foreground">{hint}</p>
+      <p className="hidden text-xs text-muted-foreground sm:block">{hint}</p>
     </div>
   );
 }
@@ -44,7 +66,7 @@ function Stats({ api }: { api: KopiApi }) {
   if (state.status === "error") return <ErrorState error={state.error} />;
   const open = state.data;
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div className="grid grid-cols-3 gap-2 sm:gap-3">
       <Stat label="Open opportunities" value={open?.length} hint="Accepting responses on GeBIZ" />
       <Stat label="Published today" value={open?.filter((n) => isToday(n.published)).length} hint="New since midnight, Singapore time" />
       <Stat label="Closing in 7 days" value={open?.filter((n) => daysUntil(n.closing) <= 7).length} hint="Decide on these first" />
