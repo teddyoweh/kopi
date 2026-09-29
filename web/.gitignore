@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# synced from ../backend by scripts/sync-fixtures.mjs
+/lib/fixtures/
