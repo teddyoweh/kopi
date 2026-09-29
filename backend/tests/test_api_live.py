@@ -150,7 +150,7 @@ def test_a_notice_past_its_closing_time_is_closed_even_before_ingest_notices(liv
     ids = json.loads((live.data_dir / "notices" / "_open.json").read_text()) + ["PAST0000000001"]
     (live.data_dir / "notices" / "_open.json").write_text(json.dumps(ids))
     live._loaded_at = 0
-    assert live._notice("PAST0000000001").status == NoticeStatus.CLOSED
+    assert live.notice("PAST0000000001").status == NoticeStatus.CLOSED
 
 
 def test_bundle_keeps_history_and_marks_departed_notices_closed(tmp_path):

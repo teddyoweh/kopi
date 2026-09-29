@@ -396,7 +396,7 @@ def _live_store(tmp_path, claude: bool):
     for n in _json.loads((FIXTURES_DIR / "notices.json").read_text()):
         (data / "notices" / f"{n['doc_no']}.json").write_text(_json.dumps(n))
     store = LiveStore(db=None, embed_query=None, embed_document=lambda text: None, data_dir=data, claude=claude)
-    store._market = lambda vector, agency, k: None
+    store.market_for = lambda notice: None
     return store
 
 
