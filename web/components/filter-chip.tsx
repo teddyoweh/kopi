@@ -43,8 +43,8 @@ export function FilterChip({
         disabled={disabled}
         aria-label={selected ? `${label}: ${selected}. Change` : `Filter by ${label.toLowerCase()}`}
         className={cn(
-          "inline-flex h-8 max-w-full items-center gap-1.5 rounded-full px-3.5 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/40 disabled:opacity-50",
-          selected ? "bg-kopi-soft font-medium text-kopi" : "bg-secondary text-foreground hover:bg-sidebar-accent",
+          "inline-flex h-7 max-w-full items-center gap-1.5 rounded-md border px-2.5 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-50",
+          selected ? "border-kopi/30 bg-kopi-soft font-medium text-kopi" : "bg-card text-foreground hover:bg-accent",
         )}
       >
         <span className="truncate">{selected ?? label}</span>

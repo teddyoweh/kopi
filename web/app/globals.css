@@ -34,6 +34,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-frame: var(--frame);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --shadow-float: var(--float-shadow);
   --color-kopi: var(--kopi);
   --color-kopi-soft: var(--kopi-soft);
   --color-met: var(--met);
@@ -52,44 +55,50 @@
 }
 
 :root {
-  /* Kopi: warm neutrals, one accent (kopi orange), flat. */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.2 0.006 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.006 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.006 60);
-  --primary: oklch(0.2 0.006 60);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.967 0.003 75);
-  --secondary-foreground: oklch(0.2 0.006 60);
-  --muted: oklch(0.967 0.003 75);
-  --muted-foreground: oklch(0.52 0.008 60);
-  --accent: oklch(0.967 0.003 75);
-  --accent-foreground: oklch(0.2 0.006 60);
+  /* Linear light, sampled from Teddy's reference (uploads/image.png): a grey frame holds the
+     sidebar, pages sit in an inset panel, hairlines separate, one indigo accent. */
+  --frame: #efeff0;
+  --background: #fcfcfc;
+  --foreground: #1b1b1b;
+  --card: #ffffff;
+  --card-foreground: #1b1b1b;
+  --popover: #ffffff;
+  --popover-foreground: #1b1b1b;
+  --primary: #5e6ad2;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f3f4;
+  --secondary-foreground: #1b1b1b;
+  --muted: #f3f3f4;
+  --muted-foreground: #5c5c5e;
+  --accent: #f0f0f1;
+  --accent-foreground: #1b1b1b;
   --destructive: oklch(0.56 0.19 27);
-  --border: oklch(0.915 0.004 75);
-  --input: oklch(0.9 0.004 75);
-  --ring: oklch(0.62 0.16 45);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.975 0.003 75);
-  --sidebar-foreground: oklch(0.2 0.006 60);
-  --sidebar-primary: oklch(0.2 0.006 60);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.935 0.005 75);
-  --sidebar-accent-foreground: oklch(0.2 0.006 60);
-  --sidebar-border: oklch(0.915 0.004 75);
-  --sidebar-ring: oklch(0.62 0.16 45);
+  --border: #e2e2e2;
+  --input: #dcdcde;
+  --ring: #5e6ad2;
+  --radius: 0.5rem;
+  --sidebar: #efeff0;
+  --sidebar-foreground: #2c2c2e;
+  --sidebar-primary: #5e6ad2;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e1e1e2;
+  --sidebar-accent-foreground: #1b1b1b;
+  --sidebar-hover: #e7e7e8;
+  --sidebar-border: #e2e2e2;
+  --sidebar-ring: #5e6ad2;
 
-  /* The one accent, and the three states every eligibility check can be in. */
-  --kopi: oklch(0.58 0.16 45);
-  --kopi-soft: oklch(0.96 0.03 60);
+  /* The one accent (Linear indigo), and the three states every eligibility check can be in. */
+  --kopi: #5e6ad2;
+  --kopi-soft: #eef0fb;
   --met: oklch(0.52 0.12 155);
   --met-soft: oklch(0.96 0.03 155);
   --unmet: oklch(0.55 0.18 27);
   --unmet-soft: oklch(0.96 0.025 27);
-  --unknown: oklch(0.52 0.008 60);
-  --unknown-soft: oklch(0.955 0.003 75);
+  --unknown: #6b6b6e;
+  --unknown-soft: #f3f3f4;
+
+  /* Floating surfaces only (menus, composer, toasts): barely there. */
+  --float-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
 }
 
 @layer base {
@@ -101,7 +110,8 @@
   }
   html {
     @apply font-sans;
-    font-feature-settings: "cv11", "ss01";
+    font-feature-settings: "cv11";
+    -webkit-font-smoothing: antialiased;
   }
   ::selection {
     background: var(--kopi-soft);
