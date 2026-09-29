@@ -1,6 +1,6 @@
 # Main agent (lead): planning, research, orchestration and most build tasks
 
-`01-main` · model claude-opus-5-5 · 169 assistant messages · 699 tool calls · 29 Sep 07:20 UTC → 29 Sep 14:11 UTC
+`01-main` · model claude-opus-5-5 · 239 assistant messages · 862 tool calls · 29 Sep 07:20 UTC → 29 Sep 16:06 UTC
 
 Redacted export: thinking, images, system reminders and mailbox results are removed; secrets, emails, phone numbers and home paths are masked; long tool output is cut.
 
@@ -17071,4 +17071,3989 @@ That's my own synthetic test data, so it's fine. Adding the browser-result slimm
   assert old in s;
   [… 1,443 chars cut …]
   ude-resume-6cb74711-1f3d-4f02-a09f-b114d22b56ba/projects/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452.jsonl" $K/log-raw/01-main.jsonl && rm -rf logs && python3 scripts/export_logs.py --manifest $K/log-sources.json --secrets-dir $K/secrets --out logs 2>&1 | tail -1 && grep -c "gsessionid\|cid=1" logs/01-main.jsonl
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Find the two remaining tracking-id hits
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-23/logs && grep -o ".\{160\}\(gsessionid\|cid=1\).\{60\}" 01-main.jsonl | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+What's left is only my own search patterns and a synthetic test. Writing the handoff, running the full suite, and landing.
+
+- **Write** ``
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Run the full suite and commit KP-23
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-23/backend && ~/.local/bin/uv run pytest -q 2>&1 | tail -1 && cd .. && git add -A && git commit -q -m "KP-23: refresh redacted logs through the film; drop browser network logs and profile listings
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1 && git status --short | head -2
+  ```
+
+- **mcp__build__build_check** `{"task": "KP-23"}`
+
+  <details><summary>result</summary>
+
+  ```
+  277 passed in 5.75s
+  f7afd55 KP-23: refresh redacted logs through the film; drop browser network logs and profile listings
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 1s — `cd backend && uv run pytest -q tests/test_export_logs.py && cd .. && test -s logs/INDEX.md && git -C . fetch -q origin && test "$(git rev-parse HEAD)" != ""` in ~/.universe/cache/worktrees/kp/kp-23
+  
+  ...........................................                              [100%]
+  43 passed in 0.06s
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-23", "check": "cd backend && uv run pytest -q tests/test_export_logs.py (43 passed) && test -s logs/INDEX.md && git fetch origin — passed; full backend suite 277 passed.", "passed": true, "commit": "f7afd55", "summary": "Logs re-exported through 14:10 UTC, so they cover the film, the
+  [… 183 chars cut …]
+  in data/log-raw/ because the temporary folders they came from get cleaned up. Pushing main next."}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Push main to GitHub and verify the README link
+  
+  ```
+  cd ~/Documents/codes/kopi && git log --oneline -3 main && git push -q origin main 2>&1 | tail -2; git fetch -q origin && git log --oneline -1 origin/main && export PATH=/opt/homebrew/bin:$PATH && gh api repos/teddyoweh/kopi/contents/README.md -q .size && curl -s https://raw.githubusercontent.com/teddyoweh/kopi/main/README.md | grep -n "Demo (3:59)"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  a09cd69 KP-23: Refresh the redacted logs after the film and push main
+  f7afd55 KP-23: refresh redacted logs through the film; drop browser network logs and profile listings
+  9e4fe6a KP-18: Natural voiceover, cut and render
+  a09cd69 KP-23: Refresh the redacted logs after the film and push main
+  10650
+  10:**Demo (3:59):** https://kopi.unv.run/demo/kopi-demo.mp4
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+main is on GitHub (a09cd69), and the public README links the film. Checking whether either of Teddy's two blockers has cleared.
+
+- **Bash** — Check the Claude secret, latest CI run, and Settings.model usage
+  
+  ```
+  export MODAL_PROFILE=kryptonairc-lc PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH; modal secret list --json 2>/dev/null | python3 -c "import sys,json; print('kopi-claude' in [s['name'] for s in json.load(sys.stdin)])"; sleep 20; gh run list -R teddyoweh/kopi -L 1 --json status,conclusion,headSha -q '.[] | "\(.headSha[0:7]) \(.status) \(.conclusion)"'; grep -rn "settings.model\|\.model\b" ~/Documents/codes/kopi/backend/kopi/api ~/Documents/codes/kopi/backend/tests 2>/dev/null | grep -i "settings" | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  False
+  a09cd69 completed failure
+  ```
+
+  </details>
+
+- **mcp__build__build_plan** `{"addTasks": {"milestone": "m4", "tasks": [{"title": "Remove the unused Settings.model that contradicts D21", "detail": "kopi/config.py defaults Settings.model to claude-sonnet-5-5, but nothing reads it: the runner and the overview default to claude-opus-5-5 (D21) and read KOPI_MODEL themselves.
+  [… 162 chars cut …]
+  "cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q", "weight": "fast"}]}}`
+
+  <details><summary>result</summary>
+
+  ```
+  Revised artifacts/builds/kopi.json. Added KP-24.
+  ```
+
+  </details>
+
+- **mcp__build__build_next** `{"task": "KP-24"}`
+
+  <details><summary>result</summary>
+
+  ```
+  KP-24 — Remove the unused Settings.model that contradicts D21
+  kopi/config.py defaults Settings.model to claude-sonnet-5-5, but nothing reads it: the runner and the overview default to claude-opus-5-5 (D21) and read KOPI_MODEL themselves. Delete the field so the config can't mislead a reader; redeploy so Modal runs main.
+  Done when: cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q
+  You own these paths; nothing else writes them while you work: backend/kopi/config.py, planning/handoffs/KP-24.md
+  [… 2,316 chars cut …]
+  now: KP-22 (CI green on GitHub once the account billing lock is lifted) — an agent is being put on each of those between your turns, so leave them alone and do this one.
+  ```
+
+  </details>
+
+- **Bash** — Confirm nothing reads Settings.model
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-24/backend && grep -rn "\bmodel\b" kopi/config.py && grep -rn "Settings(.*model\|settings\.model\|\.model =" kopi tests modal_app.py | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  kopi/config.py:22:    model: str = field(default_factory=lambda: os.environ.get("KOPI_MODEL", "claude-sonnet-5-5"))
+  kopi/overview.py:296:        self.model = model
+  tests/test_export_logs.py:177:    assert sessions[0].tokens["output_tokens"] == 50 and sessions[0].model == "claude-opus-5-5"
+  tests/test_overview.py:340:    assert result.model == "claude-from-env"
+  tests/test_overview.py:405:    assert _live_store(tmp_path, claude=False).overview("GVT000ETT26000101", profile).model == "extractive"
+  tests/test_overview.py:416:
+  [… 167 chars cut …]
+  claude=True).overview("GVT000ETT26000101", profile).model == "claude-opus-5-5"
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Delete the dead field, run tests, write handoff, commit
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-24/backend && sed -i '' '/    model: str = field(default_factory=lambda: os.environ.get("KOPI_MODEL", "claude-sonnet-5-5"))/d' kopi/config.py && sed -n 15,35p kopi/config.py && ~/.local/bin/uv run pytest -q 2>&1 | tail -1 && cat > ../planning/handoffs/KP-24.md <<'EOF'
+  # KP-24 — Remove the unused Settings.model that contradicts D21
+  
+  **Done:** deleted `Settings.model` from `backend/kopi/config.py`. It defaulted to
+  `claude-sonnet-5-5`, but nothing read it. The copilot runner and the overview each read
+  `KOPI_MODEL` themselves and default to `claude-opus-5-5` (D21), which the overview tests
+  assert. A reader of `config.py` would have concluded the product runs on Sonnet.
+  
+  **For the next agent:** the model is chosen in exactly two places: `kopi/agent/runner.py`
+  (`--model`, from `KOPI_MODEL`) and `kopi/overview.py` (`DEFAULT_MODEL`, overridden by
+  `KOPI_MODEL`).
+  
+  **Where the agent went wrong:** the field survived from KP-1's contract, when Sonnet was
+  in the first plan. D21 changed the default without a search for every place the old one
+  was written. It was found while writing KP-18's handoff.
+  EOF
+  cd .. && git add -A && git commit -q -m "KP-24: remove unused Settings.model (defaulted to Sonnet, contradicting D21)
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  def _csv(value: str) -> list[str]:
+      return [part.strip() for part in value.split(",") if part.strip()]
+  
+  
+  @dataclass(frozen=True)
+  class Settings:
+      store: str = field(default_factory=lambda: os.environ.get("KOPI_STORE", "fixtures"))
+      access_codes: list[str] = field(default_factory=lambda: _csv(os.environ.get("KOPI_ACCESS_CODES", "")))
+      signing_key: str | None = field(default_factory=lambda: os.environ.get("KOPI_SIGNING_KEY"))
+      allowed_origins: list[str] = field(
+          default_factory=lambda: _csv(
+        
+  [… 396 chars cut …]
+  in 5.04s
+  fa04da6 KP-24: remove unused Settings.model (defaulted to Sonnet, contradicting D21)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__build__build_check** `{"task": "KP-24"}`
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 2s — `cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q` in ~/.universe/cache/worktrees/kp/kp-24
+  
+  ........................................................................ [ 25%]
+  ........................................................................ [ 51%]
+  ........................................................................ [ 77%]
+  .............................................................            [100%]
+  277 passed in 1.18s
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-24", "check": "cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q — 277 passed", "passed": true, "commit": "fa04da6", "summary": "Deleted Settings.model. It defaulted to Sonnet, but nothing read it, while the runner and overview default to Opus 5.5 (D21). The model is now set in exactly two places, both reading KOPI_MODEL. Next: redeploy, then push main."}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-24.
+  Take the next one with build_next. If this task taught you something the rest of the build should know — a gotcha, a decision and why — build_remember it first.
+  ```
+
+  </details>
+
+- **Bash** — Redeploy, push main, check API health
+  
+  ```
+  export PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH; cd ~/Documents/codes/kopi && git log --oneline -2 main && cd backend && MODAL_PROFILE=kryptonairc-lc uv run --extra deploy modal deploy modal_app.py 2>&1 | tail -2 && cd .. && git push -q origin main 2>&1 | tail -1; git fetch -q origin; git log --oneline -1 origin/main; sleep 40; curl -s -o /dev/null -w "health %{http_code}\n" https://kryptonairc-lc--kopi-api.modal.run/health
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0d04341 KP-24: Remove the unused Settings.model that contradicts D21
+  fa04da6 KP-24: remove unused Settings.model (defaulted to Sonnet, contradicting D21)
+  
+  View Deployment: https://modal.com/apps/kryptonairc-lc/main/deployed/kopi
+  0d04341 KP-24: Remove the unused Settings.model that contradicts D21
+  health 200
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+- **mcp__dev__dev_stop** `{"service": "film-api"}`
+
+- **mcp__dev__dev_stop** `{"service": "film-web"}`
+
+- **mcp__build__build_remember** `{"line": "Raw agent transcripts for the log export are copied into ~/Documents/codes/kopi/data/log-raw/ (the claude-resume-* temp folders get cleaned up); refresh 01-main.jsonl there from the largest …/7142f416-….jsonl before a final export. The demo web copy lives at artifacts/apps/kopi/demo/kopi-demo.mp4 (≤25 MiB host limit) — re-copy it after any site rebuild."}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-api. Its exit shows up in dev_logs and in dev_services.
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-web. Its exit shows up in dev_logs and in dev_services.
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+Updating my long-term note on this project, then reporting.
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **ToolSearch** `{"query": "select:mcp__chain__chain_wait", "max_results": 1}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__chain__chain_wait** `{"for": "Teddy's two actions: creating the kopi-claude Modal secret (unblocks KP-20, the hosted copilot proof) and lifting the GitHub billing lock (unblocks KP-22, CI green). On wake: check `modal secret list` for kopi-claude and `gh run list` for a success. If the secret exists, redeploy, run the
+  [… 60 chars cut …]
+  line of the film.", "minutes": 120, "why": "Both remaining tasks need Teddy's own credentials."}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. When this turn ends the session sleeps for 120 minutes, then wakes you to check.
+  ```
+
+  </details>
+
+The demo film is finished and on the Kopi site, and the repo is public and up to date. Two things are left, and both need you.
+
+**The film:** https://kopi.unv.run/demo/kopi-demo.mp4 (3:59, 1080p). The README links it, and the full-quality master is in `artifacts/media/kopi-demo.mp4`.
+- It covers the brief's six points in order, each opened by a chapter label, using real screens only.
+- The voice is ElevenLabs ("Will"), chosen over an open-source model on measurable pitch range and pace, since I can't listen. It used about 2,100 of your free-tier characters. I transcribed every line back against the script and checked each lands within 0.3 s of its footage.
+- Sped-up waits show their exact speed on screen, for example "8× speed" over the copilot thinking.
+- The AI overview and the copilot shots ran on my Mac, against the live index with my Claude login, because the hosted copilot has no credential yet. The narration says so. The copilot shot is a real run: it wrote a clarification draft for a CAA generative-AI tender.
+
+**A real bug that filming caught.** An overview labelled a phrase from Pragnition's own profile "Verified in the notice", as if MOE had written it. Each quote now says where it was found ("Verified in the notice" or "From your profile"). The fix is deployed, on the live site, and mentioned in the film.
+
+**Also:**
+- The agent logs in the repo now run through the end of the film work. The browser account lists and page network logs are removed, and the raw transcripts are kept in `data/log-raw/` because their temporary folders were being cleaned up.
+- I removed an unused setting that still defaulted to Sonnet, which contradicted the Opus 5.5 decision.
+- 277 tests pass. main is pushed and the API is redeployed. A sign-in and search against the live API returned 50 results.
+
+**What only you can do:**
+1. **Create the copilot secret** so the hosted copilot works on kopi.unv.run. Once it exists I'll redeploy, run the live copilot proof, and re-shoot that one shot so the film shows it running hosted:
+   ```
+   claude setup-token
+   MODAL_PROFILE=kryptonairc-lc modal secret create kopi-claude CLAUDE_CODE_OAUTH_TOKEN=<token>
+   ```
+2. **Fix GitHub billing** at github.com/settings/billing. Your account is locked, so GitHub never starts the CI jobs and the repo shows a red check. The same steps pass on a fresh clone of the public repo.
+
+I'll check for both in two hours and finish the rest as soon as they're done.
+
+---
+
+## Turn 25 · Teddy · 29 Sep 15:09 UTC
+
+<details><summary>Universe build state</summary>
+
+```
+New in this workspace since your last turn (yours, the crew's, or the user's):
+- uploads/image-2.png
+- uploads/image.png
+- artifacts/browser/session-mumnjwmj-qa/step-001.png
+- artifacts/browser/session-mumnjwmj-qa.json
+- artifacts/browser/session-mumqdt5l-eleven/step-001.png
+- artifacts/browser/session-mumqdt5l-eleven/step-002.png
+- artifacts/browser/session-mumqdt5l-eleven/step-003.png
+- artifacts/browser/session-mumqdt5l-eleven/step-004.png
+- artifacts/browser/session-mumqdt5l-eleven/step-005.png
+- artifacts/browser/session-mumqdt5l-eleven/step-006.png
+- artifacts/browser/session-mumqdt5l-eleven/step-007.png
+- artifacts/browser/session-mumqdt5l-eleven.json
+- artifacts/browser/session-mumqjotl-eleven/step-001.png
+- artifacts/browser/session-mumqjotl-eleven/step-002.png
+- artifacts/browser/session-mumqjotl-eleven.json
+- artifacts/docs/kopi-copilot-first-run.md
+- artifacts/media/kopi/copilot-draft-mock-1440.png
+- artifacts/media/kopi/copilot-draft-mock-390.png
+- artifacts/media/kopi/copilot-live-1440.png
+- artifacts/media/kopi/copilot-live-390.png
+- artifacts/media/kopi/copilot-mock-1440.png
+-
+[… 2,514 chars cut …]
+HEAD)" != "" — last check passed
+  - [t24] KP-24 done — Remove the unused Settings.model that contradicts D21 — owner: Main — check: cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q — last check passed
+READY NOW (1): KP-22 [owns planning/handoffs/ci.md] — claim it with build_next.
+Milestone [m5] Demo film — done, 2/2 done
+</software-factory>
+```
+
+</details>
+
+> The user attached this file to the message below. It is already in this workspace:
+>
+> - uploads/image-2.png
+>
+> ---
+>
+> use leianr style style. onthis ... ofrht ui fulll sendd
+
+- **Read** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/uploads/image-2.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/uploads/image.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Sample Linear's colours from the screenshot
+  
+  ```
+  cd ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/uploads && /opt/homebrew/bin/ffprobe -v error -show_entries stream=width,height -of csv=p=0 image.png && python3 - <<'EOF'
+  import subprocess
+  def px(x,y,f="image.png"):
+      out=subprocess.run(["/opt/homebrew/bin/ffmpeg","-loglevel","error","-i",f,"-vf",f"crop=1:1:{x}:{y}","-f","rawvideo","-pix_fmt","rgb24","-"],capture_output=True).stdout
+      return "#%02x%02x%02x"%tuple(out[:3])
+  # coords in original 3024x1964 (display x1.51)
+  s=1.512
+  pts={"sidebar bg":(250,1010),"panel bg (upper)":(1200,420),"panel bg (lower)":(1200,1700),"panel top bar":(1500,280),"active nav":(420,595),"composer card":(1600,880),"example card":(1100,1300),"send button":(2497,965),"frame gap right of panel":(3010,700),"toast bg":(1500,435),"nav text":(130,402),"muted header text":(60,694),"card desc text":(1040,1333),"title text":(1030,1283)}
+  for k,(x,y) in pts.items(): print(f"{k:28} {px(x,y)}")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  3024,1964
+  sidebar bg                   #efeff0
+  panel bg (upper)             #f7f8f8
+  panel bg (lower)             #f0f0f1
+  panel top bar                #f9f9fa
+  active nav                   #e1e1e2
+  composer card                #ffffff
+  example card                 #f2f2f3
+  send button                  #fffeff
+  frame gap right of panel     #eeeeef
+  toast bg                     #ffffff
+  nav text                     #efeff0
+  muted header text            #e0e0e1
+  card desc text               #5c5c5e
+  title text                   #f3f3f4
+  ```
+
+  </details>
+
+Some samples landed on background. Sampling boxes instead, taking the most common and darkest colour in each region.
+
+- **Bash** — Sample colour boxes from the Linear screenshot
+  
+  ```
+  python3 - <<'EOF'
+  import subprocess
+  from collections import Counter
+  W,H=3024,1964
+  raw=subprocess.run(["/opt/homebrew/bin/ffmpeg","-loglevel","error","-i","image.png","-f","rawvideo","-pix_fmt","rgb24","-"],capture_output=True).stdout
+  def box(x0,y0,x1,y1):
+      c=Counter(); dark=None
+      for y in range(int(y0),int(y1)):
+          for x in range(int(x0),int(x1)):
+              i=(y*W+x)*3; p=tuple(raw[i:i+3]); c[p]+=1
+              if dark is None or sum(p)<sum(dark): dark=p
+      h=lambda p:"#%02x%02x%02x"%p
+      return h(c.most_common(1)[0][0]), h(dark)
+  s=1.512
+  regions={
+   "nav 'Inbox' text":(80*s,255*s,110*s,280*s),
+   "section 'Workspace' text":(30*s,450*s,125*s,470*s),
+   "active nav bg":(200*s,380*s,320*s,405*s),
+   "send button":(1640*s,628*s,1664*s,650*s),
+   "composer border":(652*s,590*s,655*s,600*s),
+   "example card border":(651*s,800*s,654*s,810*s),
+   "example card bg":(700*s,800*s,900*s,830*s),
+   "example title":(676*s,838*s,860*s,860*s),
+   "example desc":(676*s,872*s,830*s,892*s),
+   "'Get started' text":(676*s,700*s,940*s,718*s),
+   "panel border (left edge)":(351*s,600*s,354*s,700*s),
+   "top bar 'New chat'":(378*s,193*s,465*s,212*s),
+   "top bar divider":(600*s,233*s,900*s,237*s),
+   "Skills chip text":(700*s,630*s,750*s,648*s),
+   "count '1'":(305*s,258*s,318*s,275*s),
+  }
+  for k,v in regions.items(): print(f"{k:28} mode {box(*v)[0]}  darkest {box(*v)[1]}")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  nav 'Inbox' text             mode #efeff0  darkest #59595b
+  section 'Workspace' text     mode #efeff0  darkest #59595b
+  active nav bg                mode #e1e1e2  darkest #e1e1e2
+  send button                  mode #6f78cf  darkest #6f78cf
+  composer border              mode #ffffff  darkest #ffffff
+  example card border          mode #f3f3f4  darkest #e2e2e2
+  example card bg              mode #f3f3f4  darkest #f2f2f3
+  example title                mode #f3f3f4  darkest #1b1b1b
+  example desc                 mode #f2f2f3  darkest
+  [… 190 chars cut …]
+  bar divider              mode #f9f9fa  darkest #e2e2e2
+  Skills chip text             mode #ffffff  darkest #5e5e60
+  count '1'                    mode #efeff0  darkest #59595b
+  ```
+
+  </details>
+
+- **Bash** — Survey the web app's components and theme
+  
+  ```
+  cd ~/Documents/codes/kopi/web && git -C .. log --oneline -1 && ls components/shell components/ui components/copilot && wc -l components/*.tsx components/shell/*.tsx components/copilot/*.tsx app/globals.css app/layout.tsx | sort -n | tail -30 && sed -n 1,140p app/globals.css
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0d04341 KP-24: Remove the unused Settings.model that contradicts D21
+  components/copilot:
+  copilot-view.tsx
+  turn.tsx
+  
+  components/shell:
+  access-gate.tsx
+  app-shell.tsx
+  nav.tsx
+  profile-switcher.tsx
+  wordmark.tsx
+  
+  components/ui:
+  badge.tsx
+  button.tsx
+  dropdown-menu.tsx
+  input.tsx
+  sheet.tsx
+  skeleton.tsx
+  tooltip.tsx
+        15 components/shell/wordmark.tsx
+        31 app/layout.tsx
+        35 components/page-header.tsx
+        47 components/states.tsx
+        49 components/shell/nav.tsx
+        53 components/query-input.tsx
+        61
+  [… 2,340 chars cut …]
+  "cv11", "ss01";
+    }
+    ::selection {
+      background: var(--kopi-soft);
+    }
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the current shell components
+  
+  ```
+  cd ~/Documents/codes/kopi/web && cat components/shell/app-shell.tsx components/shell/nav.tsx components/shell/profile-switcher.tsx components/page-header.tsx app/layout.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  "use client";
+  
+  import { Menu } from "lucide-react";
+  import { useState } from "react";
+  
+  import { useKopi } from "@/components/kopi-provider";
+  import { AccessGate } from "@/components/shell/access-gate";
+  import { Nav } from "@/components/shell/nav";
+  import { ProfileSwitcher } from "@/components/shell/profile-switcher";
+  import { Wordmark } from "@/components/shell/wordmark";
+  import { Button } from "@/components/ui/button";
+  import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+  
+  function SourceNote() {
+   
+  [… 2,314 chars cut …]
+            </TooltipProvider>
+          </KopiProvider>
+        </body>
+      </html>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__build__build_plan** `{"addMilestone": {"title": "Linear-style UI", "goal": "kopi.unv.run looks and works like Linear: a light-grey frame holding the sidebar (company switcher at the top, grouped sections), every page in an inset rounded panel with a hairline border and its own top bar, Inter type, hairline borders on
+  [… 7,840 chars cut …]
+  type hints, docstrings only where the why is not obvious, no dead code, no TODOs left behind."]}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **mcp__build__build_next** `{"task": "KP-25"}`
+
+  <details><summary>result</summary>
+
+  ```
+  KP-25 — Linear design system and app shell
+  Tokens sampled from Teddy's Linear screenshot (uploads/image.png): frame and sidebar #efeff0, panel #f9f9fa to white, hairline #e2e2e2, active row #e1e1e2, text #1b1b1b / muted #5c5c5e, accent Linear indigo #5e6ad2 (remap --kopi to it; keep met/unmet/unknown semantics). Inter replaces Geist (next/font). Shell: sidebar on the frame with the company profile as the workspace switcher (initial avatar, name, chevron) plus search and new-chat icon buttons; nav grouped like Linear
+  [… 2,320 chars cut …]
+  now: KP-22 (CI green on GitHub once the account billing lock is lifted) — an agent is being put on each of those between your turns, so leave them alone and do this one.
+  ```
+
+  </details>
+
+Claimed KP-25. First, recording your design direction so future work starts from it.
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+Your preference is saved. Now reading the UI primitives and how each page uses the page header, since the header moves into the new top bar.
+
+- **Bash** — Find page header uses and scroll-dependent code
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && git log --oneline -1 && grep -rn "PageHeader\|SectionHeader" components app --include=*.tsx | grep -v "^components/page-header.tsx" | cut -c1-170; grep -rn "window.scroll\|scrollIntoView\|scrollTo(\|IntersectionObserver\|sticky" components app --include=*.tsx | cut -c1-150
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0d04341 KP-24: Remove the unused Settings.model that contradicts D21
+  (eval):1: no matches found: --include=*.tsx
+  (eval):1: no matches found: --include=*.tsx
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Find page header uses and scroll-dependent code
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && grep -rn "PageHeader\|SectionHeader" components app | grep -v "^components/page-header.tsx" | cut -c1-170; echo ---; grep -rn "window.scroll\|scrollIntoView\|scrollTo(\|IntersectionObserver\|sticky" components app | cut -c1-160
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/profile-view.tsx:7:import { PageHeader } from "@/components/page-header";
+  components/profile-view.tsx:518:      <PageHeader
+  components/overview.tsx:7:import { PageHeader, SectionHeader } from "@/components/page-header";
+  components/overview.tsx:82:      <SectionHeader
+  components/overview.tsx:112:      <SectionHeader id="newest" title="Newest on GeBIZ" description="Most recently published." />
+  components/overview.tsx:131:      <PageHeader title="Overview" description={`${longToday()}. What is open on GeBIZ,
+  [… 1,512 chars cut …]
+  top-0 z-30 flex h-14 items-center gap-3 bg-background/95 px-4 backdrop-blur supports-backd
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read UI primitives and shared small components
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && cat components/ui/button.tsx components/ui/badge.tsx components/ui/input.tsx components/states.tsx components/filter-chip.tsx components/query-input.tsx components/shell/wordmark.tsx | head -330
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  import { Button as ButtonPrimitive } from "@base-ui/react/button"
+  import { cva, type VariantProps } from "class-variance-authority"
+  import { cn } from "cn"
+  
+  const buttonVariants = cva(
+    "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px
+  [… 2,309 chars cut …]
+      <span className="text-[15px] font-semibold tracking-tight">Kopi</span>
+      </Link>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check primitives for shadows and the tracked-tender store
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && grep -n "shadow\|ring-foreground\|rounded" components/ui/dropdown-menu.tsx components/ui/sheet.tsx components/ui/tooltip.tsx components/ui/skeleton.tsx | cut -c1-200; echo ---; grep -n "export function\|export const\|localStorage" lib/submissions.ts lib/stored.ts | head -20; echo ---; sed -n 1,35p components/shell/access-gate.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/ui/dropdown-menu.tsx:43:          className={cn("z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popo
+  components/ui/dropdown-menu.tsx:90:        "group/dropdown-menu-item relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:t
+  components/ui/dropdown-menu.tsx:115:        "flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm
+  [… 2,294 chars cut …]
+  is not valid." : "Could not reach Kopi. Try again.");
+      } finally {
+        setBusy(false);
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Everything needed is in place, including `useTracked()` for the Submissions count. Writing the design tokens first.
+
+- **Bash** — Replace theme tokens with Linear's palette
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && python3 - <<'EOF'
+  p="app/globals.css"; s=open(p).read()
+  start=s.index(":root {"); end=s.index("@layer base {")
+  new=''':root {
+    /* Linear light, sampled from Teddy's reference (uploads/image.png): a grey frame holds the
+       sidebar, pages sit in an inset panel, hairlines separate, one indigo accent. */
+    --frame: #efeff0;
+    --background: #fcfcfc;
+    --foreground: #1b1b1b;
+    --card: #ffffff;
+    --card-foreground: #1b1b1b;
+    --popover: #ffffff;
+    --popover-foreground: #1b1b1b;
+    --primary: #5e6ad2;
+    --primary-foreground: #ffffff;
+    --secondary: #f3f3f4;
+    --secondary-foreground: #1b1b1b;
+    --muted: #f3f3f4;
+    --muted-foreground: #5c5c5e;
+    --accent: #f0f0f1;
+    --accent-foreground: #1b1b1b;
+    --destructive: oklch(0.56 0.19 27);
+    --border: #e2e2e2;
+    --input: #dcdcde;
+    --ring: #5e6ad2;
+    --radius: 0.5rem;
+    --sidebar: #efeff0;
+    --sidebar-foreground: #2c2c2e;
+    --sidebar-primary: #5e6ad2;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e1e1e2;
+    --sidebar-accent-foreground: #1b1b1b;
+    --sidebar-hover: #e7e7e8;
+    --sidebar-border: #e2e2e2;
+   
+  [… 639 chars cut …]
+  var(--sidebar-hover);
+    --shadow-float: var(--float-shadow);
+    --color-kopi: var(--kopi);''')
+  s=s.replace('''  html {
+      @apply font-sans;
+      font-feature-settings: "cv11", "ss01";
+    }''','''  html {
+      @apply font-sans;
+      font-feature-settings: "cv11";
+      -webkit-font-smoothing: antialiased;
+    }''')
+  open(p,"w").write(s)
+  EOF
+  sed -n '/@layer base/,$p' app/globals.css
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  @layer base {
+    * {
+      @apply border-border outline-ring/50;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+    html {
+      @apply font-sans;
+      font-feature-settings: "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection {
+      background: var(--kopi-soft);
+    }
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the font and the shell.
+
+- **Bash** — Switch the font to Inter and the body to the frame colour
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && python3 - <<'EOF'
+  p="app/layout.tsx"; s=open(p).read()
+  s=s.replace('import { Geist, Geist_Mono } from "next/font/google";','import { Geist_Mono, Inter } from "next/font/google";')
+  s=s.replace('const sans = Geist({ variable: "--font-sans", subsets: ["latin"] });','const sans = Inter({ variable: "--font-sans", subsets: ["latin"] });')
+  s=s.replace('<body className="min-h-dvh bg-background">','<body className="min-h-dvh bg-frame">')
+  open(p,"w").write(s)
+  EOF
+  grep -n "Inter\|bg-frame" app/layout.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  2:import { Geist_Mono, Inter } from "next/font/google";
+  10:const sans = Inter({ variable: "--font-sans", subsets: ["latin"] });
+  22:      <body className="min-h-dvh bg-frame">
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check NAV importers, useTracked shape and new-chat param
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && grep -rn "from \"@/components/shell/nav\"\|NAV\b" components app lib | grep -v "components/shell/nav.tsx" | head; grep -n "export function useTracked" -A13 lib/submissions.ts; grep -rn "new=1\|searchParams.get(\"new\")\|params.get(\"new\")" components | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/shell/app-shell.tsx:8:import { Nav } from "@/components/shell/nav";
+  28:export function useTracked() {
+  29-  const [tracked, update] = useStored(TRACKED_KEY, NO_TRACKED);
+  30-  const isTracked = useCallback((doc: string) => tracked.some((t) => t.doc_no === doc), [tracked]);
+  31-  const track = useCallback(
+  32-    (notice: Notice | NoticeSummary) => {
+  33-      const { doc_no, title, agency, closing, url } = notice;
+  34-      update((list) => [...list.filter((t) => t.doc_no !== doc_no), { doc_no, title, agency,
+  [… 173 chars cut …]
+  t.doc_no !== doc)), [update]);
+  39-  return { tracked, isTracked, track, untrack };
+  40-}
+  41-
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Writing the grouped sidebar nav.
+
+- **Write** `~/.universe/cache/worktrees/kp/kp-25/web/components/shell/nav.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  The file ~/.universe/cache/worktrees/kp/kp-25/web/components/shell/nav.tsx has been updated successfully. (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+Now the company switcher, restyled as Linear's workspace switcher.
+
+- **Bash** — Restyle the company switcher as a workspace switcher
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && python3 - <<'EOF'
+  p="components/shell/profile-switcher.tsx"; s=open(p).read()
+  s=s.replace('import { Check, ChevronsUpDown, Pencil } from "lucide-react";','import { Check, ChevronDown, Pencil } from "lucide-react";')
+  old=s[s.index("export function ProfileSwitcher() {"):]
+  new='''/** The company Kopi bids as, in the place Linear keeps its workspace switcher. */
+  export function ProfileSwitcher() {
+    const { profiles, profile, setProfile } = useKopi();
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="flex h-8 min-w-0 items-center gap-2 rounded-md pr-1.5 pl-1 text-left transition-colors outline-none hover:bg-sidebar-hover focus-visible:ring-2 focus-visible:ring-ring/40"
+          aria-label={`Bidding as ${profile.name}. Switch company`}
+        >
+          <span className="grid size-5.5 shrink-0 place-items-center rounded-md bg-kopi text-[10px] font-semibold text-white">{initials(profile.name)}</span>
+          <span className="min-w-0 truncate text-[14px] font-semibold tracking-[-0.01em]">{profile.name}</span>
+          <ChevronDown
+  [… 703 chars cut …]
+            ))}
+          </DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href="/profile" />} className="mt-1 gap-2.5 py-1.5 text-muted-foreground">
+            <Pencil aria-hidden />
+            Edit profile
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+  '''
+  s=s.replace(old,new)
+  open(p,"w").write(s)
+  EOF
+  echo done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  done
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the app shell itself: frame, sidebar, inset panel, and a top bar that pages fill through a context. I'm using a context rather than DOM ids, so there's no timing race when the access gate opens.
+
+- **Write** `~/.universe/cache/worktrees/kp/kp-25/web/components/shell/app-shell.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  The file ~/.universe/cache/worktrees/kp/kp-25/web/components/shell/app-shell.tsx has been updated successfully. (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+Now the page header, which portals the title and actions into the top bar.
+
+- **Bash** — Check the tooltip trigger API usage
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && grep -rn "TooltipTrigger" components | grep -v "ui/tooltip" | head -3; sed -n 1,40p components/ui/tooltip.tsx | grep -n "function\|Trigger\|render" 
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/shell/app-shell.tsx:36:      <TooltipTrigger
+  components/shell/app-shell.tsx:51:      </TooltipTrigger>
+  6:function TooltipProvider({
+  19:function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
+  23:function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
+  24:  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  27:function TooltipContent({
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Write** `~/.universe/cache/worktrees/kp/kp-25/web/components/page-header.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  The file ~/.universe/cache/worktrees/kp/kp-25/web/components/page-header.tsx has been updated successfully. (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+Switching the crumb links to Next's `Link`, then restyling the primitives. Looking at the menu popup's full classes first.
+
+- **Bash** — Use Link for crumbs; inspect menu, sheet and tooltip classes
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && python3 - <<'EOF'
+  p="components/page-header.tsx"; s=open(p).read()
+  s=s.replace('import { Fragment } from "react";','import Link from "next/link";\nimport { Fragment } from "react";')
+  s=s.replace('''            <a href={crumb.href} className="shrink-0 text-muted-foreground transition-colors hover:text-foreground">
+                {crumb.label}
+              </a>''','''            <Link href={crumb.href} className="shrink-0 text-muted-foreground transition-colors hover:text-foreground">
+                {crumb.label}
+              </Link>''')
+  open(p,"w").write(s)
+  EOF
+  sed -n 43p components/ui/dropdown-menu.tsx; sed -n 137p components/ui/dropdown-menu.tsx; grep -n "className=" components/ui/sheet.tsx | head -8 | cut -c1-260; sed -n 50,54p components/ui/tooltip.tsx | cut -c1-300
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  className={cn("z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in
+  [… 1,304 chars cut …]
+  data-[side=inline-start]:slide-in-f
+              className
+            )}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Restyling the primitives: buttons, badges, inputs, menus and the tooltip.
+
+- **Bash** — Restyle button, badge, input, menu and tooltip primitives
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && python3 - <<'EOF'
+  import re
+  # Button: Linear radius, size and fills.
+  p="components/ui/button.tsx"; s=open(p).read()
+  s=s.replace('"group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium','"group/button inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-[13px] font-medium')
+  s=s.replace('default: "bg-primary text-primary-foreground hover:bg-primary/80",','default: "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_8%)]",')
+  s=s.replace('''"border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",''','''"border-border bg-card hover:bg-accent hover:text-foreground aria-expanded:bg-accent aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",''')
+  s=s.replace('''"hover:bg-muted hover:text-foreground aria-expanded:bg-muted
+  [… 1,497 chars cut …]
+  focus:text-accent-foreground")
+  open(p,"w").write(s); print("menus", n)
+  
+  # Tooltip: Linear's are small and dark.
+  p="components/ui/tooltip.tsx"; s=open(p).read()
+  s=s.replace("rounded-md bg-foreground px-3 py-1.5 text-xs text-background","rounded-md bg-foreground px-2 py-1 text-xs text-background")
+  open(p,"w").write(s)
+  EOF
+  grep -n "shadow" components/ui/*.tsx | cut -c1-120
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  menus 2
+  components/ui/dropdown-menu.tsx:43:          className={cn("z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 
+  components/ui/dropdown-menu.tsx:137:      className={cn("w-auto min-w-[96px] rounded-lg border bg-popover p-1 text-popov
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the shared small components: empty and error states, filter chips, the search field and the sign-in card.
+
+- **Bash** — Restyle states, chips, search field and sign-in card
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && python3 - <<'EOF'
+  p="components/states.tsx"; s=open(p).read()
+  s=s.replace('''    <div role="alert" className="flex items-start gap-3 rounded-lg bg-unmet-soft px-4 py-3.5 text-sm">''','''    <div role="alert" className="flex items-start gap-3 rounded-lg border border-unmet/20 bg-unmet-soft px-4 py-3.5 text-sm">''')
+  s=s.replace('''    <div className="flex flex-col items-start gap-3 rounded-xl bg-secondary px-6 py-8">
+        <span className="grid size-9 place-items-center rounded-lg bg-background">''','''    <div className="flex flex-col items-start gap-3 rounded-xl border bg-card px-6 py-7">
+        <span className="grid size-8 place-items-center rounded-md border bg-background">''')
+  s=s.replace('''        <p className="font-medium">{title}</p>''','''        <p className="text-[14px] font-medium">{title}</p>''')
+  s=s.replace('''<div key={i} className="flex flex-col gap-2 rounded-lg px-3 py-3.5">''','''<div key={i} className="flex flex-col gap-2 border-b px-3 py-3.5 last:border-b-0">''')
+  open(p,"w").write(s)
+  
+  p="components/filter-chip.tsx"; s=open(p).read()
+  old='''   
+  [… 1,509 chars cut …]
+  s=s.replace('''          <h1 className="text-xl font-semibold tracking-tight">Enter your access code</h1>''','''          <h1 className="text-lg font-semibold tracking-[-0.01em]">Enter your access code</h1>''')
+  open(p,"w").write(s)
+  EOF
+  grep -n "rounded-xl bg-background\|bg-sidebar" components/shell/access-gate.tsx | head; sed -n 60,101p components/shell/access-gate.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  84:        <div className="flex flex-col gap-4 rounded-xl bg-background p-8">
+            />
+            {error && (
+              <p id="access-code-error" className="text-sm text-unmet">
+                {error}
+              </p>
+            )}
+          </div>
+          <Button type="submit" size="lg" className="h-10" disabled={!code.trim() || busy}>
+            {busy ? <Loader2 className="animate-spin" /> : <ArrowRight />}
+            Continue
+          </Button>
+        </form>
+      </Centered>
+    );
+  }
+  
+  /** Shows the app once signed in;
+  [… 928 chars cut …]
+  text-muted-foreground" aria-label="Loading" />
+        </div>
+      </Centered>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Fix the error card, then lint and build
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && sed -i '' 's|        <div className="flex flex-col gap-4 rounded-xl bg-background p-8">|        <div className="flex flex-col gap-4 rounded-xl border bg-card p-8 shadow-float">|; s|          <h1 className="text-xl font-semibold tracking-tight">Kopi is not reachable</h1>|          <h1 className="text-lg font-semibold tracking-[-0.01em]">Kopi is not reachable</h1>|' components/shell/access-gate.tsx && export PATH=/opt/homebrew/bin:$PATH && (test -d node_modules || npm ci --silent) && npm run lint 2>&1 | tail -15 && NODE_ENV=production npm run build 2>&1 | tail -4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  
+  
+  ○  (Static)  prerendered as static content
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Lint and build pass. Taking 1440 and 390 screenshots of the new shell (mock data, since the pages themselves haven't been restyled yet).
+
+- **Bash** — Build mock mode and screenshot the shell at 1440 and 390
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && export PATH=/opt/homebrew/bin:$PATH && NODE_ENV=production NEXT_PUBLIC_KOPI_API= npm run build >/dev/null 2>&1 && rm -rf /tmp/kp25-out && cp -R out /tmp/kp25-out && rm -rf out && cat > /tmp/kp25-shots.mjs <<'EOF'
+  import { createServer } from "node:http";
+  import { readFile, stat } from "node:fs/promises";
+  import { extname, join } from "node:path";
+  import { chromium } from "/tmp/kopi-shots/node_modules/playwright-core/index.mjs";
+  const root = process.argv[2], out = process.argv[3];
+  const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".json": "application/json", ".txt": "text/plain" };
+  const server = createServer(async (req, res) => {
+    let path = join(root, decodeURIComponent(new URL(req.url, "http://x").pathname));
+    try { if ((await stat(path)).isDirectory()) path = join(path, "index.html"); } catch { path += ".html"; }
+    try { res.writeHead(200, { "Content-Type": types[extname(path)] ?? "application/octet-stream" }); res.end(await readFile(path)); } catch { res.writeHead(404);
+  [… 828 chars cut …]
+  await page.waitForTimeout(500);
+      await page.screenshot({ path: `${out}/menu-390.png` });
+    }
+    if (errors.length) console.log(w, "errors:", errors);
+  }
+  await browser.close(); server.close();
+  EOF
+  mkdir -p /tmp/kp25-shots && node /tmp/kp25-shots.mjs /tmp/kp25-out /tmp/kp25-shots "overview=/" "tender=/tender/?doc=GVT000ETT26000101" "search=/search/" && ls /tmp/kp25-shots
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  Exit code 1
+  node:_http_server:414
+      throw new ERR_HTTP_HEADERS_SENT('write');
+            ^
+  
+  Error [ERR_HTTP_HEADERS_SENT]: Cannot write headers after they are sent to the client
+      at ServerResponse.writeHead (node:_http_server:414:11)
+      at Server.<anonymous> (file:///private/tmp/kp25-shots.mjs:10:146) {
+    code: 'ERR_HTTP_HEADERS_SENT'
+  }
+  
+  Node.js v26.7.0
+  ```
+
+  </details>
+
+- **Bash** — Fix the static server and take the screenshots
+  
+  ```
+  cd /tmp && python3 - <<'EOF'
+  p="/tmp/kp25-shots.mjs"; s=open(p).read()
+  s=s.replace('''  try { res.writeHead(200, { "Content-Type": types[extname(path)] ?? "application/octet-stream" }); res.end(await readFile(path)); } catch { res.writeHead(404); res.end(); }''','''  let body;
+    try { body = await readFile(path); } catch { res.writeHead(404); res.end(); return; }
+    res.writeHead(200, { "Content-Type": types[extname(path)] ?? "application/octet-stream" }); res.end(body);''')
+  open(p,"w").write(s)
+  EOF
+  /opt/homebrew/bin/node /tmp/kp25-shots.mjs /tmp/kp25-out /tmp/kp25-shots "overview=/" "tender=/tender/?doc=GVT000ETT26000101" "search=/search/" && ls /tmp/kp25-shots
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  Exit code 1
+  node:internal/modules/run_main:107
+      triggerUncaughtException(
+      ^
+  
+  locator.click: Timeout 30000ms exceeded.
+  Call log:
+    - waiting for getByRole('button', { name: 'Open menu' })
+  
+      at /private/tmp/kp25-shots.mjs:27:59 {
+    log: [ "  - waiting for getByRole('button', { name: 'Open menu' })" ],
+    name: 'TimeoutError'
+  }
+  
+  Node.js v26.7.0
+  ```
+
+  </details>
+
+- **Bash** — List screenshots taken so far
+  
+  ```
+  ls /tmp/kp25-shots
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  overview-1440.png
+  overview-390.png
+  search-1440.png
+  search-390.png
+  tender-1440.png
+  tender-390.png
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp25-shots/overview-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The empty setting didn't switch the build to mock mode, so it tried the API and got "not reachable". Checking how the app decides between mock and live.
+
+- **Bash** — Find the mock-mode switch
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && grep -n "NEXT_PUBLIC_KOPI_API\|mock" lib/api.ts | head -10
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  44:/** Everything the web app can ask of Kopi. The live and mock clients both implement it. */
+  46:  readonly mode: "live" | "mock";
+  74:/** NEXT_PUBLIC_KOPI_API is the API origin, or "mock" (also the default) for the in-browser fixtures. */
+  75:export const API_BASE = process.env.NEXT_PUBLIC_KOPI_API ?? "mock";
+  236:/** The API client for this build: live against NEXT_PUBLIC_KOPI_API, or the fixture mock. */
+  239:    API_BASE === "mock" ? import("./mock").then((m) => new m.MockApi()) : Promise.resolve(new LiveApi(API_BASE.replace(/\/$/, "")));
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Build in mock mode and retake screenshots
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && export PATH=/opt/homebrew/bin:$PATH && NODE_ENV=production NEXT_PUBLIC_KOPI_API=mock npm run build >/dev/null 2>&1 && rm -rf /tmp/kp25-out && cp -R out /tmp/kp25-out && rm -rf out && rm -f /tmp/kp25-shots/* && node /tmp/kp25-shots.mjs /tmp/kp25-out /tmp/kp25-shots "overview=/" "tender=/tender/?doc=GVT000ETT26000101" "search=/search/" "copilot=/copilot/" 2>&1 | tail -3; ls /tmp/kp25-shots
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  copilot-1440.png
+  copilot-390.png
+  menu-390.png
+  overview-1440.png
+  overview-390.png
+  search-1440.png
+  search-390.png
+  tender-1440.png
+  tender-390.png
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp25-shots/overview-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The shell reads like Linear now: grey frame, grouped sidebar with the company switcher, inset panel with its own top bar. The page content itself is KP-26's job. Checking mobile and the menu sheet.
+
+- **Bash** — Tile the mobile screenshots
+  
+  ```
+  cd /tmp/kp25-shots && /opt/homebrew/bin/ffmpeg -y -loglevel error -i overview-390.png -i menu-390.png -i tender-390.png -i copilot-390.png -filter_complex "[0]scale=390:-1[a];[1]scale=390:-1[b];[2]scale=390:-1[c];[3]scale=390:-1[d];[a][b][c][d]hstack=4" mobile.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp25-shots/mobile.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Mostly right. One bug: in the mobile menu, the sheet's close button sits on top of the new-chat button. Checking the sheet's API to fix it.
+
+- **Bash** — Read the sheet content component
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && sed -n 40,80p components/ui/sheet.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  className,
+    children,
+    side = "right",
+    showCloseButton = true,
+    ...props
+  }: SheetPrimitive.Popup.Props & {
+    side?: "top" | "right" | "bottom" | "left"
+    showCloseButton?: boolean
+  }) {
+    return (
+      <SheetPortal>
+        <SheetOverlay />
+        <SheetPrimitive.Popup
+          data-slot="sheet-content"
+          data-side={side}
+          className={cn(
+            "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground transition duration-200 ease-in-out data-ending-style:opacity-0
+  [… 1,481 chars cut …]
+        </SheetPrimitive.Close>
+          )}
+        </SheetPrimitive.Popup>
+      </SheetPortal>
+    )
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Hiding the sheet's own close button for the menu (tapping outside, choosing a link or pressing Escape closes it), then re-checking.
+
+- **Bash** — Hide the sheet close button and re-shoot more pages
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25/web && sed -i '' 's|          <SheetContent side="left" className="w-72 border-none bg-frame px-2 pt-3 pb-4">|          <SheetContent side="left" showCloseButton={false} className="w-72 border-none bg-frame px-2 pt-3 pb-4">|' components/shell/app-shell.tsx && grep -n "showCloseButton" components/shell/app-shell.tsx && export PATH=/opt/homebrew/bin:$PATH && NODE_ENV=production NEXT_PUBLIC_KOPI_API=mock npm run build >/dev/null 2>&1 && rm -rf /tmp/kp25-out && cp -R out /tmp/kp25-out && rm -rf out && rm -f /tmp/kp25-shots/* && node /tmp/kp25-shots.mjs /tmp/kp25-out /tmp/kp25-shots "tender=/tender/?doc=MOHH00ETQ26000077" "copilot=/copilot/" "profile=/profile/" 2>&1 | tail -2; ls /tmp/kp25-shots; grep -o '"doc_no": *"[^"]*"' lib/fixtures/notices.json 2>/dev/null | head -3; ls lib/fixtures | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  130:          <SheetContent side="left" showCloseButton={false} className="w-72 border-none bg-frame px-2 pt-3 pb-4">
+  copilot-1440.png
+  copilot-390.png
+  menu-390.png
+  profile-1440.png
+  profile-390.png
+  tender-1440.png
+  tender-390.png
+  "doc_no": "GVT000ETT26000101"
+  "doc_no": "MOH000ETQ26000215"
+  "doc_no": "IRS000ETT26000044"
+  awards.json
+  licences.json
+  notices.json
+  profiles
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+My screenshot script split on every "=", which cut off the tender's doc parameter. So the "No tender chosen" screen was my own mistake, not an app bug. Fixing the script and re-shooting.
+
+- **Bash** — Fix URL parsing and re-shoot tender and copilot
+  
+  ```
+  sed -i '' 's|    const \[name, url\] = p.split("=");|    const i = p.indexOf("="); const name = p.slice(0, i), url = p.slice(i + 1);|' /tmp/kp25-shots.mjs && rm -f /tmp/kp25-shots/* && /opt/homebrew/bin/node /tmp/kp25-shots.mjs /tmp/kp25-out /tmp/kp25-shots "tender=/tender/?doc=GVT000ETT26000101" "copilot=/copilot/" 2>&1 | tail -2; ls /tmp/kp25-shots
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  copilot-1440.png
+  copilot-390.png
+  menu-390.png
+  tender-1440.png
+  tender-390.png
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp25-shots/tender-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp25-shots/menu-390.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The menu sheet is clean, and the indigo accent already carries through the pages via the tokens. Writing D25 and the KP-25 handoff, then landing it.
+
+- **Bash** — Write D25 and the handoff, save screenshots, commit
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-25 && S=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi; cp /tmp/kp25-shots/tender-1440.png $S/linear-shell-1440.png && cp /tmp/kp25-shots/menu-390.png $S/linear-shell-menu-390.png && python3 - <<'EOF'
+  p="planning/02-decisions.md"; s=open(p).read().rstrip("\n")
+  s+='''
+  
+  ## D25 — Kopi looks like Linear (KP-25)
+  **Picked:** Linear's light theme and layout, with tokens sampled from Teddy's screenshot of
+  Linear Agent (`uploads/image.png`):
+  - a #efeff0 frame holding the sidebar, with the company as the workspace switcher and
+    grouped, foldable sections;
+  - every page in an inset panel (12px radius, #e2e2e2 hairline) with its own top bar, which
+    the page fills with its title, crumbs and actions;
+  - Inter, and Linear indigo #5e6ad2 as the one accent.
+  
+  The panel, not the window, is the scroll container.
+  **Rejected:** the earlier flat, borderless look (warm neutrals, orange accent, Geist).
+  **Why:** Teddy asked for it on 29 Sep ("use Linear style ... for the UI"). A bid team uses
+  Kopi as a work tool, and Linear's density, hairlines and fixed frame read
+  [… 1,496 chars cut …]
+  mobile sheet's own close button sat on top of the new-chat button.** Found in the
+    390 screenshot; the menu sheet now hides it.
+  EOF
+  git add -A && git commit -q -m "KP-25: Linear design system and app shell (tokens, Inter, frame + inset panel + top bar, grouped sidebar, primitives); D25
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1
+  ```
+
+- **mcp__build__build_check** `{"task": "KP-25"}`
+
+  <details><summary>result</summary>
+
+  ```
+  7de563e KP-25: Linear design system and app shell (tokens, Inter, frame + inset panel + top bar, grouped sidebar, primitives); D25
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 7s — `cd web && npm run lint && npm run build` in ~/.universe/cache/worktrees/kp/kp-25
+  
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  
+  > kopi-web@0.1.0 prebuild
+  > node scripts/sync-fixtures.mjs
+  
+  fixtures synced into ~/.universe/cache/worktrees/kp/kp-25/web/lib/fixtures
+  
+  > kopi-web@0.1.0 build
+  > next build
+  
+  ▲ Next.js 16.3.6 (Turbopack)
+  - Environments: .env.production
+  ✓ Running next.config.ts took 56ms
+  
+    Creating an optimized production build ...
+  ✓ Compiled successfully in 864ms
+    Running TypeScript ...
+    Finished
+  [… 436 chars cut …]
+  ├ ○ /licences
+  ├ ○ /profile
+  ├ ○ /search
+  ├ ○ /submissions
+  └ ○ /tender
+  
+  
+  ○  (Static)  prerendered as static content
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-25", "check": "cd web && npm run lint && npm run build — passed; screenshots at 1440 and 390 in mock mode (overview, tender, search, copilot, mobile menu)", "passed": true, "commit": "7de563e", "summary": "Linear's frame is in, with tokens sampled from Teddy's screenshot: a grey frame,
+  [… 404 chars cut …]
+  ["artifacts/media/kopi/linear-shell-1440.png", "artifacts/media/kopi/linear-shell-menu-390.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-25.
+  Take the next one with build_next. If this task taught you something the rest of the build should know — a gotcha, a decision and why — build_remember it first.
+  ```
+
+  </details>
+
+- **mcp__build__build_remember** `{"line": "Linear UI (KP-25): the inset panel (#kopi-panel, usePanel().scroller) is the scroll container, not the window; pages name themselves with <PageHeader title crumbs actions description/> which portals into the panel's top bar; sticky elements inside pages need top ≥ 16 (52px bar). Mock-mode build: NEXT_PUBLIC_KOPI_API=mock npm run build (an empty value is a broken live build)."}`
+
+- **mcp__build__build_next** `{}`
+
+  <details><summary>result</summary>
+
+  ```
+  Kept.
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  KP-22 — CI green on GitHub once the account billing lock is lifted
+  GitHub refuses to start Actions jobs on teddyoweh: 'The job was not started because your account is locked due to a billing issue.' Teddy fixes billing at github.com/settings/billing; then rerun the latest run (gh run rerun <id> -R teddyoweh/kopi) or push, and confirm success. The ci.yml steps already pass on a fresh clone of the public repo (272 tests, lint, build).
+  Done when: /opt/homebrew/bin/gh run list -R teddyoweh/kopi -L 1 --json conclusion -q
+  [… 2,303 chars cut …]
+  NEXT_PUBLIC_KOPI_API=mock npm run build (an empty value is a broken live build).
+  
+  Run the check with build_check (it runs here, not in your turn), then build_task_done.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_update** `{"task": "KP-22", "activity": "Waiting on Teddy: GitHub won't start Actions jobs until the account's billing lock is lifted (github.com/settings/billing). Nothing to do in the repo; the CI steps pass on a fresh clone."}`
+
+- **mcp__build__build_next** `{"task": "KP-27"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Updated.
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  KP-27 — Copilot as a Linear Agent screen, plus submissions and profile
+  Copilot empty state like Linear Agent: centred composer card (white, hairline, 12px radius) with a context chip bottom-left (the tender or 'All open tenders'), attach-style secondary icon and a round indigo send button; 'Get started with some examples' with three bordered example cards (icon, title, one-line description) drawn from the existing starters; conversation as Linear Agent threads (tool steps as compact rows, drafts panel as a bordered
+  [… 2,301 chars cut …]
+  NEXT_PUBLIC_KOPI_API=mock npm run build (an empty value is a broken live build).
+  
+  Run the check with build_check (it runs here, not in your turn), then build_task_done.
+  ```
+
+  </details>
+
+KP-27 is claimed. Handing it to a subagent in its own worktree while I take KP-26 in parallel.
+
+- **Bash** — Confirm the KP-27 worktree has the new shell
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-27 && git log --oneline -3 && grep -c "usePanel" web/components/shell/app-shell.tsx && cp /tmp/kp25-shots.mjs ~/Documents/codes/kopi/data/film-rig/shots.mjs && ls ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/uploads/
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  f61aa19 KP-25: Linear design system and app shell
+  7de563e KP-25: Linear design system and app shell (tokens, Inter, frame + inset panel + top bar, grouped sidebar, primitives); D25
+  0d04341 KP-24: Remove the unused Settings.model that contradicts D21
+  1
+  image-2.png
+  image.png
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Agent** — KP-27 Linear copilot UI
+  
+  > You are building one slice of "Kopi", a copilot for Singapore government tenders (GeBIZ), in a Next.js 16 static-export web app (Tailwind v4, shadcn/ui on Base UI, lucide-react). Work ONLY in the git worktree ~/.universe/cache/worktrees/kp/kp-27 (branch factory/kp-27). You may write ONLY these paths: web/components/copilot/**, web/components/submissions-view.tsx, web/components/profile-view.tsx, web/components/draft-preview.tsx, web/components/markdown.tsx, web/app/copilot/**, web/app/submissions/**, web/app/profile/**, web/lib/copilot.ts, planning/handoffs/KP-27.md. Another agent is restyling the overview/search/tender/licences pages in parallel; do not touch their files or the shell.
+  >
+  > ## The job: KP-27 — Copilot as a Linear Agent screen, plus submissions and profile
+  > The app was just re-skinned to look like Linear (KP-25). Read planning/handoffs/KP-25.md and planning/02-decisions.md (D25) first, and look at the reference screenshot of Linear Agent at ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/uploads/image.png (use the Read tool on the PNG). Also read planning/handoffs/KP-13.md: it describes
+  > [… 1,484 chars cut …]
+  > built, decisions and why, what the next agent must know, and "Where the agent went wrong" (honest, with the fix). Commit in the worktree; the message ends with the line `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. Do not push, do not merge, do not deploy. Reply with: the commit sha, the check output tail, the screenshot paths, and anything you could not do.
+
+  <details><summary>result</summary>
+
+  ```
+  Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+  agentId: a6a4529d1dab47637 (internal ID - do not mention to user. Use SendMessage with to: 'a6a4529d1dab47637', summary: '<5-10 word recap>' to continue this agent.)
+  The agent is working in the background. You will be notified automatically when it completes. You know nothing about its results until that notification arrives — do not report, assume, or
+  [… 404 chars cut …]
+  full subagent JSONL transcript and reading it will overflow your context. If the user asks for progress, say the agent is still running; you'll get a completion notification.
+  ```
+
+  </details>
+
+The KP-27 subagent is running. Now claiming KP-26 (overview, search, tender, licences) myself.
+
+- **mcp__build__build_next** `{"task": "KP-26"}`
+
+  <details><summary>result</summary>
+
+  ```
+  KP-26 — Overview, search, tender and licences in the Linear style
+  On KP-25's shell and primitives: Linear-density lists (hairline rows, hover fill, right-aligned meta, status as small icon + text), the stat row as compact bordered tiles, the tender page as Linear's issue view (main column plus a right properties rail: closing, method, category, document no.), eligibility and the AI overview as bordered sections, the licence explorer as a list with expandable rows. Keep every behaviour and every piece of text that
+  [… 2,284 chars cut …]
+  NEXT_PUBLIC_KOPI_API=mock npm run build (an empty value is a broken live build).
+  
+  Run the check with build_check (it runs here, not in your turn), then build_task_done.
+  ```
+
+  </details>
+
+Claimed KP-26. Reading its components, starting with the overview and tender rows.
+
+- **Bash** — Read overview and tender-row components
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && git log --oneline -1 && cat components/overview.tsx components/tender-row.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  f61aa19 KP-25: Linear design system and app shell
+  "use client";
+  
+  import { ArrowRight } from "lucide-react";
+  import Link from "next/link";
+  
+  import { useApi, useKopi } from "@/components/kopi-provider";
+  import { PageHeader, SectionHeader } from "@/components/page-header";
+  import { ErrorState, RowsSkeleton } from "@/components/states";
+  import { TenderRow } from "@/components/tender-row";
+  import { Skeleton } from "@/components/ui/skeleton";
+  import type { KopiApi, NoticeSummary } from "@/lib/api";
+  import { daysUntil,
+  [… 2,312 chars cut …]
+  </span>Match {score.toFixed(2)}
+            </span>
+          )}
+        </div>
+      </Link>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Rewrite the tender row and add a Linear list card
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/tender-row.tsx"; s=open(p).read()
+  start=s.index("/** One opportunity in a list")
+  new='''/** A closing deadline as Linear shows priority: a small glyph, filled as time runs out. */
+  function Urgency({ days }: { days: number }) {
+    const level = days <= 3 ? 3 : days <= 7 ? 2 : 1;
+    return (
+      <span className="flex h-3.5 shrink-0 items-end gap-[2px]" aria-hidden>
+        {[1, 2, 3].map((bar) => (
+          <span
+            key={bar}
+            className={cn("w-[3px] rounded-[1px]", bar <= level ? (level === 3 ? "bg-unmet" : "bg-foreground/70") : "bg-foreground/15")}
+            style={{ height: `${bar * 4 + 2}px` }}
+          />
+        ))}
+      </span>
+    );
+  }
+  
+  /** One opportunity in a list: what, who, and how long is left. Search adds highlights and a score. */
+  export function TenderRow({
+    notice,
+    compact = false,
+    highlights,
+    score,
+  }: {
+    notice: NoticeSummary;
+    compact?: boolean;
+    highlights?: string[];
+    score?: number;
+  }) {
+    const days = daysUntil(notice.closing);
+    const urgent = days <= 3;
+    // A search result sets its title in
+  [… 1,509 chars cut …]
+  id={id} className="truncate text-[13px] font-medium">
+            {title}
+          </h2>
+          {count !== undefined && <span className="text-[13px] text-muted-foreground tabular-nums">{count}</span>}
+          {action && <div className="ml-auto shrink-0">{action}</div>}
+        </div>
+        {children}
+      </section>
+    );
+  }
+  '''
+  s=s[:start]+new
+  open(p,"w").write(s)
+  EOF
+  echo ok
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the overview page on those pieces.
+
+- **Bash** — Rebuild the overview with tiles and list cards
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/overview.tsx"; s=open(p).read()
+  s=s.replace('import { PageHeader, SectionHeader } from "@/components/page-header";','import { PageHeader } from "@/components/page-header";')
+  s=s.replace('import { TenderRow } from "@/components/tender-row";','import { ListCard, TenderRow } from "@/components/tender-row";')
+  start=s.index("function Stat({"); end=s.index("export function OverviewPage()")
+  new='''function Stat({ label, value, hint }: { label: string; value?: number; hint: string }) {
+    return (
+      <div className="flex flex-col gap-1.5 rounded-lg border bg-card px-3.5 py-3 sm:px-4">
+        <p className="text-[12.5px] text-muted-foreground">{label}</p>
+        {value === undefined ? (
+          <Skeleton className="h-6 w-12" />
+        ) : (
+          <p className="text-[22px] leading-none font-semibold tracking-[-0.02em] tabular-nums sm:text-2xl">{value.toLocaleString("en-SG")}</p>
+        )}
+        <p className="hidden text-[12.5px] text-muted-foreground sm:block">{hint}</p>
+      </div>
+    );
+  }
+  
+  function Stats({ api }: { api: KopiApi }) {
+    const
+  [… 1,512 chars cut …]
+  gap-12">
+            <Stats api={api} />
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-10">''','''        <div className="flex flex-col gap-6">
+            <Stats api={api} />
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5">''')
+  open(p,"w").write(s)
+  EOF
+  sed -n '/export function OverviewPage/,$p' components/overview.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  export function OverviewPage() {
+    const api = useApi();
+    const { profile } = useKopi();
+    return (
+      <>
+        <PageHeader title="Overview" description={`${longToday()}. What is open on GeBIZ, read for ${profile.name}.`} />
+        {api && (
+          <div className="flex flex-col gap-6">
+            <Stats api={api} />
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5">
+              <div className="lg:col-span-3">
+                <BestMatches api={api} />
+              </div>
+              <div
+  [… 50 chars cut …]
+  api={api} />
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the search page.
+
+- **Bash** — Read the search view
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -n 1,60p components/search-view.tsx && sed -n 150,252p components/search-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  "use client";
+  
+  import { ArrowUpRight, SearchX } from "lucide-react";
+  import { useMemo, useState } from "react";
+  
+  import { FilterChip, type ChipOption } from "@/components/filter-chip";
+  import { useApi } from "@/components/kopi-provider";
+  import { PageHeader } from "@/components/page-header";
+  import { QueryInput } from "@/components/query-input";
+  import { EmptyState, ErrorState, RowsSkeleton } from "@/components/states";
+  import { TenderRow } from "@/components/tender-row";
+  import type { NoticeSummary, TenderFilters }
+  [… 2,315 chars cut …]
+       </EmptyState>
+              )}
+            </section>
+          )}
+        </div>
+      </>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the middle of the search view
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -n 60,150p components/search-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  return {
+      category: params.get("category"),
+      method: params.get("method"),
+      closing: closing && WINDOWS.some((w) => w.value === closing) ? closing : null,
+      agency: params.get("agency"),
+    };
+  }
+  
+  function toApi(f: Filters): TenderFilters {
+    return {
+      status: "open",
+      category: f.category ?? undefined,
+      method: f.method ?? undefined,
+      agency: f.agency ?? undefined,
+      closing_before: f.closing ? sgDayEnd(Number(f.closing)) : undefined,
+    };
+  }
+  
+  /** Agencies in the results, most results first:
+  [… 2,311 chars cut …]
+  filters;
+    const box = useQueryText(q, update);
+    const [attempt, setAttempt] = useState(0);
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Search is next: examples become bordered cards, results sit in a list card with the summary in its header, and "Show all" becomes a footer row.
+
+- **Bash** — Restyle search examples, results and filters
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/search-view.tsx"; s=open(p).read()
+  s=s.replace('import { ArrowUpRight, SearchX } from "lucide-react";','import { Search, SearchX } from "lucide-react";')
+  s=s.replace('import { TenderRow } from "@/components/tender-row";','import { ListCard, TenderRow } from "@/components/tender-row";')
+  start=s.index("function Examples({"); end=s.index("export function SearchView()")
+  new='''function Examples({ onPick }: { onPick: (query: string) => void }) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p className="text-[13px] text-muted-foreground">Describe the work in your own words; Kopi searches every open notice by meaning. A few to start with:</p>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {EXAMPLES.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => onPick(example)}
+              className="group flex items-center gap-3 rounded-lg border bg-card px-3.5 py-3 text-left text-[13.5px] transition-colors hover:bg-muted/60"
+        
+  [… 1,503 chars cut …]
+  s=s.replace('''      <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-3">
+            <QueryInput''','''      <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <QueryInput''')
+  open(p,"w").write(s)
+  EOF
+  grep -n "ArrowUpRight\|rounded-xl bg-secondary\|bg-sidebar-accent" components/search-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (Bash completed with no output)
+  ```
+
+  </details>
+
+Now the tender page, the most important one. It becomes Linear's issue view: a main column plus a properties rail. Reading it in full.
+
+- **Bash** — Read the first part of the tender view
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -n 1,140p components/tender-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  "use client";
+  
+  import { ArrowLeft, Check, CircleHelp, ExternalLink, FileSearch, X, type LucideIcon } from "lucide-react";
+  import Link from "next/link";
+  import { useSearchParams } from "next/navigation";
+  import { useEffect, useState } from "react";
+  
+  import { useApi, useKopi } from "@/components/kopi-provider";
+  import { EmptyState, ErrorState } from "@/components/states";
+  import { AiOverview, TenderActions, TrackButton } from "@/components/tender-ai";
+  import { Badge } from "@/components/ui/badge";
+  import { Skeleton }
+  [… 2,304 chars cut …]
+  rounded-lg bg-secondary px-4 py-3.5 sm:grid-cols-[6rem_minmax(0,1fr)_auto]"
+                >
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the rest of the tender view
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -n 140,404p components/tender-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  >
+                  <div className="col-start-1 row-start-1 sm:pt-px">
+                    <StatusPill status={check.status} />
+                  </div>
+                  <div className="col-span-2 row-start-2 flex min-w-0 flex-col gap-0.5 sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                    <p className="text-xs text-muted-foreground">{KIND[check.kind] ?? check.kind}</p>
+                    <p className="text-sm font-medium break-words">{check.requirement}</p>
+                    <p className="text-sm
+  [… 2,319 chars cut …]
+  notice={notice} profile={profile} />
+          </aside>
+        </div>
+      </article>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Restyle properties, eligibility and market in the tender view
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/tender-view.tsx"; s=open(p).read()
+  s=s.replace('import { ArrowLeft, Check, CircleHelp, ExternalLink, FileSearch, X, type LucideIcon } from "lucide-react";','import { Check, CircleHelp, ExternalLink, FileSearch, X, type LucideIcon } from "lucide-react";')
+  s=s.replace('import { EmptyState, ErrorState } from "@/components/states";','import { PageHeader } from "@/components/page-header";\nimport { EmptyState, ErrorState } from "@/components/states";')
+  
+  # Facts -> Linear properties
+  start=s.index("function Fact({"); end=s.index("function Section({")
+  s=s[:start]+'''function Property({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+      <div className="grid grid-cols-[7.5rem_minmax(0,1fr)] items-baseline gap-3 py-1.5">
+        <dt className="text-[13px] text-muted-foreground">{label}</dt>
+        <dd className="text-[13px] font-medium break-words">{children}</dd>
+      </div>
+    );
+  }
+  
+  function yesNo(value: boolean | null | undefined): string {
+    return value === true ? "Yes" : value === false ? "No" : "Not stated";
+  [… 1,531 chars cut …]
+  text-[13px]">{example.description}</p>''')
+  s=s.replace('''                <p className="shrink-0 text-sm font-medium tabular-nums">{example.amount''','''                <p className="shrink-0 text-[13px] font-medium tabular-nums">{example.amount''')
+  open(p,"w").write(s)
+  print("ok")
+  EOF
+  grep -n "bg-secondary\|text-sm\b" components/tender-view.tsx | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  330:        <Link href="/" className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+  336:            <span className="text-sm font-medium text-kopi">{closingLabel(notice.closing)}</span>
+  347:            className="flex w-fit items-center gap-1.5 text-sm font-medium text-kopi hover:underline"
+  378:                  <li key={r.code} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-lg bg-secondary px-4 py-3 text-sm">
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the tender page's layout itself: the top bar, the title block and the right rail.
+
+- **Bash** — Restructure the tender page layout; check TrackButton
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/tender-view.tsx"; s=open(p).read()
+  start=s.index("  return (\n    <article className=\"flex flex-col gap-10\">")
+  end=s.index("\n}\n", start)+3
+  new='''  return (
+      <article className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_21rem]">
+        <PageHeader
+          title={notice.doc_no}
+          crumbs={[{ label: "Overview", href: "/" }]}
+          actions={
+            <>
+              <a
+                href={notice.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden h-7 items-center gap-1.5 rounded-md border bg-card px-2.5 text-[13px] font-medium transition-colors hover:bg-accent sm:flex"
+              >
+                View on GeBIZ <ExternalLink className="size-3.5 text-muted-foreground" aria-hidden />
+              </a>
+              <TrackButton notice={notice} />
+            </>
+          }
+        />
+  
+        <div className="flex min-w-0 flex-col gap-9">
+          <header className="flex flex-col gap-2.5">
+            <div className="flex
+  [… 1,526 chars cut …]
+  />
+          <TenderActions notice={notice} profile={profile} />
+        </aside>
+      </article>
+    );
+  }
+  '''
+  s=s[:start]+new+s[end:]
+  open(p,"w").write(s)
+  EOF
+  grep -n "ArrowLeft\|Facts\b" components/tender-view.tsx; sed -n '/^function TenderSkeleton/,/^}/p' components/tender-view.tsx | head -5; grep -n "export function TrackButton" -A30 components/tender-ai.tsx | head -40
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  function TenderSkeleton() {
+    return (
+      <div className="flex flex-col gap-10" aria-busy="true" aria-label="Loading">
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-4 w-20" />
+  366:export function TrackButton({ notice }: { notice: Notice }) {
+  367-  const { isTracked, track, untrack } = useTracked();
+  368-  const tracked = isTracked(notice.doc_no);
+  369-  return (
+  370-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+  371-      <Button
+  372-        variant={tracked ? "secondary"
+  [… 674 chars cut …]
+  aria-hidden />
+  384-        </Link>
+  385-      )}
+  386-    </div>
+  387-  );
+  388-}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Reading the AI overview and "Prepare a response" component, which also holds the Track button.
+
+- **Bash** — Read the tender AI component
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -n 1,82p components/tender-ai.tsx; sed -n 112,365p components/tender-ai.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  "use client";
+  
+  import {
+    AlertTriangle,
+    ArrowRight,
+    ArrowUpRight,
+    BookmarkCheck,
+    BookmarkPlus,
+    Check,
+    ListChecks,
+    Loader2,
+    MessageCircleQuestion,
+    RotateCcw,
+    Sparkles,
+    TableProperties,
+    type LucideIcon,
+  } from "lucide-react";
+  import Link from "next/link";
+  import { useState } from "react";
+  
+  import { useApi } from "@/components/kopi-provider";
+  import { Button, buttonVariants } from "@/components/ui/button";
+  import { Skeleton } from "@/components/ui/skeleton";
+  import { ApiError, type Notice, type
+  [… 2,310 chars cut …]
+  className="text-kopi" /> Ask Kopi about this tender
+        </Link>
+      </section>
+    );
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Restyling the AI overview as a bordered card with a header strip, plus the Linear verdict chips, the "Prepare a response" card and a compact Track button for the top bar.
+
+- **Bash** — Read the reasons list markup
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -n 82,112p components/tender-ai.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  /** Where code found a verified quote word for word. Overviews cached before `found_in` existed say only "Verified". */
+  const FOUND_IN = { notice: "Verified in the notice", profile: "From your profile", unknown: "Verified" } as const;
+  
+  function Reasons({ overview }: { overview: Overview }) {
+    return (
+      <ul className="flex flex-col gap-2">
+        {overview.fit.reasons.map((reason, i) => (
+          <li key={i} className="flex flex-col gap-2.5 rounded-lg bg-background px-4 py-3.5">
+            <p className="text-sm
+  [… 836 chars cut …]
+       <AlertTriangle className="mt-px size-3.5 shrink-0" aria-hidden />
+                  <span>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Apply the Linear restyle to the AI overview and actions
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/tender-ai.tsx"; s=open(p).read()
+  reps=[
+  # verdict chip + tiles
+  ('''  return <h3 className="text-sm font-semibold">{children}</h3>;''','''  return <h3 className="text-[13px] font-semibold">{children}</h3>;'''),
+  ('''      <div className="flex flex-col gap-2.5 rounded-lg bg-background px-4 py-3.5">
+          <p className="text-xs text-muted-foreground">Recommendation</p>
+          <span className={cn("inline-flex h-8 w-fit items-center rounded-full px-3.5 text-base font-semibold tracking-tight uppercase", rec.className)}>''','''      <div className="flex flex-col gap-2 rounded-lg border px-4 py-3">
+          <p className="text-xs text-muted-foreground">Recommendation</p>
+          <span className={cn("inline-flex h-7 w-fit items-center rounded-md px-2.5 text-[13px] font-semibold tracking-wide uppercase", rec.className)}>'''),
+  ('''      <div className="flex flex-col gap-2.5 rounded-lg bg-background px-4 py-3.5">
+          <p className="truncate text-xs text-muted-foreground">Fit for {profile.name}</p>''','''      <div className="flex flex-col
+  [… 1,514 chars cut …]
+            Open in Submissions <ArrowRight className="size-3.5" aria-hidden />
+          </Link>
+        )}
+      </div>''','''        {tracked ? "Tracking" : "Track this tender"}
+        </Button>
+      </div>'''),
+  ]
+  for a,b in reps:
+      assert a in s, a[:70]
+      s=s.replace(a,b)
+  open(p,"w").write(s)
+  print("ok")
+  EOF
+  grep -rn "TrackButton" components app | grep -v tender-ai.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  components/tender-view.tsx:11:import { AiOverview, TenderActions, TrackButton } from "@/components/tender-ai";
+  components/tender-view.tsx:342:            <TrackButton notice={notice} />
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the licences page.
+
+- **Bash** — List the licences view's styling hooks
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && grep -n "className=" components/licences-view.tsx | cut -c1-230
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  44:    <div className="flex min-w-0 flex-col gap-1">
+  45:      <dt className="text-xs text-muted-foreground">{label}</dt>
+  46:      <dd className={cn("text-sm break-words whitespace-pre-line", !value && "text-muted-foreground", !open && "line-clamp-3")}>
+  66:          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+  75:        className="flex items-center gap-1.5 text-sm font-medium text-kopi hover:underline"
+  77:        {/gobusiness/i.test(licence.url) ? "View on GoBusiness" :
+  [… 2,308 chars cut …]
+  268:                <p className="text-sm text-muted-foreground" aria-live="polite">
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Restyle licences, then lint and build
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && python3 - <<'EOF'
+  p="components/licences-view.tsx"; s=open(p).read()
+  reps=[
+  ('''      <dd className={cn("text-sm break-words whitespace-pre-line", !value && "text-muted-foreground", !open && "line-clamp-3")}>''','''      <dd className={cn("text-[13px] break-words whitespace-pre-line", !value && "text-muted-foreground", !open && "line-clamp-3")}>'''),
+  ('''          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"''','''          className="text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"'''),
+  ('''        className="flex items-center gap-1.5 text-sm font-medium text-kopi hover:underline"''','''        className="flex items-center gap-1.5 text-[13px] font-medium text-kopi hover:underline"'''),
+  ('''    <li className="flex flex-col gap-3.5 rounded-xl bg-secondary p-4 sm:gap-4 sm:p-5">''','''    <li className="flex flex-col gap-3 border-b px-4 py-4 last:border-b-0 sm:px-5">'''),
+  ('''          <h3 className="leading-snug font-medium break-words">{licence.name}</h3>
+            <p
+  [… 1,530 chars cut …]
+  text-muted-foreground" aria-live="polite">''')
+  s=s.replace('''      <div className="flex flex-col gap-8">''','''      <div className="flex flex-col gap-6">''')
+  open(p,"w").write(s)
+  print("ok")
+  EOF
+  export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -12 && NODE_ENV=production npm run build 2>&1 | grep -i "error\|✓ Compiled\|Static" | head -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  sh: eslint: command not found
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Install dependencies, lint and build
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && export PATH=/opt/homebrew/bin:$PATH && npm ci --silent 2>&1 | tail -2; npm run lint 2>&1 | tail -12 && NODE_ENV=production npm run build 2>&1 | grep -i "error\|✓ Compiled\|Static" | head -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  ✓ Compiled successfully in 3.6s
+    Generating static pages using 11 workers (0/10) ...
+    Generating static pages using 11 workers (2/10) 
+    Generating static pages using 11 workers (4/10) 
+    Generating static pages using 11 workers (7/10)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Lint and build pass. Screenshots of all four pages at 1440 and 390 in mock mode.
+
+- **Bash** — Build mock and screenshot the four pages
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && export PATH=/opt/homebrew/bin:$PATH && rm -rf out && NODE_ENV=production NEXT_PUBLIC_KOPI_API=mock npm run build >/dev/null 2>&1 && rm -rf /tmp/kp26-out && cp -R out /tmp/kp26-out && rm -rf out && mkdir -p /tmp/kp26-shots && rm -f /tmp/kp26-shots/* && sed 's/4791/4792/g' /tmp/kp25-shots.mjs > /tmp/kp26-shots.mjs && node /tmp/kp26-shots.mjs /tmp/kp26-out /tmp/kp26-shots "overview=/" "search=/search/?q=cleaning%20services%20for%20schools" "search-idle=/search/" "tender=/tender/?doc=GVT000ETT26000101" "licences=/licences/" 2>&1 | tail -3; ls /tmp/kp26-shots
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (eval):1: no matches found: /tmp/kp26-shots/*
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Take the screenshots
+  
+  ```
+  sed 's/4791/4792/g' /tmp/kp25-shots.mjs > /tmp/kp26-shots.mjs && /opt/homebrew/bin/node /tmp/kp26-shots.mjs /tmp/kp26-out /tmp/kp26-shots "overview=/" "search=/search/?q=cleaning%20services%20for%20schools" "search-idle=/search/" "tender=/tender/?doc=GVT000ETT26000101" "licences=/licences/" 2>&1 | tail -3; ls /tmp/kp26-shots
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  licences-1440.png
+  licences-390.png
+  menu-390.png
+  overview-1440.png
+  overview-390.png
+  search-1440.png
+  search-390.png
+  search-idle-1440.png
+  search-idle-390.png
+  tender-1440.png
+  tender-390.png
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp26-shots/overview-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The overview reads as Linear now: bordered tiles, list cards with header strips, and urgency bars in place of priority icons. Checking the tender page.
+
+- **Read** `/tmp/kp26-shots/tender-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The tender page is now Linear's issue view: crumb and actions in the top bar, properties rail on the right. Checking the mobile layouts together.
+
+- **Bash** — Tile the mobile screenshots
+  
+  ```
+  cd /tmp/kp26-shots && /opt/homebrew/bin/ffmpeg -y -loglevel error -i overview-390.png -i search-390.png -i tender-390.png -i licences-390.png -i search-idle-390.png -filter_complex "[0]scale=390:-1[a];[1]scale=390:-1[b];[2]scale=390:-1[c];[3]scale=390:-1[d];[4]scale=390:-1[e];[a][b][c][d][e]hstack=5" mobile.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp26-shots/mobile.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Mobile holds up. One oddity: on the licences page the Agency filter renders as a full-width bar. Checking the desktop licences view.
+
+- **Read** `/tmp/kp26-shots/licences-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+On mobile the Agency chip stretches because its column container stretches its children; `items-start` fixes that. Then I'll screenshot a filled-in AI overview (mock) at both widths.
+
+- **Bash** — Fix the chip and screenshot a read overview and tracked state
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-26/web && sed -i '' 's|        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">|        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between">|' components/licences-view.tsx && grep -c 'flex flex-col items-start gap-3 sm:flex-row' components/licences-view.tsx && export PATH=/opt/homebrew/bin:$PATH && NODE_ENV=production NEXT_PUBLIC_KOPI_API=mock npm run build >/dev/null 2>&1 && rm -rf /tmp/kp26-out && cp -R out /tmp/kp26-out && rm -rf out && cat > /tmp/kp26-ai.mjs <<'EOF'
+  import { createServer } from "node:http";
+  import { readFile, stat } from "node:fs/promises";
+  import { extname, join } from "node:path";
+  import { chromium } from "/tmp/kopi-shots/node_modules/playwright-core/index.mjs";
+  const root = "/tmp/kp26-out";
+  const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".json": "application/json", ".txt": "text/plain" };
+  const server = createServer(async (req, res) => {
+    let path = join(root, decodeURIComponent(new
+  [… 1,267 chars cut …]
+  this tender/ }).click();
+    await page.waitForTimeout(400);
+    await page.evaluate(() => document.getElementById("kopi-panel").scrollTo(0, 0));
+    await page.screenshot({ path: `/tmp/kp26-shots/tracked-${w}.png` });
+    if (errors.length) console.log(w, errors);
+  }
+  await browser.close(); server.close();
+  EOF
+  node /tmp/kp26-ai.mjs && ls /tmp/kp26-shots | grep -E "ai-|tracked"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  1
+  ai-1440.png
+  ai-390.png
+  tracked-1440.png
+  tracked-390.png
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp26-shots/ai-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Tile the overview and tracked states
+  
+  ```
+  cd /tmp/kp26-shots && /opt/homebrew/bin/ffmpeg -y -loglevel error -i ai-390.png -i tracked-390.png -i tracked-1440.png -filter_complex "[0]scale=390:-1[a];[1]scale=390:-1[b];[2]scale=-1:844[c];[a][b][c]hstack=3" ai-mobile.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp26-shots/ai-mobile.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Everything checks out, including the Submissions count in the sidebar and the tracked state in the top bar. Saving the screenshots and landing KP-26.
+
+- **Bash** — Save screenshots, write the handoff, commit KP-26
+  
+  ```
+  S=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi; for f in overview search tender licences ai tracked; do for w in 1440 390; do cp /tmp/kp26-shots/$f-$w.png $S/linear-$f-$w.png; done; done; cd ~/.universe/cache/worktrees/kp/kp-26 && cat > planning/handoffs/KP-26.md <<'EOF'
+  # KP-26 — Overview, search, tender and licences in the Linear style
+  
+  **Built** (on KP-25's shell and tokens)
+  - **Rows** (`tender-row.tsx`):
+    - `TenderRow` is a Linear list row. A three-bar urgency glyph stands in for Linear's
+      priority icon: one bar, two within 7 days, three in red within 3 days.
+    - Title in 14px, agency and category in 13px muted, deadline and type right-aligned,
+      hairline between rows, hover fill.
+    - New `ListCard`: a bordered card with a 40px header strip (title, optional count and
+      action) wrapping hairline rows.
+  - **Overview:** the three stats as compact bordered tiles, and "Best matches" and "Newest on
+    GeBIZ" as list cards.
+  - **Search:**
+    - examples are bordered cards with a search icon;
+    - results sit in a list card whose header is the summary line, still announced
+  [… 1,491 chars cut …]
+  fixed with
+    `items-start`.
+  - **`npm run lint` failed with "eslint: command not found"** in a fresh worktree. Run
+    `npm ci` first.
+  EOF
+  git add -A && git commit -q -m "KP-26: overview, search, tender and licences in the Linear style (list cards, urgency rows, issue view with properties rail)
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1
+  ```
+
+- **mcp__build__build_check** `{"task": "KP-26"}`
+
+  <details><summary>result</summary>
+
+  ```
+  bd6320a KP-26: overview, search, tender and licences in the Linear style (list cards, urgency rows, issue view with properties rail)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 7s — `cd web && npm run lint && npm run build` in ~/.universe/cache/worktrees/kp/kp-26
+  
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  
+  > kopi-web@0.1.0 prebuild
+  > node scripts/sync-fixtures.mjs
+  
+  fixtures synced into ~/.universe/cache/worktrees/kp/kp-26/web/lib/fixtures
+  
+  > kopi-web@0.1.0 build
+  > next build
+  
+  ▲ Next.js 16.3.6 (Turbopack)
+  - Environments: .env.production
+  ✓ Running next.config.ts took 45ms
+  
+    Creating an optimized production build ...
+  ✓ Compiled successfully in 708ms
+    Running TypeScript ...
+    Finished
+  [… 437 chars cut …]
+  ├ ○ /licences
+  ├ ○ /profile
+  ├ ○ /search
+  ├ ○ /submissions
+  └ ○ /tender
+  
+  
+  ○  (Static)  prerendered as static content
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-26", "check": "cd web && npm run lint && npm run build — passed; screenshots at 1440 and 390 in mock mode, including a read AI overview and the tracked state", "passed": true, "commit": "bd6320a", "summary": "Overview, search, tender and licences now read like Linear. They use bordered
+  [… 421 chars cut …]
+  "artifacts/media/kopi/linear-overview-1440.png", "artifacts/media/kopi/linear-tender-390.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-26.
+  Take the next one with build_next. If this task taught you something the rest of the build should know — a gotcha, a decision and why — build_remember it first.
+  ```
+
+  </details>
+
+KP-26 has landed. While the KP-27 subagent works, I'm preparing the film rig for the new look: the title cards and labels switch from Kopi orange and Geist to indigo and Inter.
+
+- **Bash** — Recolour the film's title cards and labels for the new look
+  
+  ```
+  cd ~/Documents/codes/kopi/data/film-rig/cards && python3 - <<'EOF'
+  p="cards.html"; s=open(p).read()
+  s=s.replace('font-family: Geist, "Geist Fallback", ui-sans-serif, system-ui, sans-serif;','font-family: Inter, "Inter Fallback", ui-sans-serif, system-ui, sans-serif;')
+  s=s.replace('.card { width: 1920px; height: 1080px; background: #f6f5f3; color: #1c1a17;','.card { width: 1920px; height: 1080px; background: #efeff0; color: #1b1b1b;')
+  s=s.replace('.sub { font-size: 30px; color: #6f6a63;','.sub { font-size: 30px; color: #5c5c5e;')
+  s=s.replace('.links span:first-child { color: #c2551f; }','.links span:first-child { color: #5e6ad2; }')
+  s=s.replace('background: #1c1a17; color: #fff; font-size: 24px; font-weight: 500;','background: #1b1b1b; color: #fff; font-size: 24px; font-weight: 500;')
+  s=s.replace('.pill b { font-weight: 600; color: #f0a37a;','.pill b { font-weight: 600; color: #aeb5f5;')
+  s=s.replace('background: #c2551f; color: #fff; font-size: 24px; font-weight: 600;','background: #5e6ad2; color: #fff; font-size: 24px; font-weight: 600;')
+  s=s.replace('fill="#c2551f"','fill="#5e6ad2"')
+  s=s.replace('<link
+  [… 84 chars cut …]
+  s=s.replace('h1 { margin: 0; font-size: 84px; line-height: 1.04; font-weight: 600; letter-spacing: -0.035em; }','h1 { margin: 0; font-size: 84px; line-height: 1.04; font-weight: 600; letter-spacing: -0.03em; }')
+  open(p,"w").write(s)
+  EOF
+  grep -c "c2551f\|Geist\|f6f5f3" cards.html; grep -n "APP_CSS\|5e6ad2" cards.html | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0
+  5:<!--APP_CSS-->
+  15:  .links span:first-child { color: #5e6ad2; }
+  18:  .speed { display: none; padding: 12px 22px; border-radius: 999px; background: #5e6ad2; color: #fff; font-size: 24px; font-weight: 600; width: max-content; font-variant-numeric: tabular-nums; }
+  23:  <div class="mark"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#5e6ad2"/><path d="M6.5 9h9v4.5a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4V9Z" fill="#fff"/><path d="M15.5 10.5h1.25a1.75 1.75 0 0 1 0 3.5H15.5" stroke="#fff" stroke-width="1.5"
+  [… 231 chars cut …]
+  1.75 0 0 1 0 3.5H15.5" stroke="#fff" stroke-width="1.5" fill="none"/></svg>Kopi</div>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__chain__chain_wait** `{"for": "The KP-27 subagent (copilot as a Linear Agent screen, plus submissions and profile) to finish in its worktree. Then: review its screenshots, run the check, land it, and start KP-28 (live QA, republish, README screenshots, re-shoot and re-cut the film on the new UI, push).", "minutes": 25, "why": "Parallel subagent is building the copilot restyle."}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. When this turn ends the session sleeps for 25 minutes, then wakes you to check.
+  ```
+
+  </details>
+
+The Linear restyle is about three-quarters done: the frame and the overview, search, tender and licences pages are built but not yet on the live site. The copilot, submissions and profile pages are still being rebuilt by a subagent working in parallel.
+
+**What's in so far:**
+- **Colours and font:** sampled from your Linear screenshot rather than guessed. A grey frame (#efeff0), hairline borders (#e2e2e2), Linear indigo (#5e6ad2) as the one accent, and Inter in place of Geist.
+- **Shell:** the sidebar sits on the frame with Pragnition Labs as the workspace switcher, plus search and a round "new chat" button. Nav is grouped Linear-style: Overview, Copilot and Submissions (with a live tracked count), then foldable Explore and Company sections. Every page sits in an inset rounded panel with its own top bar.
+- **Pages:** the overview and search use bordered list cards with thin row dividers. Rows show a small urgency glyph where Linear shows priority, red when a deadline is within three days. The tender page follows Linear's issue view: "Overview / doc number" plus the Track and GeBIZ buttons in the top bar, and a properties panel on the right. Eligibility, the AI overview, market data and licences are bordered sections. All text and behaviour are unchanged, including the quote-source labels.
+- **Checked:** every page at 1440 and 390 wide, including a filled-in AI overview and a tracked tender. The screenshots are in `artifacts/media/kopi/linear-*.png`.
+
+I also replaced the build's old "flat, no separator lines" design rule with your Linear direction, recorded it as decision D25, and saved it as your preference for future app UIs.
+
+**Next, once the subagent reports back:** I'll check its screenshots and land it. Then comes a final task: check every page at 1440 and 390 on live data, republish kopi.unv.run, and regenerate the README screenshots. I'll then re-shoot and re-cut the demo film on the new UI, using the same voiceover, and push everything to GitHub.
+
+The two things only you can do haven't changed: the `kopi-claude` Modal secret for the hosted copilot, and the GitHub billing lock that stops CI from running.
+
+---
+
+## Turn 26 · Universe (subagent finished) · 29 Sep 15:41 UTC
+
+<details><summary>Universe subagent finished</summary>
+
+````
+<task-notification>
+<task-id>a6a4529d1dab47637</task-id>
+<tool-use-id>toolu_0182N4ez2Erm7eixCfP23y2K</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/a6a4529d1dab47637.output</output-file>
+<status>completed</status>
+<summary>Agent "KP-27 Linear copilot UI" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>KP-27 is built and committed in the worktree on branch `factory/kp-27`. Lint and the normal build pass, and KP-13's own behaviour checks all still pass. Nothing is pushed, merged or deployed.
+
+**Commit:** `40b2063` — "KP-27: Copilot as a Linear Agent screen; Submissions and Profile in Linear's style". The message ends with the `Co-Authored-By` line. Only files in my slice changed, plus `planning/handoffs/KP-27.md`.
+
+**Check output tail** (`npm run lint &amp;&amp; npm run build`):
+```
+&gt; kopi-web@0.1.0 lint
+[… 2,517 chars cut …]
+- **Screenshot rig port:** I ran a copy of `shots.mjs` on port 4797 instead of 4791, and my other scripts use 4798 and 4799. That keeps them from clashing with the other agent's runs. All the scripts are in `/tmp/kp27-shots`.</result>
+<usage><subagent_tokens>274064</subagent_tokens><tool_uses>81</tool_uses><duration_ms>1160354</duration_ms></usage>
+</task-notification>
+````
+
+</details>
+
+The KP-27 subagent reports done. Before landing it I'm checking its screenshots myself: the copilot empty and mid-conversation, then submissions and profile.
+
+- **Read** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/linear-copilot-1440.png`
+
+- **Read** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/linear-copilot-conversation-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Both copilot states match the Linear Agent reference closely. Checking submissions and profile.
+
+- **Read** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/linear-submissions-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/linear-profile-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Tile KP-27 mobile screenshots
+  
+  ```
+  cd ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi && /opt/homebrew/bin/ffmpeg -y -loglevel error -i linear-copilot-390.png -i linear-copilot-conversation-390.png -i linear-submissions-390.png -i linear-profile-390.png -filter_complex "[0]scale=390:-1[a];[1]scale=390:-1[b];[2]scale=390:-1[c];[3]scale=390:-1[d];[a][b][c][d]hstack=4" /tmp/kp27-mobile.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (Bash completed with no output)
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp27-mobile.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Mobile layouts are clean too. The subagent says it touched only its own files; confirming that before landing.
+
+- **Bash** — Verify KP-27 changed only its own files
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-27 && git log --oneline -2 && git diff --stat HEAD~1 | tail -15 && git status --short | head -5
+  ```
+
+- **mcp__build__build_check** `{"task": "KP-27"}`
+
+  <details><summary>result</summary>
+
+  ```
+  40b2063 KP-27: Copilot as a Linear Agent screen; Submissions and Profile in Linear's style
+  f61aa19 KP-25: Linear design system and app shell
+   planning/handoffs/KP-27.md              | 184 ++++++++++++++++
+   web/components/copilot/copilot-view.tsx | 362 ++++++++++++++++++--------------
+   web/components/copilot/turn.tsx         |  70 +++---
+   web/components/draft-preview.tsx        |  16 +-
+   web/components/markdown.tsx             |  28 +--
+   web/components/profile-view.tsx         | 147 ++++++++-----
+  
+  [… 85 chars cut …]
+                       |  56 +++--
+   8 files changed, 701 insertions(+), 360 deletions(-)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 7s — `cd web && npm run lint && npm run build` in ~/.universe/cache/worktrees/kp/kp-27
+  
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  
+  > kopi-web@0.1.0 prebuild
+  > node scripts/sync-fixtures.mjs
+  
+  fixtures synced into ~/.universe/cache/worktrees/kp/kp-27/web/lib/fixtures
+  
+  > kopi-web@0.1.0 build
+  > next build
+  
+  ▲ Next.js 16.3.6 (Turbopack)
+  - Environments: .env.production
+  ✓ Running next.config.ts took 46ms
+  
+    Creating an optimized production build ...
+  ✓ Compiled successfully in 525ms
+    Running TypeScript ...
+    Finished
+  [… 436 chars cut …]
+  ├ ○ /licences
+  ├ ○ /profile
+  ├ ○ /search
+  ├ ○ /submissions
+  └ ○ /tender
+  
+  
+  ○  (Static)  prerendered as static content
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-27", "check": "cd web && npm run lint && npm run build — passed (build_check). The subagent also ran KP-13's interaction checks: 15/15 in mock mode, and 25/25 in live mode with /chat intercepted. I reviewed the 1440 and 390 screenshots of the empty copilot, a conversation, submissions
+  [… 761 chars cut …]
+  "artifacts/media/kopi/linear-profile-1440.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-27.
+  Take the next one with build_next. If this task taught you something the rest of the build should know — a gotcha, a decision and why — build_remember it first.
+  ```
+
+  </details>
+
+- **mcp__build__build_next** `{"task": "KP-28"}`
+
+  <details><summary>result</summary>
+
+  ```
+  KP-28 — QA on live data, publish, README screenshots and re-shoot the film
+  Walk the demo path on live data at 1440 and 390 and fix what looks off; rebuild and publish kopi.unv.run (re-copy demo/kopi-demo.mp4); regenerate docs/images; re-record the film's app scenes with data/film-rig (record.mjs, film_api.py for the overview and copilot) and re-cut with the same voice (cut.py); refresh logs; push main.
+  Done when: curl -sf https://kopi.unv.run >/dev/null && curl -sf -r 0-1023 -o /dev/null
+  [… 2,331 chars cut …]
+  NEXT_PUBLIC_KOPI_API=mock npm run build (an empty value is a broken live build).
+  
+  Run the check with build_check (it runs here, not in your turn), then build_task_done.
+  ```
+
+  </details>
+
+KP-28 claimed. First a small fix I'm carrying over: the sidebar's "new chat" button should really start a new conversation. Finding how the copilot resets a conversation today.
+
+- **Bash** — Find the copilot's reset and URL handling
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && git log --oneline -1 && grep -n "New conversation\|newConversation\|reset\|urlAsk\|params.get\|useSearchParams\|router" components/copilot/copilot-view.tsx | head -30
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  4779355 KP-27: Copilot as a Linear Agent screen, plus submissions and profile
+  288:  const urlDoc = params.get("doc");
+  289:  const urlAsk = params.get("ask");
+  291:  const [state, dispatch] = useReducer(reducer, { doc: urlDoc, ask: urlAsk }, initialConversation);
+  354:  const newConversation = useCallback(() => {
+  357:    dispatch({ type: "reset", doc: null });
+  378:    if (!urlAsk || !api) return;
+  379:    const key = `${urlDoc}\n${urlAsk}`;
+  385:    dispatch({ type: "reset", doc: urlDoc });
+  386:    void send(urlAsk, {
+  [… 220 chars cut …]
+  454:                <Plus /> <span className="hidden sm:inline">New conversation</span>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the copilot's state and URL effects
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && sed -n 280,395p components/copilot/copilot-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  // ---------------------------------------------------------------- page
+  
+  export function CopilotView() {
+    const api = useApi();
+    const { profile, signOut } = useKopi();
+    const { scroller } = usePanel();
+    const [params, updateUrl] = useUrlParams();
+    const urlDoc = params.get("doc");
+    const urlAsk = params.get("ask");
+  
+    const [state, dispatch] = useReducer(reducer, { doc: urlDoc, ask: urlAsk }, initialConversation);
+    const latest = useRef(state);
+    const controller = useRef<AbortController | null>(null);
+    const
+  [… 2,316 chars cut …]
+  refreshFiles(restoredSession.current);
+    }, [refreshFiles]);
+  
+    useEffect(() => {
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The fix is small: the sidebar's button links to `/copilot?new=1`, and the copilot resets when it sees that flag, then clears it.
+
+- **Bash** — Make the sidebar's new-chat button reset the copilot
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && grep -n "export function useUrlParams" -A12 lib/use-url-query.ts | head -16 && python3 - <<'EOF'
+  p="components/copilot/copilot-view.tsx"; s=open(p).read()
+  old='''    setFiles({ session: null, list: [] });
+      updateUrl({ doc: null, ask: null });
+    }, [updateUrl]);
+  '''
+  new='''    setFiles({ session: null, list: [] });
+      updateUrl({ doc: null, ask: null, new: null });
+    }, [updateUrl]);
+  
+    // The sidebar's "new chat" links to `/copilot?new=1`: start fresh wherever the tab was.
+    const fresh = params.get("new");
+    useEffect(() => {
+      if (fresh) newConversation();
+    }, [fresh, newConversation]);
+  '''
+  assert old in s; s=s.replace(old,new); open(p,"w").write(s)
+  p="components/shell/app-shell.tsx"; s=open(p).read()
+  old='''        <IconLink href="/copilot" label="New chat with Kopi" round onNavigate={onNavigate}>'''
+  new='''        <IconLink href="/copilot/?new=1" label="New chat with Kopi" round onNavigate={onNavigate}>'''
+  assert old in s; s=s.replace(old,new); open(p,"w").write(s)
+  print("ok")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  16:export function useUrlParams(): [URLSearchParams, UrlUpdate] {
+  17-  const params = useSearchParams();
+  18-  const pathname = usePathname();
+  19-  const update = useCallback<UrlUpdate>(
+  20-    (changes) => {
+  21-      // Read the live URL, not `params`: two updates in one tick must not undo each other.
+  22-      const next = new URLSearchParams(window.location.search);
+  23-      for (const [key, value] of Object.entries(changes)) {
+  24-        if (value) next.set(key, value);
+  25-        else next.delete(key);
+  26-      }
+  [… 40 chars cut …]
+  28-      window.history.replaceState(null, "", text ? `${pathname}?${text}` : pathname);
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Testing it in mock mode: start a conversation, press the sidebar's new-chat button, and confirm the copilot is empty again.
+
+- **Bash** — Lint, build mock, and test the new-chat reset
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && export PATH=/opt/homebrew/bin:$PATH && (test -d node_modules || npm ci --silent) && npm run lint 2>&1 | tail -3 && NODE_ENV=production NEXT_PUBLIC_KOPI_API=mock npm run build >/dev/null 2>&1 && rm -rf /tmp/kp28-mock && cp -R out /tmp/kp28-mock && rm -rf out && cat > /tmp/kp28-newchat.mjs <<'EOF'
+  import { createServer } from "node:http";
+  import { readFile, stat } from "node:fs/promises";
+  import { extname, join } from "node:path";
+  import { chromium } from "/tmp/kopi-shots/node_modules/playwright-core/index.mjs";
+  const root = "/tmp/kp28-mock";
+  const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".json": "application/json", ".txt": "text/plain" };
+  const server = createServer(async (req, res) => {
+    let path = join(root, decodeURIComponent(new URL(req.url, "http://x").pathname));
+    try { if ((await stat(path)).isDirectory()) path = join(path, "index.html"); } catch { path += ".html"; }
+    let body; try { body = await readFile(path); } catch { res.writeHead(404); res.end(); return; }
+   
+  [… 779 chars cut …]
+  await page.getByRole("link", { name: "New chat with Kopi" }).click();
+  await page.waitForTimeout(1500);
+  const after = await page.getByText("Get started with some examples").isVisible();
+  console.log(JSON.stringify({ examplesDuringConversation: during, examplesAfterNewChat: after, url: page.url() }));
+  await browser.close(); server.close();
+  EOF
+  node /tmp/kp28-newchat.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ✖ 1 problem (1 error, 0 warnings)
+  
+  {"examplesDuringConversation":false,"examplesAfterNewChat":true,"url":"http://127.0.0.1:4794/copilot/"}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The reset works: the examples disappear during a conversation and come back after "new chat", with the URL cleaned. But lint reports one error; reading it.
+
+- **Bash** — Show the lint error
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && export PATH=/opt/homebrew/bin:$PATH && npx eslint components/copilot/copilot-view.tsx 2>&1 | head -20; grep -rn "eslint-disable-next-line react-hooks/set-state-in-effect" components lib | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ~/.universe/cache/worktrees/kp/kp-28/web/components/copilot/copilot-view.tsx
+    365:16  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+  
+  Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+  * Update external systems with the latest state from React.
+  * Subscribe for updates from some external
+  [… 748 chars cut …]
+     // eslint-disable-next-line react-hooks/set-state-in-effect
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Lint flags a state update inside an effect. The clean fix is to make the drafts list follow the conversation it belongs to, so a reset only needs the reducer. Checking how `files` is used.
+
+- **Bash** — Find uses of the files state
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && grep -n "files\.\|files," components/copilot/copilot-view.tsx | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  295:  const [files, setFiles] = useState<{ session: string | null; list: SessionFile[] }>({ session: null, list: [] });
+  427:  const listed = files.session === sessionId ? files.list : [];
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The drafts list is already keyed to the current conversation, so that `setFiles` call was redundant. Removing it.
+
+- **Bash** — Drop the redundant setState, re-lint and re-test
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && python3 - <<'EOF'
+  p="components/copilot/copilot-view.tsx"; s=open(p).read()
+  old='''    dispatch({ type: "reset", doc: null });
+      setFiles({ session: null, list: [] });
+      updateUrl({ doc: null, ask: null, new: null });'''
+  new='''    dispatch({ type: "reset", doc: null }); // the drafts list follows the session, so it empties too
+      updateUrl({ doc: null, ask: null, new: null });'''
+  assert old in s; s=s.replace(old,new); open(p,"w").write(s)
+  EOF
+  export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -3 && NODE_ENV=production NEXT_PUBLIC_KOPI_API=mock npm run build >/dev/null 2>&1 && rm -rf /tmp/kp28-mock && cp -R out /tmp/kp28-mock && rm -rf out && node /tmp/kp28-newchat.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  {"examplesDuringConversation":false,"examplesAfterNewChat":true,"url":"http://127.0.0.1:4794/copilot/"}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Lint is clean and the reset works. Building the live site and publishing it, with the demo video copied back in.
+
+- **Bash** — Build the live site and stage it with the demo video
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && export PATH=/opt/homebrew/bin:$PATH && NODE_ENV=production npm run build 2>&1 | tail -1 && grep -rl "kryptonairc-lc--kopi-api" out/_next/static | head -1 && S=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi && cp $S/demo/kopi-demo.mp4 /tmp/kopi-demo-web.mp4 && rm -rf $S && mkdir -p $S/demo && cp -R out/. $S/ && cp /tmp/kopi-demo-web.mp4 $S/demo/kopi-demo.mp4 && rm -rf out && ls $S | head -20 && du -sh $S
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  out/_next/static/chunks/3ixayi3na1_do.js
+  404
+  404.html
+  __next.__PAGE__.txt
+  __next._full.txt
+  __next._tree.txt
+  _next
+  _not-found
+  copilot
+  demo
+  icon.svg
+  index.html
+  index.txt
+  licences
+  profile
+  search
+  submissions
+  tender
+   25M	~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__sites__site_publish** `{"path": "artifacts/apps/kopi"}`
+
+  <details><summary>result</summary>
+
+  ```
+  {
+    "url": "https://kopi.unv.run",
+    "label": "kopi",
+    "version": 6,
+    "framework": "static",
+    "filesUploaded": 50,
+    "visibility": "public",
+    "rolledBack": false
+  }
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+The desktop pass finished; the mobile pass timed out waiting for the network to go idle on its first page. Switching to page-load plus explicit waits and re-running.
+
+- **Bash** — Re-run live QA with load waits
+  
+  ```
+  sed -i '' 's/waitUntil: "networkidle"/waitUntil: "load"/g' /tmp/kp28-liveqa.mjs && rm -f /tmp/kp28-live/* ; /opt/homebrew/bin/node /tmp/kp28-liveqa.mjs 2>&1 | tail -30; ls /tmp/kp28-live
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [
+   {
+    "width": 1440,
+    "errors": [
+     "console Failed to load resource: the server responded with a status of 503 ()"
+    ]
+   },
+   {
+    "width": 390,
+    "errors": [
+     "console Failed to load resource: the server responded with a status of 503 ()"
+    ]
+   }
+  ]
+  copilot-1440.png
+  copilot-390.png
+  copilot-unavailable-1440.png
+  copilot-unavailable-390.png
+  licences-1440.png
+  licences-390.png
+  overview-1440.png
+  overview-390.png
+  profile-1440.png
+  profile-390.png
+  search-1440.png
+  search-390.png
+  submissions-1440.png
+  submissions-390.png
+  tender-1440.png
+  tender-390.png
+  tender-overview-1440.png
+  tender-overview-390.png
+  ```
+
+  </details>
+
+The only console error is the expected 503 from the copilot, which has no credential yet. Reviewing the screenshots as contact sheets.
+
+- **Bash** — Build contact sheets of the live QA shots
+  
+  ```
+  cd /tmp/kp28-live && /opt/homebrew/bin/ffmpeg -y -loglevel error -i overview-1440.png -i search-1440.png -i tender-1440.png -i tender-overview-1440.png -i submissions-1440.png -i copilot-unavailable-1440.png -i licences-1440.png -i profile-1440.png -i copilot-1440.png -filter_complex "[0]scale=960:-1[a];[1]scale=960:-1[b];[2]scale=960:-1[c];[3]scale=960:-1[d];[4]scale=960:-1[e];[5]scale=960:-1[f];[6]scale=960:-1[g];[7]scale=960:-1[h];[8]scale=960:-1[i];[a][b][c]hstack=3[r1];[d][e][f]hstack=3[r2];[g][h][i]hstack=3[r3];[r1][r2][r3]vstack=3" sheet-1440.png && /opt/homebrew/bin/ffmpeg -y -loglevel error -i overview-390.png -i search-390.png -i tender-390.png -i tender-overview-390.png -i submissions-390.png -i copilot-unavailable-390.png -filter_complex "[0]scale=390:-1[a];[1]scale=390:-1[b];[2]scale=390:-1[c];[3]scale=390:-1[d];[4]scale=390:-1[e];[5]scale=390:-1[f];[a][b][c][d][e][f]hstack=6" sheet-390.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp28-live/sheet-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Every page works on live data (734 open, 75 published today). The fallback overview and the copilot's "being connected" card read cleanly. Checking the 390 sheet.
+
+- **Read** `/tmp/kp28-live/sheet-390.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Mobile is clean on live data too. Saving the live QA shots, then updating the README's screenshots.
+
+- **Bash** — Save live QA shots; list README images
+  
+  ```
+  S=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi; for f in /tmp/kp28-live/*-1440.png /tmp/kp28-live/*-390.png; do cp $f $S/linear-live-$(basename $f); done; cd ~/.universe/cache/worktrees/kp/kp-28 && ls -la docs/images | awk '{print $5, $9}' && grep -n "docs/images" README.md docs/*.md | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  192 .
+  160 ..
+  364669 copilot.png
+  156981 search.png
+  440106 submissions.png
+  427056 tender-overview.png
+  README.md:12:![The copilot drafting clarification questions](docs/images/copilot.png)
+  README.md:51:![A tender with its AI overview; the unverified quote is flagged and the call is capped](docs/images/tender-overview.png)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The README uses four mock-mode images (synthetic data, so safe to publish). Regenerating them on the new UI with the same framing.
+
+- **Bash** — Check existing README image sizes
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/docs/images && for f in *.png; do echo "$f $(sips -g pixelWidth -g pixelHeight $f | awk '/pixel/ {print $2}' | tr '\n' ' ')"; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  copilot.png 1440 1107 
+  search.png 1440 900 
+  submissions.png 1440 2395 
+  tender-overview.png 1440 1800
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Regenerate the README images from the mock build
+  
+  ```
+  cat > /tmp/kp28-docs.mjs <<'EOF'
+  // README images from the mock build (synthetic data only): 1440 wide at 1x.
+  import { createServer } from "node:http";
+  import { readFile, stat } from "node:fs/promises";
+  import { extname, join } from "node:path";
+  import { chromium } from "/tmp/kopi-shots/node_modules/playwright-core/index.mjs";
+  const root = "/tmp/kp28-mock", OUT = process.argv[2];
+  const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".json": "application/json", ".txt": "text/plain" };
+  const server = createServer(async (req, res) => {
+    let path = join(root, decodeURIComponent(new URL(req.url, "http://x").pathname));
+    try { if ((await stat(path)).isDirectory()) path = join(path, "index.html"); } catch { path += ".html"; }
+    let body; try { body = await readFile(path); } catch { res.writeHead(404); res.end(); return; }
+    res.writeHead(200, { "Content-Type": types[extname(path)] ?? "application/octet-stream" }); res.end(body);
+  }).listen(4795);
+  const B = "http://127.0.0.1:4795";
+  const browser = await chromium.launch({
+  [… 1,504 chars cut …]
+  path: `${OUT}/submissions.png` });
+  await browser.close(); server.close();
+  EOF
+  /opt/homebrew/bin/node /tmp/kp28-docs.mjs ~/.universe/cache/worktrees/kp/kp-28/docs/images && cd ~/.universe/cache/worktrees/kp/kp-28/docs/images && for f in *.png; do echo "$f $(sips -g pixelWidth -g pixelHeight $f | awk '/pixel/ {print $2}' | tr '\n' ' ') $(ls -la $f | awk '{print $5}')"; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  copilot.png 1440 1107  179953
+  search.png 1440 900  99107
+  submissions.png 1440 1600  162710
+  tender-overview.png 1440 1800  302724
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/.universe/cache/worktrees/kp/kp-28/docs/images/tender-overview.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `~/.universe/cache/worktrees/kp/kp-28/docs/images/copilot.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The README images look right. Committing this progress, then re-shooting the film. First I'm checking the new copilot's button labels and drafts markup, because the recorder drives them by name.
+
+- **Bash** — Commit progress; read copilot labels for the recorder
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28 && git add -A && git commit -q -m "KP-28: sidebar new chat starts a fresh conversation (?new=1); README images on the new UI
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1 && grep -n 'aria-label=' web/components/copilot/copilot-view.tsx | cut -c1-160 | head -20; grep -n 'aria-labelledby="drafts"\|id="drafts"' web/components/copilot/*.tsx | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  8a00dd8 KP-28: sidebar new chat starts a fresh conversation (?new=1); README images on the new UI
+  95:        aria-label="Remove the tender from this conversation"
+  212:          <button type="button" onClick={onStop} aria-label="Stop the answer" className={cn(round, "border bg-card text-foreground hover:bg-muted")}>
+  219:            aria-label="Send"
+  458:              <Button variant="outline" size="sm" onClick={newConversation} aria-label="New conversation">
+  web/components/copilot/copilot-view.tsx:242:    <section
+  [… 124 chars cut …]
+         <h2 id="drafts" className="flex items-center gap-2 text-[13px] font-medium">
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the drafts panel markup
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && sed -n 242,275p components/copilot/copilot-view.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  <section aria-labelledby="drafts" className="flex flex-col rounded-lg border bg-card">
+        <div className="flex flex-col gap-0.5 border-b px-3.5 py-3">
+          <h2 id="drafts" className="flex items-center gap-2 text-[13px] font-medium">
+            Drafts
+            {rows.length > 0 && <span className="text-muted-foreground tabular-nums">{rows.length}</span>}
+          </h2>
+          <p className="text-xs leading-relaxed text-muted-foreground">Documents Kopi writes in this conversation, as markdown.</p>
+        </div>
+    
+  [… 1,377 chars cut …]
+  size="icon-sm" variant="ghost" />}
+              </li>
+            ))}
+          </ul>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Build the local film web and inject the app CSS into the cards
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28/web && export PATH=/opt/homebrew/bin:$PATH && NODE_ENV=production NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8765 npm run build >/dev/null 2>&1 && rm -rf /tmp/kopi-film/web-local && cp -R out /tmp/kopi-film/web-local && rm -rf out && mkdir -p /tmp/kopi-film/web-local/film && python3 - <<'EOF'
+  import re
+  html=open("/tmp/kopi-film/web-local/index.html").read()
+  links="".join(re.findall(r'<link rel="stylesheet" href="[^"]+"[^>]*>', html))
+  src=open("~/Documents/codes/kopi/data/film-rig/cards/cards.html").read()
+  open("/tmp/kopi-film/web-local/film/cards.html","w").write(src.replace("<!--APP_CSS-->", links))
+  print(links[:200])
+  EOF
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  p="record.mjs"; s=open(p).read()
+  old='''      await a.scrollTo(a.page.getByText("Can you bid", { exact: false }).first(), 140, 2200).catch(() => a.scroll(600));'''
+  new='''      await a.scrollTo(a.page.locator("#eligibility"), 140, 2200);'''
+  assert old in s; s=s.replace(old,new); open(p,"w").write(s)
+  EOF
+  cp /tmp/kopi-film/record.mjs ~/Documents/codes/kopi/data/film-rig/record.mjs; rm -rf /tmp/kopi-film/overviews
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  <link rel="stylesheet" href="/_next/static/chunks/37tg9qwwt5n8-.css" data-precedence="next"/>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__dev__dev_start** `{"service": "film-api"}`
+
+- **mcp__dev__dev_start** `{"service": "film-web"}`
+
+  <details><summary>result</summary>
+
+  ```
+  film-api — Kopi API (local, live data, for filming): running at http://localhost:8765 (pid 76323)
+      in ., `cd ~/Documents/codes/kopi/backend && KOPI_DATA_DIR=/tmp/kopi-film/data KOPI_EMBED_DEVICE=mps PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra search --extra agent python /tmp/kopi-film/film_api.py`
+  
+  Read its output with dev_logs({ service: "film-api" }).
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  film-web — Kopi web (local build against the film API): running, no address printed (pid 76376)
+      in ., `python3 -m http.server 4790 --bind 127.0.0.1 --directory /tmp/kopi-film/web-local`
+  
+  Read its output with dev_logs({ service: "film-web" }).
+  ```
+
+  </details>
+
+Both film services are running. Recording the app scenes on the new UI: sign-in, home, search and licences on kopi.unv.run, and the tender, a real copilot run and submissions on the local copy.
+
+- **Bash** — Re-record the non-copilot app scenes
+  
+  ```
+  cd /tmp/kopi-film && /opt/homebrew/bin/node record.mjs 01-gate 02-home 03-search 04-tender 07-licences 2>&1 | grep -v "^$" | tail -12
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  01-gate: frames span 7.75 s -> clip 7.733333 s
+  01-gate: 54 frames, 8.4 s
+  02-home: frames span 28.03 s -> clip 28.033333 s
+  02-home: 244 frames, 30.8 s
+  03-search: frames span 24.60 s -> clip 24.600000 s
+  03-search: 536 frames, 27.0 s
+  04-tender: frames span 75.40 s -> clip 75.400000 s
+  04-tender: 2356 frames, 83.2 s
+  07-licences: frames span 19.46 s -> clip 19.466667 s
+  07-licences: 424 frames, 21.5 s
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the copilot scene: a real Agent SDK turn on live data.
+
+- **Bash** — Record the copilot and submissions scenes
+  
+  ```
+  cd /tmp/kopi-film && /opt/homebrew/bin/node record.mjs 05-copilot 06-submissions 2>&1 | grep -v "^$" | tail -6
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  05-copilot: frames span 95.66 s -> clip 95.666016 s
+  05-copilot: 2709 frames, 104.8 s
+  06-submissions: frames span 29.04 s -> clip 29.033333 s
+  06-submissions: 145 frames, 31.8 s
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Recorded. Now finding the new cut points: frozen stretches for every clip, plus timed frame grids for the tender and copilot clips.
+
+- **Bash** — Detect static stretches in the new clips
+  
+  ```
+  M=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo; for n in 02-home 03-search 04-tender 05-copilot 06-submissions; do echo "== $n $(/opt/homebrew/bin/ffprobe -v error -show_entries format=duration -of csv=p=0 $M/$n.mp4)"; /opt/homebrew/bin/ffmpeg -hide_banner -i $M/$n.mp4 -vf "freezedetect=n=0.0005:d=1.5" -map 0:v -f null - 2>&1 | grep -o "freeze_start: [0-9.]*\|freeze_end: [0-9.]*" | paste - - | awk '{printf "  %.1f-%.1f (%.1fs)\n", $2, $4, $4-$2}'; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  == 02-home 28.033333
+    2.4-4.2 (1.8s)
+    4.2-23.0 (18.8s)
+    26.5-0.0 (-26.5s)
+  == 03-search 24.600000
+    0.9-5.9 (5.0s)
+    5.9-7.9 (2.0s)
+    16.3-18.9 (2.6s)
+    22.3-0.0 (-22.3s)
+  == 04-tender 75.400000
+    1.4-4.3 (2.9s)
+    8.4-12.4 (4.0s)
+    16.9-21.2 (4.3s)
+    26.7-49.8 (23.1s)
+    49.8-52.0 (2.2s)
+    56.5-60.0 (3.5s)
+    64.3-67.8 (3.5s)
+    72.0-0.0 (-72.0s)
+  == 05-copilot 95.666016
+    0.1-5.1 (5.0s)
+    5.1-7.2 (2.0s)
+    7.2-9.8 (2.6s)
+    9.8-13.6 (3.8s)
+    14.1-16.3 (2.2s)
+    16.9-18.7 (1.8s)
+    19.1-38.3 (19.2s)
+    38.3-46.4 (8.1s)
+    47.6-49.6 (2.0s)
+    53.1-72.1 (19.0s)
+    72.8-81.0 (8.2s)
+    81.0-0.0 (-81.0s)
+  == 06-submissions 29.033333
+    0.6-3.5 (2.9s)
+    3.5-5.3 (1.7s)
+    5.7-0.0 (-5.7s)
+  ```
+
+  </details>
+
+The copilot clip has two long "thinking" stretches this time (19–38 s and 53–72 s). Looking at frames every 2.5 s to place the cuts.
+
+- **Bash** — Make timed frame grids for copilot and tender
+  
+  ```
+  M=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo; cd /tmp/kopi-film/check && rm -f *.png && /opt/homebrew/bin/ffmpeg -y -loglevel error -i $M/05-copilot.mp4 -vf "fps=1/2.5,scale=400:-1,tile=6x7" -frames:v 1 cop-grid.png && /opt/homebrew/bin/ffmpeg -y -loglevel error -i $M/04-tender.mp4 -vf "fps=1/2.5,scale=400:-1,tile=6x6" -frames:v 1 ten-grid.png && ls
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  b
+  cop-grid.png
+  ten-grid.png
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/cop-grid.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/ten-grid.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Re-record home with cursor hovers and check for freezes
+  
+  ```
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  p="record.mjs"; s=open(p).read()
+  start=s.index('  async "02-home"(b) {'); end=s.index('  // Semantic search on the published site.')
+  new='''  async "02-home"(b) {
+      const token = await hostedToken();
+      await film(b, "02-home", async (a) => {
+        await a.go(HOSTED);
+        await a.page.getByText("Best matches", { exact: false }).first().waitFor({ timeout: 30000 });
+        await a.wait(2500);
+        const rows = a.page.locator('a[href^="/tender/"]');
+        for (const i of [0, 1, 2, 3]) { await a.moveTo(rows.nth(i), 1600); }
+        await a.moveTo(a.page.getByRole("link", { name: /Search all/ }), 1500);
+        for (const i of [6, 7, 8]) { await a.moveTo(rows.nth(i), 1500); }
+        await a.scroll(500, 2400); await a.wait(1800);
+        await a.moveTo(a.page.getByRole("link", { name: "Copilot" }).first(), 1500);
+        await a.moveTo(a.page.getByRole("link", { name: "Submissions" }).first(), 1200);
+        await a.scroll(-500, 1800); await a.wait(800);
+      }, { storage: `sessionStorage.setItem("kopi.token", ${JSON.stringify(token)})` });
+    },
+  '''
+  s=s[:start]+new+s[end:]
+  [… 114 chars cut …]
+  record.mjs 02-home 2>&1 | tail -2 && M=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo && /opt/homebrew/bin/ffmpeg -hide_banner -i $M/02-home.mp4 -vf "freezedetect=n=0.0005:d=1.5" -map 0:v -f null - 2>&1 | grep -o "freeze_start: [0-9.]*\|freeze_end: [0-9.]*" | paste - - | awk '{printf "  %.1f-%.1f (%.1fs)\n", $2, $4, $4-$2}'
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  02-home: frames span 39.31 s -> clip 39.300000 s
+  02-home: 390 frames, 42.9 s
+    2.2-4.7 (2.5s)
+    4.7-7.5 (2.8s)
+    7.6-9.2 (1.6s)
+    9.6-11.5 (2.0s)
+    11.6-13.6 (2.0s)
+    13.6-15.6 (2.0s)
+    16.0-17.7 (1.7s)
+    17.7-19.7 (1.9s)
+    19.7-21.6 (2.0s)
+    21.6-30.4 (8.8s)
+    30.8-0.0 (-30.8s)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The new home clip has motion throughout. Updating the cut plan to the new clips' timings, then pushing the branch so the GitHub scene shows the new README images before I re-record it.
+
+- **Bash** — Update the cut plan and push the new UI to GitHub
+  
+  ```
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  p="cut.py"; s=open(p).read()
+  start=s.index("PLAN = ["); end=s.index("INTRO, OUTRO")
+  new='''PLAN = [
+      ("s01", 1, [("01-gate", 0.3, 2.8, 1), ("02-home", 0.5, 28.5, None)]),
+      ("s03", None, [("03-search", 0.8, 17.6, None)]),
+      ("s04a", None, [("04-tender", 0.3, 2.5, 1), ("04-tender", 2.5, 21.0, None)]),
+      ("s04b", None, [("04-tender", 21.0, 27.0, 2), ("04-tender", 27.0, 49.8, 8), ("04-tender", 49.8, 68.0, None)]),
+      ("s05", None, [("05-copilot", 0, 10, 3), ("05-copilot", 10, 19, 1), ("05-copilot", 19, 47, 8),
+                     ("05-copilot", 47, 53, 1.5), ("05-copilot", 53, 60, 1), ("05-copilot", 72.5, 81, None)]),
+      ("s06", None, [("06-submissions", 3.0, 9.0, None)]),
+      ("s08", 2, [("08-repo", 0, 12.06, 1), ("09-planning", 10.0, 24.3, None)]),
+      ("s09", 3, [("15-decisions", 0.5, 20.0, None)]),
+      ("s11", None, [("11-eval", 3.0, 38.6, None)]),
+      ("s10", None, [("10-review", 0.5, 16.7, None)]),
+      ("s12", 4, [("12-journal", 0, 30.0, None)]),
+      ("s13", 5, [("13-cuts", 0, 12.9, None)]),
+      ("s14", 6, [("14-weakest", 0, 13.1, None)]),
+  ]
+  '''
+  s=s[:start]+new+s[end:]
+  open(p,"w").write(s)
+  EOF
+  cp cut.py ~/Documents/codes/kopi/data/film-rig/cut.py && cd ~/.universe/cache/worktrees/kp/kp-28 && git fetch -q origin && git merge-base --is-ancestor origin/main HEAD && git push -q origin HEAD:main 2>&1 | tail -1; git fetch -q origin; git log --oneline -1 origin/main
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  8a00dd8 KP-28: sidebar new chat starts a fresh conversation (?new=1); README images on the new UI
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Pushed. Re-recording the two GitHub scenes that show the README, then cutting a draft.
+
+- **Bash** — Re-record the README scenes
+  
+  ```
+  sleep 20; cd /tmp/kopi-film && /opt/homebrew/bin/node record.mjs 08-repo 14-weakest 2>&1 | grep -v "^$" | tail -4 && M=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo && /opt/homebrew/bin/ffmpeg -y -loglevel error -sseof -2 -i $M/08-repo.mp4 -frames:v 1 -vf scale=960:-1 check/repo-end.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  08-repo: frames span 12.15 s -> clip 12.133333 s
+  08-repo: 208 frames, 13.8 s
+  14-weakest: frames span 13.13 s -> clip 13.133333 s
+  14-weakest: 210 frames, 14.9 s
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/repo-end.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+GitHub now shows the new UI in the README. Cutting a draft of the film and checking the timeline and speeds.
+
+- **Bash** — Cut a draft and print the timeline
+  
+  ```
+  cd /tmp/kopi-film && python3 cut.py --draft 2>&1 | tail -1; python3 -c "
+  import json
+  for r in json.load(open('/tmp/kopi-film/cut/timeline.json')):
+      print(r['segment'], r['starts'], r['seconds'], [(c, s) for c, s in r['speeds']])"; ls cards | grep speed
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  total 239.1 s -> ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 (239.1 s)
+  s01 2.3 30.47 [('01-gate', 1), ('02-home', 1.002)]
+  s03 32.8 8.17 [('03-search', 2.064)]
+  s04a 40.9 19.83 [('04-tender', 1), ('04-tender', 1.05)]
+  s04b 60.8 14.2 [('04-tender', 2), ('04-tender', 8), ('04-tender', 2.187)]
+  s05 75.0 30.23 [('05-copilot', 3), ('05-copilot', 1), ('05-copilot', 8), ('05-copilot', 1.5), ('05-copilot', 1), ('05-copilot', 2.5)]
+  s06 105.2 5.93 [('06-submissions', 1.013)]
+  s08 111.1
+  [… 273 chars cut …]
+  1.0)]
+  speed-2.0.png
+  speed-2.1.png
+  speed-2.2.png
+  speed-2.5.png
+  speed-3.0.png
+  speed-8.0.png
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Draft cut is 3:59.1. Watching the boundaries: a frame just after each segment starts, plus points inside the copilot segment.
+
+- **Bash** — Tile boundary frames of the new cut
+  
+  ```
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  import json, subprocess, os
+  F="~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4"
+  tl=json.load(open("cut/timeline.json"))
+  times=[("intro",1.0)]+[(r["segment"], r["starts"]+1.5) for r in tl]
+  s05=[r for r in tl if r["segment"]=="s05"][0]; s04b=[r for r in tl if r["segment"]=="s04b"][0]
+  times+=[("s04b-8x", s04b["starts"]+4.2), ("s04b-end", s04b["starts"]+s04b["seconds"]-1.5), ("s05-steps", s05["starts"]+8), ("s05-8x", s05["starts"]+14), ("s05-answer", s05["starts"]+22), ("s05-draft", s05["starts"]+s05["seconds"]-1.2), ("outro", tl[-1]["starts"]+tl[-1]["seconds"]+2)]
+  os.makedirs("check/b", exist_ok=True)
+  for f in os.listdir("check/b"): os.remove("check/b/"+f)
+  for i,(n,t) in enumerate(times):
+      subprocess.run(["/opt/homebrew/bin/ffmpeg","-y","-loglevel","error","-ss",f"{t:.2f}","-i",F,"-frames:v","1","-vf","scale=640:-1",f"check/b/{i:02d}.png"],check=True)
+  subprocess.run(["/opt/homebrew/bin/ffmpeg","-y","-loglevel","error","-pattern_type","glob","-i","check/b/*.png","-filter_complex","tile=7x3","check/boundaries2.png"],check=True)
+  print([(n,round(t,1)) for n,t in times])
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [('intro', 1.0), ('s01', 3.8), ('s03', 34.3), ('s04a', 42.4), ('s04b', 62.3), ('s05', 76.5), ('s06', 106.7), ('s08', 112.6), ('s09', 136.1), ('s11', 149.2), ('s10', 175.2), ('s12', 185.9), ('s13', 209.6), ('s14', 222.1), ('s04b-8x', 65.0), ('s04b-end', 73.5), ('s05-steps', 83.0), ('s05-8x', 89.0), ('s05-answer', 97.0), ('s05-draft', 104.0), ('outro', 237.1)]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/boundaries2.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Grab the submissions end and copilot answer frames
+  
+  ```
+  cd /tmp/kopi-film && F=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 && /opt/homebrew/bin/ffmpeg -y -loglevel error -ss 110.4 -i $F -frames:v 1 -vf scale=960:-1 check/s06-end.png && /opt/homebrew/bin/ffmpeg -y -loglevel error -ss 97 -i $F -frames:v 1 -vf scale=960:-1 check/s05-ans.png && /opt/homebrew/bin/ffmpeg -y -loglevel error -i check/s06-end.png -i check/s05-ans.png -filter_complex vstack check/two.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/two.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Use /tmp/workspace for the local copilot sandbox
+  
+  ```
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  p="film_api.py"; s=open(p).read()
+  old='''    def create(self) -> LocalBox:
+          root = Path(tempfile.mkdtemp(prefix="kopi-box-"))
+          (root / "drafts").mkdir()'''
+  new='''    def create(self) -> LocalBox:
+          # One box per filming run, named like the sandbox's /workspace so the agent's replies read the same.
+          root = Path("/tmp/workspace")
+          shutil.rmtree(root, ignore_errors=True)
+          (root / "drafts").mkdir(parents=True)'''
+  assert old in s; s=s.replace(old,new)
+  s=s.replace("import subprocess\nimport sys\nimport tempfile\n","import shutil\nimport subprocess\nimport sys\n")
+  open(p,"w").write(s)
+  EOF
+  grep -n "tempfile\|shutil" film_api.py; cp film_api.py ~/Documents/codes/kopi/data/film-rig/film_api.py
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  9:import shutil
+  56:        shutil.rmtree(root, ignore_errors=True)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__dev__dev_restart** `{"service": "film-api"}`
+
+  <details><summary>result</summary>
+
+  ```
+  film-api — Kopi API (local, live data, for filming): running at http://localhost:8765 (pid 79652)
+      in ., `cd ~/Documents/codes/kopi/backend && KOPI_DATA_DIR=/tmp/kopi-film/data KOPI_EMBED_DEVICE=mps PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra search --extra agent python /tmp/kopi-film/film_api.py`
+  ```
+
+  </details>
+
+- **Bash** — Re-record the copilot scene and map its timings
+  
+  ```
+  cd /tmp/kopi-film && /opt/homebrew/bin/node record.mjs 05-copilot 2>&1 | grep -v "^$" | tail -2 && M=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo && /opt/homebrew/bin/ffmpeg -hide_banner -i $M/05-copilot.mp4 -vf "freezedetect=n=0.0005:d=1.5" -map 0:v -f null - 2>&1 | grep -o "freeze_start: [0-9.]*\|freeze_end: [0-9.]*" | paste - - | awk '{printf "  %.1f-%.1f (%.1fs)\n", $2, $4, $4-$2}'; cd check && rm -f cop-grid.png && /opt/homebrew/bin/ffmpeg -y -loglevel error -i $M/05-copilot.mp4 -vf "fps=1/2.5,scale=400:-1,tile=6x7" -frames:v 1 cop-grid.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  05-copilot: frames span 103.72 s -> clip 103.733333 s
+  05-copilot: 2945 frames, 113.1 s
+    0.2-5.3 (5.1s)
+    5.3-7.3 (2.0s)
+    7.3-10.0 (2.7s)
+    10.0-13.5 (3.6s)
+    14.5-17.1 (2.6s)
+    18.4-20.9 (2.5s)
+    21.5-44.5 (23.0s)
+    44.5-53.1 (8.6s)
+    55.1-80.2 (25.1s)
+    80.8-89.0 (8.2s)
+    89.0-0.0 (-89.0s)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/cop-grid.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Grab the copilot answer frame
+  
+  ```
+  M=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo; /opt/homebrew/bin/ffmpeg -y -loglevel error -ss 70 -i $M/05-copilot.mp4 -frames:v 1 -vf "crop=1100:1080:420:0,scale=880:-1" /tmp/kopi-film/check/ans70.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (Bash completed with no output)
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/check/ans70.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The answer now reads `/tmp/workspace/drafts/…` and is a good, honest one ("That's my inference, not a figure from the notice"). Updating the copilot cut points and rendering the final film.
+
+- **Bash** — Render the final film with the new copilot take
+  
+  ```
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  p="cut.py"; s=open(p).read()
+  old='''    ("s05", None, [("05-copilot", 0, 10, 3), ("05-copilot", 10, 19, 1), ("05-copilot", 19, 47, 8),
+                     ("05-copilot", 47, 53, 1.5), ("05-copilot", 53, 60, 1), ("05-copilot", 72.5, 81, None)]),'''
+  new='''    ("s05", None, [("05-copilot", 0, 10, 3), ("05-copilot", 10, 21, 1.5), ("05-copilot", 21, 53, 8),
+                     ("05-copilot", 53, 64, 1), ("05-copilot", 80.5, 89, None)]),'''
+  assert old in s; s=s.replace(old,new); open(p,"w").write(s)
+  EOF
+  cp cut.py ~/Documents/codes/kopi/data/film-rig/cut.py && python3 cut.py 2>&1 | tail -1 && python3 -c "
+  import json
+  for r in json.load(open('/tmp/kopi-film/cut/timeline.json')):
+      if r['segment'] in ('s04b','s05','s06'): print(r['segment'], r['starts'], r['seconds'], [(c, s) for c, s in r['speeds']])" && F=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 && /opt/homebrew/bin/ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate:format=duration,size -of compact $F
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  total 238.0 s -> ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 (238.0 s)
+  s04b 60.8 14.2 [('04-tender', 2), ('04-tender', 8), ('04-tender', 2.187)]
+  s05 75.0 29.1 [('05-copilot', 3), ('05-copilot', 1.5), ('05-copilot', 8), ('05-copilot', 1), ('05-copilot', 2.5)]
+  s06 104.1 5.93 [('06-submissions', 1.013)]
+  stream|codec_name=h264|width=1920|height=1080|r_frame_rate=30/1
+  stream|codec_name=aac|r_frame_rate=0/0
+  format|duration=238.000000|size=48760878
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Final render: 3:58.0, 1080p30, 48.8 MB. A quick sync check at the copilot-to-submissions boundary, then encoding the web copy and publishing.
+
+- **Bash** — Check audio sync at a boundary; encode the web copy
+  
+  ```
+  F=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4; /tmp/kokoro-env/bin/python - <<EOF
+  import subprocess, numpy as np
+  raw=subprocess.run(["/opt/homebrew/bin/ffmpeg","-loglevel","error","-ss","101","-t","5","-i","$F","-f","f32le","-ac","1","-ar","16000","-"],capture_output=True).stdout
+  x=np.frombuffer(raw,dtype=np.float32); w=4000
+  print(" ".join(f"{101+i/16000:.2f}:{'#' if np.sqrt((x[i:i+w]**2).mean())>0.01 else '.'}" for i in range(0,len(x)-w,w)))
+  EOF
+  cd /tmp/kopi-film && /opt/homebrew/bin/ffmpeg -y -loglevel error -i $F -c:v libx264 -preset slow -crf 23 -tune stillimage -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart web-23.mp4 && ls -la web-23.mp4 | awk '{print $5}' && cp web-23.mp4 ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi/demo/kopi-demo.mp4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  101.00:. 101.25:. 101.50:. 101.75:. 102.00:. 102.25:. 102.50:. 102.75:. 103.00:. 103.25:. 103.50:. 103.75:. 104.00:. 104.25:# 104.50:# 104.75:# 105.00:# 105.25:# 105.50:#
+  23475387
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The submissions line starts at 104.3 s, exactly on its footage. The web copy is 23.5 MB, under the host's limit. Publishing.
+
+- **mcp__sites__site_publish** `{"path": "artifacts/apps/kopi"}`
+
+  <details><summary>result</summary>
+
+  ```
+  {
+    "url": "https://kopi.unv.run",
+    "label": "kopi",
+    "version": 7,
+    "framework": "static",
+    "filesUploaded": 1,
+    "visibility": "public",
+    "rolledBack": false
+  }
+  ```
+
+  </details>
+
+- **Bash** — Verify the hosted film matches
+  
+  ```
+  sleep 8; curl -s -o /tmp/dl2.mp4 -w "%{http_code} %{size_download}\n" https://kopi.unv.run/demo/kopi-demo.mp4 && cmp /tmp/dl2.mp4 /tmp/kopi-film/web-23.mp4 && echo identical && /opt/homebrew/bin/ffprobe -v error -show_entries format=duration -of csv=p=0 /tmp/dl2.mp4; curl -s -o /dev/null -w "site %{http_code}\n" https://kopi.unv.run/
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  200 23475387
+  identical
+  238.000000
+  site 200
+  ```
+
+  </details>
+
+The hosted film is live and byte-identical to the web copy (3:58). Updating the README's runtime label, then refreshing the logs with this session's latest work plus the KP-27 subagent's transcript.
+
+- **Bash** — Refresh raw transcripts and re-export the logs
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-28 && sed -i '' 's|\*\*Demo (3:59):\*\*|**Demo (3:58):**|' README.md && grep -n "Demo (3:58)" README.md; SUB=$(ls -S /var/folders/ms/*/T/claude-resume-*/projects/-Users-teddy--universe-sessions-529c67bc-*/7142f416-*/subagents/agent-a6a4529d1dab47637.jsonl ~/.claude/projects/-Users-teddy--universe-sessions-529c67bc-*/7142f416-*/subagents/agent-a6a4529d1dab47637.jsonl 2>/dev/null | head -1); MAIN=$(ls -S /var/folders/ms/*/T/claude-resume-*/projects/-Users-teddy--universe-sessions-529c67bc-*/7142f416-4f85-496d-ae13-524a650d7452.jsonl ~/.claude/projects/-Users-teddy--universe-sessions-529c67bc-*/7142f416-4f85-496d-ae13-524a650d7452.jsonl 2>/dev/null | head -1); echo "sub: $SUB"; echo "main: $MAIN"; K=~/Documents/codes/kopi/data; umask 077; cp "$MAIN" $K/log-raw/01-main.jsonl && cp "$SUB" $K/log-raw/13-sub-kp27.jsonl && python3 - <<'EOF'
+  import json
+  p="~/Documents/codes/kopi/data/log-sources.json"; m=json.load(open(p))
+  if not any(e["label"]=="13-sub-kp27" for e in m):
+      m.append({"label":"13-sub-kp27","title":"Subagent: KP-27 copilot as a Linear Agent screen, plus
+  [… 91 chars cut …]
+  json.dump(m,open(p,"w"),indent=1); print(len(m),"sessions")
+  EOF
+  cd ~/.universe/cache/worktrees/kp/kp-28 && rm -rf logs && python3 scripts/export_logs.py --manifest $K/log-sources.json --secrets-dir $K/secrets --out logs 2>&1 | tail -3 && sed -n 7,8p logs/INDEX.md | cut -c1-220 && tail -3 logs/INDEX.md | head -1
   ```

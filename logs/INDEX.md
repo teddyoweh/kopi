@@ -4,7 +4,7 @@ Every Claude Code session that built Kopi, exported by `scripts/export_logs.py`.
 
 | Log | Who | Model | Turns | Assistant messages | Tool calls | Output tokens | Span (UTC) |
 |---|---|---|---:|---:|---:|---:|---|
-| [01-main](01-main.md) | Main agent (lead): planning, research, orchestration and most build tasks | claude-opus-5-5 | 33 | 169 | 699 | 749,402 | 29 Sep 07:20 UTC → 29 Sep 14:11 UTC |
+| [01-main](01-main.md) | Main agent (lead): planning, research, orchestration and most build tasks | claude-opus-5-5 | 36 | 239 | 862 | 872,641 | 29 Sep 07:20 UTC → 29 Sep 16:06 UTC |
 | [02-crew-kp4](02-crew-kp4.md) | Crew agent 1: KP-4 permits, licences, registrations and eligibility gates | claude-opus-5-5 | 2 | 11 | 59 | 80,822 | 29 Sep 08:50 UTC → 29 Sep 09:07 UTC |
 | [03-crew-kp5](03-crew-kp5.md) | Crew agent 2: KP-5 web shell and design system | claude-opus-5-5 | 2 | 9 | 47 | 51,500 | 29 Sep 08:50 UTC → 29 Sep 09:00 UTC |
 | [04-review-kp1](04-review-kp1.md) | Reviewer: KP-1 contract, models and API | claude-sonnet-5 | 3 | 7 | 22 | 9,898 | 29 Sep 08:50 UTC → 29 Sep 09:13 UTC |
@@ -16,6 +16,7 @@ Every Claude Code session that built Kopi, exported by `scripts/export_logs.py`.
 | [10-sub-kp9](10-sub-kp9.md) | Subagent: KP-9 overview, search, tender and licences pages | claude-opus-5-5 | 1 | 49 | 112 | 120,416 | 29 Sep 11:05 UTC → 29 Sep 11:31 UTC |
 | [11-sub-kp10](11-sub-kp10.md) | Subagent: KP-10 tender overview with verified quotes | claude-opus-5-5 | 1 | 22 | 56 | 73,630 | 29 Sep 11:39 UTC → 29 Sep 11:54 UTC |
 | [12-sub-kp13](12-sub-kp13.md) | Subagent: KP-13 copilot, submissions and profile UI | claude-opus-5-5 | 1 | 40 | 121 | 180,191 | 29 Sep 11:47 UTC → 29 Sep 12:22 UTC |
+| [13-sub-kp27](13-sub-kp27.md) | Subagent: KP-27 copilot as a Linear Agent screen, plus submissions and profile | claude-opus-5-5 | 1 | 23 | 81 | 93,941 | 29 Sep 15:21 UTC → 29 Sep 15:41 UTC |
 
 ## What was removed, and why
 
