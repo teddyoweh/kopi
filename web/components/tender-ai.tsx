@@ -4,8 +4,7 @@ import {
   AlertTriangle,
   ArrowRight,
   ArrowUpRight,
-  BookmarkCheck,
-  BookmarkPlus,
+  Briefcase,
   Check,
   ListChecks,
   Loader2,
@@ -16,16 +15,17 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useApi } from "@/components/kopi-provider";
+import { useApi, useKopi } from "@/components/kopi-provider";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError, type Notice, type Overview, type Profile } from "@/lib/api";
 import { tenderAsks } from "@/lib/copilot";
 import { dateTime } from "@/lib/format";
 import { writeStored, useStored } from "@/lib/stored";
-import { useTracked } from "@/lib/submissions";
+import { bidHref, useBids } from "@/lib/bids";
 import { cn } from "@/lib/utils";
 
 /** `/copilot?doc=…&ask=…`: the copilot opened on a tender with a request already made. */
@@ -366,26 +366,15 @@ export function TenderActions({ notice, profile }: { notice: Notice; profile: Pr
   );
 }
 
-export function TrackButton({ notice }: { notice: Notice }) {
-  const { isTracked, track, untrack } = useTracked();
-  const tracked = isTracked(notice.doc_no);
+/** Start the bid on this tender, or go back to it: the bid workspace, where Kopi works it end to end. */
+export function BidButton({ notice }: { notice: Notice }) {
+  const router = useRouter();
+  const { profile } = useKopi();
+  const { bidFor, startBid } = useBids();
+  const bid = bidFor(notice.doc_no);
   return (
-    <div className="flex items-center gap-3">
-      {tracked && (
-        <Link href="/submissions" className="hidden items-center gap-1 text-[13px] font-book text-kopi hover:underline md:flex">
-          Open in Submissions <ArrowRight className="size-3.5" aria-hidden />
-        </Link>
-      )}
-      <Button
-        variant={tracked ? "secondary" : "default"}
-        aria-pressed={tracked}
-        onClick={() => (tracked ? untrack(notice.doc_no) : track(notice))}
-        title={tracked ? "Stop tracking this tender" : "Add it to Submissions"}
-        className={cn(tracked && "bg-kopi-soft text-kopi hover:bg-kopi-soft/70")}
-      >
-        {tracked ? <BookmarkCheck /> : <BookmarkPlus />}
-        {tracked ? "Tracking" : "Track this tender"}
-      </Button>
-    </div>
+    <Button onClick={() => router.push(bid ? bidHref(notice.doc_no) : startBid(notice, profile.id))} title={bid ? "Open the bid workspace" : "Kopi qualifies it, plans it and drafts the documents"}>
+      <Briefcase /> {bid ? "Open bid" : "Start bid"}
+    </Button>
   );
 }

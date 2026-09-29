@@ -193,6 +193,14 @@ export function describeStep(tool: string, input: Record<string, unknown>, runni
       return say(`Reading ${base(input.file_path)}`, `Read ${base(input.file_path)}`);
     case "Glob":
       return say("Looking through the drafts", "Looked through the drafts");
+    case "remember": {
+      const note = str(input.note);
+      return say("Saving to the bid memory", note ? `Remembered: ${note}` : "Saved to the bid memory");
+    }
+    case "set_bid_stage": {
+      const stage = str(input.stage);
+      return say("Moving the bid on", stage ? `Moved the bid to ${stage}` : "Moved the bid on");
+    }
     default: {
       const name = tool.replace(/^mcp__\w+__/, "").replace(/_/g, " ");
       return say(`Using ${name}`, `Used ${name}`);

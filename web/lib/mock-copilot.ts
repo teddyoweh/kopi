@@ -6,6 +6,7 @@
  */
 import type { ChatEvent, ChatRequest, ChecklistItem, EligibilityCheck, Licence, MarketContext, Notice, Profile, SearchResponse } from "./api";
 import { dateTime, moneyShort, shortDate } from "./format";
+import { addNote, setStage } from "./mock-memory";
 
 export type MockTools = {
   notice(doc: string): Notice;
@@ -161,6 +162,85 @@ export function checklistDraft(n: Notice, items: ChecklistItem[]): string {
   ].join("\n");
 }
 
+/** The go/no-go call a bid plan opens with, from the checks the rules can run. */
+function bidCall(checks: EligibilityCheck[]): { call: string; why: string } {
+  const blocker = checks.find((c) => c.status === "unmet" && c.kind !== "closing");
+  const open = checks.filter((c) => c.status === "unknown");
+  if (blocker) return { call: "Bid only if the gap closes", why: `${blocker.requirement} is not on the profile. Without it, or a partner who holds it, the bid is not compliant.` };
+  if (open.length) return { call: "Bid, once the open checks are confirmed", why: `${open.map((c) => c.requirement).join("; ")}: the profile doesn't say, so confirm before investing in the proposal.` };
+  return { call: "Bid", why: "Nothing the rules can check stands in the way." };
+}
+
+/** A date `days` before `iso`, or "As soon as possible" when that day has already gone. */
+function before(iso: string, days: number): string {
+  const at = new Date(new Date(iso).getTime() - days * 86400e3);
+  return at.getTime() < Date.now() ? "As soon as possible" : shortDate(at.toISOString());
+}
+
+export function bidPlanDraft(n: Notice, profile: Profile, checks: EligibilityCheck[], market: MarketContext): string {
+  const { call, why } = bidCall(checks);
+  const gaps = checks.filter((c) => c.status !== "met" && c.kind !== "closing");
+  const band =
+    market.similar_count && market.p25_amount !== null && market.p75_amount !== null
+      ? `${market.similar_count} similar past awards went for ${moneyShort(market.p25_amount)}–${moneyShort(market.p75_amount)} (median ${moneyShort(market.median_amount ?? 0)}).`
+      : "No close past awards to price against.";
+  const winner = market.top_suppliers[0];
+  return [
+    `# Bid plan: ${n.doc_no} ${n.title}`,
+    "",
+    `**Call: ${call}.** ${why}`,
+    "",
+    "## Why",
+    "",
+    `- **What ${n.agency} is buying:** ${(n.description ?? n.title).split(/(?<=\.)\s+/)[0]}`,
+    `- **What ${profile.name} brings:** ${(profile.capabilities ?? []).slice(0, 3).join("; ") || profile.summary}.`,
+    `- **Market:** ${band}${winner ? ` ${winner.supplier} has won ${winner.wins} of them.` : ""}`,
+    `- **Format:** ${n.procurement_method}${n.two_envelope ? ", two envelopes (the price is opened only if the technical proposal passes)" : ""}.`,
+    "",
+    "## Gaps to close",
+    "",
+    ...(gaps.length ? gaps.map((c) => `- **${c.requirement}**: ${c.reason}.`) : ["- None the notice names."]),
+    "- **The tender documents.** They sit behind the GeBIZ login. Download them and add them to this bid so Kopi can check the real requirements.",
+    "",
+    "## Timeline, back from closing",
+    "",
+    "| When | What |",
+    "|---|---|",
+    `| Today | Plan, questions, compliance matrix and outline (drafted by Kopi) |`,
+    `| ${before(n.closing, 10)} | Send the clarification questions through GeBIZ |`,
+    `| ${before(n.closing, 5)} | Proposal draft complete; internal review |`,
+    `| ${before(n.closing, 2)} | Price signed off |`,
+    `| ${before(n.closing, 1)} | Submit on GeBIZ, a day early |`,
+    `| ${shortDate(n.closing)} | Closes ${dateTime(n.closing)} |`,
+    "",
+    "## Owners",
+    "",
+    "- Bid lead: [placeholder]",
+    "- Pricing: [placeholder]",
+    "- Technical writing: [placeholder]",
+    "",
+  ].join("\n");
+}
+
+export function proposalOutlineDraft(n: Notice, profile: Profile): string {
+  const items = n.items ?? [];
+  return [
+    `# Proposal outline: ${n.doc_no} ${n.title}`,
+    "",
+    `For ${profile.name}. Each section says what goes in it; fill the [placeholder]s from the tender documents and your own records.`,
+    "",
+    "1. **Cover letter.** Who we are, the one-line reason we fit, and a named contact. [placeholder: signatory]",
+    `2. **Our understanding.** ${n.agency}'s need in their words, and the ${items.length || "listed"} item${items.length === 1 ? "" : "s"} we respond to.`,
+    ...items.map((item, i) => `   ${i + 1}. ${item}: our approach, deliverables and acceptance. [placeholder: approach]`),
+    "3. **Approach and plan.** Phases, milestones and what the agency sees at each. [placeholder: timeline]",
+    "4. **Team and track record.** Named people with their roles, and two case studies like this one. [placeholder: case studies]",
+    "5. **Compliance.** One line per requirement, from the compliance matrix, with evidence attached.",
+    `6. **Price.** ${n.two_envelope ? "In its own envelope: the technical proposal must stand without it." : "Line by line against the items."} [placeholder: pricing]`,
+    "7. **Annexes.** Registrations, licences, certificates and the forms the tender documents ask for.",
+    "",
+  ].join("\n");
+}
+
 // ---------------------------------------------------------------- the script
 
 function say(text: string): Beat[] {
@@ -185,6 +265,60 @@ function write(name: string, body: string, files: Map<string, string>): Beat[] {
   ];
 }
 
+/** A bid's kickoff, as the live bid playbook runs it: read, remember, stage, and five documents. */
+async function bidKickoff(request: ChatRequest, tools: MockTools, files: Map<string, string>): Promise<Beat[]> {
+  const { profile } = request;
+  const doc = request.doc_no!;
+  const session = request.session_id ?? "";
+  const n = tools.notice(doc);
+  const checks = await tools.eligibility(doc, profile);
+  const market = await tools.similarAwards(n.title, n.agency);
+  const items = await tools.checklist(doc, profile);
+  const { call: verdict } = bidCall(checks);
+  const remember = (note: string): Beat[] => {
+    const [callBeat, result] = call("remember", { note }, "Saved to the bid memory", 380);
+    return [callBeat, { ...result, effect: () => addNote(session, note, "kopi") }];
+  };
+  const stage = (to: "qualify" | "clarify" | "draft" | "review", next: string): Beat[] => {
+    const [callBeat, result] = call("set_bid_stage", { stage: to, next_step: next }, `The bid is at ${to}. Next: ${next}`, 380);
+    return [callBeat, { ...result, effect: () => setStage(session, to, next) }];
+  };
+  const gaps = checks.filter((c) => c.status !== "met" && c.kind !== "closing");
+  const { body: questions, count } = clarificationDraft(n, profile, checks);
+  const winner = market.top_suppliers[0];
+  return [
+    ...say(`I'll work the bid for ${doc} end to end: read the notice, check where ${profile.name} stands, then plan it and draft what you need.`),
+    ...call("get_company_profile", {}, profileResult(profile), 400),
+    ...call("get_tender", { doc_no: doc }, noticeResult(n)),
+    ...call("check_eligibility", { doc_no: doc }, checksResult(profile, doc, checks)),
+    ...call("similar_awards", { description: n.title, agency: n.agency }, marketResult(market)),
+    ...remember(`Closes ${dateTime(n.closing)}. ${n.procurement_method}${n.two_envelope ? ", two envelopes" : ""}; ${n.items?.length ?? 0} items to respond.`),
+    ...(gaps.length ? remember(`To settle: ${gaps.map((c) => `${c.requirement} (${c.status === "unmet" ? "not on the profile" : "profile doesn't say"})`).join("; ")}.`) : []),
+    ...(market.similar_count
+      ? remember(`Price band: ${market.similar_count} similar awards, median ${moneyShort(market.median_amount ?? 0)}${winner ? `; ${winner.supplier} won ${winner.wins}` : ""}.`)
+      : []),
+    ...stage("qualify", "Confirm the call in the bid plan"),
+    ...write(`${doc}-bid-plan.md`, bidPlanDraft(n, profile, checks, market), files),
+    ...stage("clarify", "Send the clarification questions"),
+    ...write(`${doc}-clarification-questions.md`, questions, files),
+    ...write(`${doc}-compliance-matrix.md`, complianceDraft(n, profile, checks), files),
+    ...stage("draft", "Fill the placeholders in the drafts"),
+    ...write(`${doc}-checklist.md`, checklistDraft(n, items), files),
+    ...write(`${doc}-proposal-outline.md`, proposalOutlineDraft(n, profile), files),
+    ...say(
+      `The bid for **${doc}** is set up. My call: **${verdict.toLowerCase()}**.\n\n` +
+        `- **Bid plan** with the timeline back from closing on ${dateTime(n.closing)}.\n` +
+        `- **${count} clarification questions** to send through GeBIZ.\n` +
+        `- **Compliance matrix**, one row per requirement the notice names.\n` +
+        `- **Submission checklist** and a **proposal outline**.\n\n` +
+        `What I need from you:\n\n` +
+        (gaps.length ? gaps.map((c) => `- Confirm **${c.requirement}**.\n`).join("") : "") +
+        `- The tender documents from GeBIZ. Add them under Documents and I'll check the real requirements against these drafts.\n` +
+        `- Owners for the bid lead, pricing and writing (the plan has placeholders).`,
+    ),
+  ];
+}
+
 const mentionsDoc = (text: string) => text.match(/\b[A-Z0-9]{6}ET[A-Z]\d{8}\b/)?.[0] ?? null;
 
 /** The beats of one scripted turn. `files` collects the drafts it writes (name → markdown). */
@@ -193,6 +327,13 @@ export async function scriptTurn(request: ChatRequest, tools: MockTools, files: 
   const message = request.message;
   const doc = mentionsDoc(message) ?? request.doc_no ?? null;
   const beats: Beat[] = [];
+
+  if (request.bid && request.doc_no && /^start the bid/i.test(message)) {
+    beats.push(...(await bidKickoff(request, tools, files)));
+    const steps = beats.filter((b) => b.event.type === "tool_call").length;
+    beats.push({ event: { type: "done", cost_usd: Math.round((0.05 + steps * 0.031) * 100) / 100 }, pause: 0 });
+    return beats;
+  }
 
   if (doc) {
     const n = tools.notice(doc);

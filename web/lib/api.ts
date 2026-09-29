@@ -69,6 +69,8 @@ export interface KopiApi {
   chat(request: ChatRequest, onEvent: (event: ChatEvent) => void, signal?: AbortSignal): Promise<void>;
   sessionFiles(sessionId: string): Promise<SessionFile[]>;
   sessionFile(sessionId: string, name: string): Promise<string>;
+  /** A session file as bytes: uploads are PDFs as often as text. */
+  sessionBlob(sessionId: string, name: string): Promise<Blob>;
   /** Eligibility, snippet and price band for up to 25 tenders, for one profile. */
   insights(docs: string[], profile: Profile, q?: string): Promise<TenderInsight[]>;
   memory(sessionId: string): Promise<BidMemory>;
@@ -205,6 +207,13 @@ class LiveApi implements KopiApi {
     const response = await fetch(`${this.base}${path}`, { headers: this.headers() });
     if (!response.ok) throw await errorOf(response);
     return response.text();
+  }
+
+  async sessionBlob(sessionId: string, name: string) {
+    const path = `/sessions/${encodeURIComponent(sessionId)}/files/${encodeURIComponent(name)}`;
+    const response = await fetch(`${this.base}${path}`, { headers: this.headers() });
+    if (!response.ok) throw await errorOf(response);
+    return response.blob();
   }
 
   insights(docs: string[], profile: Profile, q?: string) {

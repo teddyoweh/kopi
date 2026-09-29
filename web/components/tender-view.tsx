@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useApi, useKopi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState, ErrorState } from "@/components/states";
-import { AiOverview, TenderActions, TrackButton } from "@/components/tender-ai";
+import { AiOverview, BidButton, TenderActions } from "@/components/tender-ai";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { EligibilityCheck, MarketContext, Notice, Profile } from "@/lib/api";
@@ -340,7 +340,7 @@ export function TenderView() {
             >
               View on GeBIZ <ExternalLink className="size-3.5 text-muted-foreground" aria-hidden />
             </a>
-            <TrackButton notice={notice} />
+            <BidButton notice={notice} />
           </>
         }
       />

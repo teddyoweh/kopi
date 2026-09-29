@@ -13,15 +13,21 @@ import { useAsync } from "@/lib/use-async";
 export type DraftRefLike = { session_id: string; file: string; title?: string };
 
 /**
- * Save a draft as a .md file. The download routes need the bearer token, so a plain link
- * cannot fetch them; the text is fetched and handed to the browser as a blob.
+ * Save a session file. The download routes need the bearer token, so a plain link cannot fetch
+ * them; the file is fetched and handed to the browser as a blob. Drafts are markdown; uploads
+ * keep their own type, so they are fetched as bytes.
  */
 export async function downloadDraft(api: KopiApi, sessionId: string, name: string, text?: string) {
-  const body = text ?? (await api.sessionFile(sessionId, name));
-  const url = URL.createObjectURL(new Blob([body], { type: "text/markdown;charset=utf-8" }));
+  const blob =
+    text !== undefined
+      ? new Blob([text], { type: "text/markdown;charset=utf-8" })
+      : /\.[a-z]+$/i.test(name) && !name.endsWith(".md")
+        ? await api.sessionBlob(sessionId, name)
+        : new Blob([await api.sessionFile(sessionId, name)], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = name.endsWith(".md") ? name : `${name}.md`;
+  link.download = /\.[a-z]+$/i.test(name) ? name : `${name}.md`;
   document.body.append(link);
   link.click();
   link.remove();
