@@ -1,0 +1,923 @@
+{
+ "sources": {
+  "workheads": "https://www.bca.gov.sg/eBACS/BCA_DIRECTORY/",
+  "tendering_limits": "https://www1.bca.gov.sg/growth-and-transformation/procurement/registration-of-built-environment-firms/tendering-limits/crs-fm-and-sy-registries-tendering-limits/"
+ },
+ "limits_page_updated": "2026-06-16",
+ "limits_valid": [
+  "1 Jul 25 to 30 Jun 26",
+  "1 Jul 26 to 30 Jun 27"
+ ],
+ "fetched": "2026-09-29",
+ "note": "Tendering limits in S$ per contract; null means unlimited. Workhead groups: CW01/CW02 use A1–C3; CR, ME, RW, TR use Single Grade or L1–L6; FM01 uses M1–M4; FM02–FM04 and SY use L1–L6.",
+ "limits": {
+  "CW01_CW02": {
+   "A1": null,
+   "A2": 105000000,
+   "B1": 50000000,
+   "B2": 16000000,
+   "C1": 5000000,
+   "C2": 1600000,
+   "C3": 800000
+  },
+  "CR_ME": {
+   "Single Grade": null,
+   "L6": null,
+   "L5": 16000000,
+   "L4": 8000000,
+   "L3": 5000000,
+   "L2": 1600000,
+   "L1": 800000
+  },
+  "FM01": {
+   "M1": null,
+   "M2": 30000000,
+   "M3": 10000000,
+   "M4": 1000000
+  },
+  "FM02_FM03_FM04": {
+   "L6": null,
+   "L5": 16000000,
+   "L4": 8000000,
+   "L3": 5000000,
+   "L2": 1600000,
+   "L1": 800000
+  },
+  "SY": {
+   "L6": null,
+   "L5": 16000000,
+   "L4": 8000000,
+   "L3": 5000000,
+   "L2": 1600000,
+   "L1": 800000
+  }
+ },
+ "workheads": [
+  {
+   "code": "CW01",
+   "title": "General Building",
+   "registry": "registered-contractors",
+   "trade_type": "construction",
+   "grades": [
+    "A1",
+    "A2",
+    "B1",
+    "B2",
+    "C1",
+    "C2",
+    "C3"
+   ]
+  },
+  {
+   "code": "CW02",
+   "title": "Civil Engineering",
+   "registry": "registered-contractors",
+   "trade_type": "construction",
+   "grades": [
+    "A1",
+    "A2",
+    "B1",
+    "B2",
+    "C1",
+    "C2",
+    "C3"
+   ]
+  },
+  {
+   "code": "CR01",
+   "title": "Minor Construction Works",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "CR02",
+   "title": "Corrosion Protection",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR03",
+   "title": "Demolition",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "CR04",
+   "title": "Fencing & Ironworks",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR05",
+   "title": "Concrete Repairs",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR06",
+   "title": "Interior Decoration & Finishing Works",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR07",
+   "title": "Cable / Pipe Laying & Road Reinstatement",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR08",
+   "title": "Piling Works",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR09",
+   "title": "Repairs & Redecoration",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR10A",
+   "title": "Automated Precast Concrete Production",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "CR10B",
+   "title": "Precast Concrete Production",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR11",
+   "title": "Signcraft Installation",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR12",
+   "title": "Ground Support & Stabilisation Works",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR13",
+   "title": "Waterproofing Installation",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR14",
+   "title": "Asphalt Works & Road Marking",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR15",
+   "title": "Site Investigation, Instrumentation and Monitoring Works",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "CR16",
+   "title": "Curtain Walls",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "CR17",
+   "title": "Windows",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "CR18",
+   "title": "Doors",
+   "registry": "registered-contractors",
+   "trade_type": "construction-related",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "ME01",
+   "title": "Air-Conditioning, Refrigeration & Ventilation Works",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME02",
+   "title": "Building Automation, Industrial & Process Control Systems",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME03",
+   "title": "Solar PV System Integration",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME04",
+   "title": "Communication & Security Systems",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME05",
+   "title": "Electrical Engineering",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME06",
+   "title": "Fire Prevention & Protection Systems",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME07",
+   "title": "High & Low Tension Overhead Line Installation",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME08",
+   "title": "Internal Telephone Wiring for Telecommunications",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME09",
+   "title": "Lift & Escalator Installation",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME10",
+   "title": "Line Plant Cabling / Wiring for Telecommunications",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME11",
+   "title": "Mechanical Engineering",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME12",
+   "title": "Plumbing & Sanitary Works",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME13",
+   "title": "Traffic Light Systems",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "ME15",
+   "title": "Integrated Building Services",
+   "registry": "registered-contractors",
+   "trade_type": "mechanical-electrical",
+   "grades": [
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "RW01",
+   "title": "Window Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "RW02A",
+   "title": "Lift Installation Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "RW02B",
+   "title": "Lift Maintenance Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade%28T1%29",
+    "Single Grade%28T2%29",
+    "Single Grade%28T3%29"
+   ]
+  },
+  {
+   "code": "RW03A",
+   "title": "Escalator Installation Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "RW03B",
+   "title": "Escalator Maintenance Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "RW04A",
+   "title": "MCPS Installation Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "RW04B",
+   "title": "MCPS Maintenance Contractors",
+   "registry": "registered-contractors",
+   "trade_type": "regulatory",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR01",
+   "title": "Formwork",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR02",
+   "title": "Steel Reinforcement Work",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR03",
+   "title": "Concreting Work",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR04",
+   "title": "Drywall Installation",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR05",
+   "title": "Pre-cast Installation",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR06",
+   "title": "Ceiling Work",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR07",
+   "title": "Tile/Marble/Stone Work",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR08",
+   "title": "Timber, Vinyl and Laminate Flooring Works",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR09",
+   "title": "Plastering/Skimming",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "TR10",
+   "title": "Ironmongery & Metalwork",
+   "registry": "registered-contractors",
+   "trade_type": "trade",
+   "grades": [
+    "Single Grade"
+   ]
+  },
+  {
+   "code": "FM01",
+   "title": "Facilities Management",
+   "registry": "fm-registry",
+   "trade_type": "facilities-management",
+   "grades": [
+    "M1",
+    "M2",
+    "M3",
+    "M4"
+   ]
+  },
+  {
+   "code": "FM02",
+   "title": "Housekeeping, Cleansing, Desilting & Conservancy Service",
+   "registry": "fm-registry",
+   "trade_type": "housekeeping-cleansing-desilting-conservancy-service",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "FM03",
+   "title": "Landscaping",
+   "registry": "fm-registry",
+   "trade_type": "landscaping",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "FM04",
+   "title": "Pest Control",
+   "registry": "fm-registry",
+   "trade_type": "pest-control",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY01A",
+   "title": "Essential Construction Materials",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY01B",
+   "title": "Ready-Mixed Concrete",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY01C",
+   "title": "Other Basic Construction Materials",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY02",
+   "title": "Chemicals",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY04",
+   "title": "Electrical Equipment",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY05",
+   "title": "Electrical & Electronic Materials, Products & Components",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY06",
+   "title": "Finishing & Building Products",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY07",
+   "title": "Gases",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY08",
+   "title": "Mechanical Equipment, Plant & Machinery",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY09",
+   "title": "Mechanical Materials Products & Components",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY10",
+   "title": "Metal & Timber Structures",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY11",
+   "title": "Petroleum Products",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY12",
+   "title": "Pipes",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "code": "SY14",
+   "title": "Sanitary Products",
+   "registry": "suppliers-registry",
+   "trade_type": "supply",
+   "grades": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  }
+ ]
+}
