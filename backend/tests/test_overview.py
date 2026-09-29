@@ -8,7 +8,7 @@ import pytest
 from claude_agent_sdk import ResultMessage
 
 from kopi import eligibility, overview
-from kopi.config import FIXTURES_DIR
+from kopi.config import FIXTURES_DIR, PROFILES_DIR
 from kopi.models import BcaWorkhead, GraHead, Notice, Overview, Profile, Recommendation
 from kopi.overview import (
     CAPPED_NOTE,
@@ -362,3 +362,48 @@ def test_claude_structured_output_is_returned(monkeypatch):
     complete = ClaudeComplete("m")
     assert anyio.run(complete, "system", "user", SCHEMA) == draft()
     assert complete.last.total_cost_usd == 0.02
+
+
+# ---------------------------------------------------------------- wired into the live store
+
+
+def _live_store(tmp_path, claude: bool):
+    import json as _json
+
+    from kopi.api.live import LiveStore
+    from kopi.config import FIXTURES_DIR
+
+    data = tmp_path / "data"
+    (data / "notices").mkdir(parents=True)
+    for n in _json.loads((FIXTURES_DIR / "notices.json").read_text()):
+        (data / "notices" / f"{n['doc_no']}.json").write_text(_json.dumps(n))
+    store = LiveStore(db=None, embed_query=None, embed_document=lambda text: None, data_dir=data, claude=claude)
+    store._market = lambda vector, agency, k: None
+    return store
+
+
+def test_live_store_without_claude_serves_the_extractive_overview(tmp_path):
+    profile = Profile.model_validate_json((PROFILES_DIR / "pragnition.json").read_text())
+    assert _live_store(tmp_path, claude=False).overview("GVT000ETT26000101", profile).model == "extractive"
+
+
+def test_live_store_falls_back_when_claude_fails(tmp_path, monkeypatch):
+    from kopi.api import live
+
+    async def broken(*args, **kwargs):
+        raise OverviewError("Claude said no")
+
+    monkeypatch.setattr(live, "generate_overview", broken)
+    profile = Profile.model_validate_json((PROFILES_DIR / "pragnition.json").read_text())
+    assert _live_store(tmp_path, claude=True).overview("GVT000ETT26000101", profile).model == "extractive"
+
+
+def test_live_store_returns_claudes_overview(tmp_path, monkeypatch):
+    from kopi.api import live
+
+    async def fine(notice, profile, checks, market, **kwargs):
+        return live.extractive_overview(notice, profile).model_copy(update={"model": "claude-opus-5-5"})
+
+    monkeypatch.setattr(live, "generate_overview", fine)
+    profile = Profile.model_validate_json((PROFILES_DIR / "pragnition.json").read_text())
+    assert _live_store(tmp_path, claude=True).overview("GVT000ETT26000101", profile).model == "claude-opus-5-5"
