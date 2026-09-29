@@ -4,9 +4,9 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { useApi, useKopi } from "@/components/kopi-provider";
-import { PageHeader, SectionHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header";
 import { ErrorState, RowsSkeleton } from "@/components/states";
-import { TenderRow } from "@/components/tender-row";
+import { ListCard, TenderRow } from "@/components/tender-row";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { KopiApi, NoticeSummary } from "@/lib/api";
 import { daysUntil, isToday, longToday } from "@/lib/format";
@@ -49,14 +49,14 @@ function allOpen(api: KopiApi): Promise<NoticeSummary[]> {
 
 function Stat({ label, value, hint }: { label: string; value?: number; hint: string }) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-secondary px-3.5 py-3.5 sm:px-5 sm:py-4">
-      <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
+    <div className="flex flex-col gap-1.5 rounded-lg border bg-card px-3.5 py-3 sm:px-4">
+      <p className="text-[12.5px] text-muted-foreground">{label}</p>
       {value === undefined ? (
-        <Skeleton className="h-6 w-12 sm:h-8 sm:w-16" />
+        <Skeleton className="h-6 w-12" />
       ) : (
-        <p className="mt-auto text-2xl leading-none font-semibold tracking-tight tabular-nums sm:mt-0 sm:text-[32px]">{value.toLocaleString("en-SG")}</p>
+        <p className="text-[22px] leading-none font-semibold tracking-[-0.02em] tabular-nums sm:text-2xl">{value.toLocaleString("en-SG")}</p>
       )}
-      <p className="hidden text-xs text-muted-foreground sm:block">{hint}</p>
+      <p className="hidden text-[12.5px] text-muted-foreground sm:block">{hint}</p>
     </div>
   );
 }
@@ -78,48 +78,43 @@ function BestMatches({ api }: { api: KopiApi }) {
   const { profile } = useKopi();
   const state = useAsync(() => api.search(profileQuery(profile), { status: "open" }, 6), [api, profile]);
   return (
-    <section aria-labelledby="best-matches">
-      <SectionHeader
-        id="best-matches"
-        title={`Best matches for ${profile.name}`}
-        description="Open tenders closest to what your company does."
-        action={
-          <Link href="/search" className="hidden items-center gap-1 text-sm font-medium text-kopi hover:underline sm:flex">
-            Search all <ArrowRight className="size-3.5" aria-hidden />
-          </Link>
-        }
-      />
+    <ListCard
+      id="best-matches"
+      title={`Best matches for ${profile.name}`}
+      action={
+        <Link href="/search" className="flex items-center gap-1 text-[13px] font-medium text-kopi hover:underline">
+          Search all <ArrowRight className="size-3.5" aria-hidden />
+        </Link>
+      }
+    >
       {state.status === "loading" && <RowsSkeleton rows={6} />}
-      {state.status === "error" && <ErrorState error={state.error} />}
+      {state.status === "error" && (
+        <div className="p-3">
+          <ErrorState error={state.error} />
+        </div>
+      )}
       {state.status === "ready" &&
         (state.data.hits.length ? (
-          <div className="-mx-3 flex flex-col">
-            {state.data.hits.map((hit) => (
-              <TenderRow key={hit.notice.doc_no} notice={hit.notice} />
-            ))}
-          </div>
+          state.data.hits.map((hit) => <TenderRow key={hit.notice.doc_no} notice={hit.notice} />)
         ) : (
-          <p className="text-sm text-muted-foreground">Nothing open matches this profile yet. Add capabilities on the Profile page.</p>
+          <p className="px-4 py-3.5 text-[13px] text-muted-foreground">Nothing open matches this profile yet. Add capabilities on the Profile page.</p>
         ))}
-    </section>
+    </ListCard>
   );
 }
 
 function Newest({ api }: { api: KopiApi }) {
   const state = useAsync(() => api.tenders({ status: "open" }, 8, 0), [api]);
   return (
-    <section aria-labelledby="newest">
-      <SectionHeader id="newest" title="Newest on GeBIZ" description="Most recently published." />
+    <ListCard id="newest" title="Newest on GeBIZ">
       {state.status === "loading" && <RowsSkeleton rows={8} />}
-      {state.status === "error" && <ErrorState error={state.error} />}
-      {state.status === "ready" && (
-        <div className="-mx-3 flex flex-col">
-          {state.data.map((notice) => (
-            <TenderRow key={notice.doc_no} notice={notice} compact />
-          ))}
+      {state.status === "error" && (
+        <div className="p-3">
+          <ErrorState error={state.error} />
         </div>
       )}
-    </section>
+      {state.status === "ready" && state.data.map((notice) => <TenderRow key={notice.doc_no} notice={notice} compact />)}
+    </ListCard>
   );
 }
 
@@ -130,9 +125,9 @@ export function OverviewPage() {
     <>
       <PageHeader title="Overview" description={`${longToday()}. What is open on GeBIZ, read for ${profile.name}.`} />
       {api && (
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
           <Stats api={api} />
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-10">
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5">
             <div className="lg:col-span-3">
               <BestMatches api={api} />
             </div>

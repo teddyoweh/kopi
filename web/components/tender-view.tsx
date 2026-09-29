@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowLeft, Check, CircleHelp, ExternalLink, FileSearch, X, type LucideIcon } from "lucide-react";
+import { Check, CircleHelp, ExternalLink, FileSearch, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useApi, useKopi } from "@/components/kopi-provider";
+import { PageHeader } from "@/components/page-header";
 import { EmptyState, ErrorState } from "@/components/states";
 import { AiOverview, TenderActions, TrackButton } from "@/components/tender-ai";
 import { Badge } from "@/components/ui/badge";
@@ -16,11 +17,11 @@ import { rememberTitle } from "@/lib/submissions";
 import { useAsync } from "@/lib/use-async";
 import { cn } from "@/lib/utils";
 
-function Fact({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+function Property({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-1", className)}>
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-sm font-medium break-words">{children}</dd>
+    <div className="grid grid-cols-[7.5rem_minmax(0,1fr)] items-baseline gap-3 py-1.5">
+      <dt className="text-[13px] text-muted-foreground">{label}</dt>
+      <dd className="text-[13px] font-medium break-words">{children}</dd>
     </div>
   );
 }
@@ -29,20 +30,23 @@ function yesNo(value: boolean | null | undefined): string {
   return value === true ? "Yes" : value === false ? "No" : "Not stated";
 }
 
-function Facts({ notice }: { notice: Notice }) {
+/** The notice's facts as Linear's properties panel. */
+function Properties({ notice }: { notice: Notice }) {
   return (
-    <dl className="grid grid-cols-2 gap-x-6 gap-y-5 rounded-xl bg-secondary p-5 sm:grid-cols-4">
-      <Fact label="Closes">{dateTime(notice.closing)}</Fact>
-      <Fact label="Published">{dateTime(notice.published)}</Fact>
-      <Fact label="Method">{notice.procurement_method || notice.type}</Fact>
-      <Fact label="Category">{categoryLeaf(notice.category) || "Not stated"}</Fact>
-      <Fact label="Procurement type">{notice.procurement_type || "Not stated"}</Fact>
-      <Fact label="Two envelopes">{yesNo(notice.two_envelope)}</Fact>
-      <Fact label="WTO-GPA / FTA">{yesNo(notice.wto_gpa)}</Fact>
-      <Fact label="Document no." className="col-span-2 sm:col-span-1">
-        {notice.doc_no}
-      </Fact>
-    </dl>
+    <section aria-label="Properties" className="rounded-lg border bg-card px-4 py-2.5">
+      <dl className="flex flex-col">
+        <Property label="Closes">{dateTime(notice.closing)}</Property>
+        <Property label="Published">{dateTime(notice.published)}</Property>
+        <Property label="Method">{notice.procurement_method || notice.type}</Property>
+        <Property label="Category">{categoryLeaf(notice.category) || "Not stated"}</Property>
+        <Property label="Procurement type">{notice.procurement_type || "Not stated"}</Property>
+        <Property label="Two envelopes">{yesNo(notice.two_envelope)}</Property>
+        <Property label="WTO-GPA / FTA">{yesNo(notice.wto_gpa)}</Property>
+        <Property label="Document no.">
+          <span className="font-mono text-[12.5px]">{notice.doc_no}</span>
+        </Property>
+      </dl>
+    </section>
   );
 }
 
@@ -60,12 +64,12 @@ function Section({
   className?: string;
 }) {
   return (
-    <section aria-labelledby={id} className={cn("flex flex-col gap-4", className)}>
-      <div className="flex flex-col gap-1">
-        <h2 id={id} className="text-base font-semibold tracking-tight">
+    <section aria-labelledby={id} className={cn("flex flex-col gap-3", className)}>
+      <div className="flex flex-col gap-0.5">
+        <h2 id={id} className="text-[14px] font-semibold tracking-[-0.01em]">
           {title}
         </h2>
-        {description && <div className="text-sm text-muted-foreground">{description}</div>}
+        {description && <div className="text-[13px] text-muted-foreground">{description}</div>}
       </div>
       {children}
     </section>
@@ -92,7 +96,7 @@ const KIND: Record<EligibilityCheck["kind"], string> = {
 function StatusPill({ status }: { status: EligibilityCheck["status"] }) {
   const { label, icon: Icon, className } = STATUS[status];
   return (
-    <span className={cn("inline-flex h-6 w-fit shrink-0 items-center gap-1 rounded-full pr-2.5 pl-2 text-xs font-medium", className)}>
+    <span className={cn("inline-flex h-6 w-fit shrink-0 items-center gap-1 rounded-md pr-2 pl-1.5 text-xs font-medium", className)}>
       <Icon className="size-3.5" aria-hidden />
       {label}
     </span>
@@ -130,28 +134,28 @@ function Eligibility({ checks, notice, profile }: { checks: EligibilityCheck[]; 
       description={checks.length ? `Checked against the ${profile.name} profile: ${tally}.` : `No checks apply to this notice.`}
     >
       {checks.length > 0 && (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col overflow-hidden rounded-lg border bg-card">
           {checks.map((raw, i) => {
             const check = closingCheck(raw, notice);
             return (
               <li
                 key={i}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2.5 rounded-lg bg-secondary px-4 py-3.5 sm:grid-cols-[6rem_minmax(0,1fr)_auto]"
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2.5 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[6rem_minmax(0,1fr)_auto]"
               >
                 <div className="col-start-1 row-start-1 sm:pt-px">
                   <StatusPill status={check.status} />
                 </div>
                 <div className="col-span-2 row-start-2 flex min-w-0 flex-col gap-0.5 sm:col-span-1 sm:col-start-2 sm:row-start-1">
                   <p className="text-xs text-muted-foreground">{KIND[check.kind] ?? check.kind}</p>
-                  <p className="text-sm font-medium break-words">{check.requirement}</p>
-                  <p className="text-sm break-words text-muted-foreground">{check.reason}</p>
+                  <p className="text-[13.5px] font-medium break-words">{check.requirement}</p>
+                  <p className="text-[13px] break-words text-muted-foreground">{check.reason}</p>
                 </div>
                 {check.source_url && (
                   <a
                     href={check.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="col-start-2 row-start-1 flex items-center gap-1 self-center text-sm font-medium text-kopi hover:underline sm:col-start-3 sm:self-start sm:pt-4"
+                    className="col-start-2 row-start-1 flex items-center gap-1 self-center text-[13px] font-medium text-kopi hover:underline sm:col-start-3 sm:self-start sm:pt-4"
                   >
                     Source <ExternalLink className="size-3.5" aria-hidden />
                   </a>
@@ -162,7 +166,7 @@ function Eligibility({ checks, notice, profile }: { checks: EligibilityCheck[]; 
         </ul>
       )}
       {count("unknown") > 0 && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-[13px] text-muted-foreground">
           Unknown means we can&apos;t tell yet: neither the notice nor the profile settles it. Adding registrations and licences on the{" "}
           <Link href="/profile" className="font-medium text-kopi underline-offset-4 hover:underline">
             Profile
@@ -178,9 +182,9 @@ function Eligibility({ checks, notice, profile }: { checks: EligibilityCheck[]; 
 
 function Figure({ label, value, hint, className }: { label: string; value: string; hint?: string; className?: string }) {
   return (
-    <div className={cn("flex flex-col gap-1.5 rounded-xl bg-secondary px-5 py-4", className)}>
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="text-2xl leading-none font-semibold tracking-tight tabular-nums">{value}</p>
+    <div className={cn("flex flex-col gap-1.5 rounded-lg border bg-card px-4 py-3", className)}>
+      <p className="text-[12.5px] text-muted-foreground">{label}</p>
+      <p className="text-[20px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{value}</p>
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
@@ -189,11 +193,11 @@ function Figure({ label, value, hint, className }: { label: string; value: strin
 function Suppliers({ title, rows, empty }: { title: string; rows: MarketContext["top_suppliers"]; empty: string }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
-      <h3 className="text-sm font-medium">{title}</h3>
+      <h3 className="text-[13px] font-medium">{title}</h3>
       {rows.length ? (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col overflow-hidden rounded-lg border bg-card">
           {rows.map((row) => (
-            <li key={row.supplier} className="flex items-baseline justify-between gap-4 rounded-lg bg-secondary px-3.5 py-2.5 text-sm">
+            <li key={row.supplier} className="flex items-baseline justify-between gap-4 border-b px-3.5 py-2 text-[13px] last:border-b-0">
               <span className="min-w-0 truncate" title={row.supplier}>
                 {row.supplier}
               </span>
@@ -204,7 +208,7 @@ function Suppliers({ title, rows, empty }: { title: string; rows: MarketContext[
           ))}
         </ul>
       ) : (
-        <p className="rounded-lg bg-secondary px-3.5 py-2.5 text-sm text-muted-foreground">{empty}</p>
+        <p className="rounded-lg border bg-card px-3.5 py-2.5 text-[13px] text-muted-foreground">{empty}</p>
       )}
     </div>
   );
@@ -230,26 +234,26 @@ function Market({ market, agency }: { market: MarketContext; agency: string }) {
           hint={range ? "25th to 75th percentile" : undefined}
         />
       </div>
-      {noAward > 0 && <p className="-mt-1 text-sm text-muted-foreground">{noAward}% of the similar tenders ended without an award.</p>}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      {noAward > 0 && <p className="text-[13px] text-muted-foreground">{noAward}% of the similar tenders ended without an award.</p>}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Suppliers title="Top suppliers" rows={market.top_suppliers} empty="No supplier names in these awards." />
         <Suppliers title={`${agency}'s incumbents`} rows={market.agency_incumbents} empty="This agency has no past awards among the similar tenders." />
       </div>
       {market.examples.length > 0 && (
         <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-medium">Past awards like this one</h3>
-          <ul className="flex flex-col gap-1">
+          <h3 className="text-[13px] font-medium">Past awards like this one</h3>
+          <ul className="flex flex-col overflow-hidden rounded-lg border bg-card">
             {market.examples.slice(0, 3).map((example) => (
-              <li key={example.tender_no} className="flex flex-col gap-1 rounded-lg bg-secondary px-4 py-3 sm:flex-row sm:items-start sm:gap-6">
+              <li key={example.tender_no} className="flex flex-col gap-1 border-b px-4 py-3 last:border-b-0 sm:flex-row sm:items-start sm:gap-6">
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <p className="line-clamp-2 text-sm">{example.description}</p>
+                  <p className="line-clamp-2 text-[13px]">{example.description}</p>
                   <p className="text-xs text-muted-foreground">
                     {[example.agency, example.year, example.suppliers[0] && `Won by ${example.suppliers[0]}${example.suppliers.length > 1 ? ` and ${example.suppliers.length - 1} more` : ""}`]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
                 </div>
-                <p className="shrink-0 text-sm font-medium tabular-nums">{example.amount !== null ? moneyShort(example.amount) : "Amount not published"}</p>
+                <p className="shrink-0 text-[13px] font-medium tabular-nums">{example.amount !== null ? moneyShort(example.amount) : "Amount not published"}</p>
               </li>
             ))}
           </ul>
@@ -321,84 +325,98 @@ export function TenderView() {
   ];
 
   return (
-    <article className="flex flex-col gap-10">
-      <div className="flex flex-col gap-5">
-        <Link href="/" className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="size-3.5" aria-hidden /> Overview
-        </Link>
-        <div className="flex flex-col gap-3">
+    <article className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_21rem]">
+      <PageHeader
+        title={notice.doc_no}
+        crumbs={[{ label: "Overview", href: "/" }]}
+        actions={
+          <>
+            <a
+              href={notice.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden h-7 items-center gap-1.5 rounded-md border bg-card px-2.5 text-[13px] font-medium transition-colors hover:bg-accent sm:flex"
+            >
+              View on GeBIZ <ExternalLink className="size-3.5 text-muted-foreground" aria-hidden />
+            </a>
+            <TrackButton notice={notice} />
+          </>
+        }
+      />
+
+      <div className="flex min-w-0 flex-col gap-9">
+        <header className="flex flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">{notice.type}</Badge>
-            <span className="text-sm font-medium text-kopi">{closingLabel(notice.closing)}</span>
+            <Badge variant="outline">{notice.type}</Badge>
+            <span className="text-[13px] font-medium text-kopi">{closingLabel(notice.closing)}</span>
           </div>
-          <h1 className="max-w-4xl text-2xl leading-tight font-semibold tracking-tight break-words sm:text-[28px]">{notice.title}</h1>
-          <p className="text-[15px] text-muted-foreground">{notice.agency}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <TrackButton notice={notice} />
+          <h1 className="max-w-4xl text-[22px] leading-snug font-semibold tracking-[-0.015em] break-words sm:text-2xl">{notice.title}</h1>
+          <p className="text-[14px] text-muted-foreground">{notice.agency}</p>
           <a
             href={notice.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-fit items-center gap-1.5 text-sm font-medium text-kopi hover:underline"
+            className="flex w-fit items-center gap-1 text-[13px] font-medium text-kopi hover:underline sm:hidden"
           >
             View on GeBIZ <ExternalLink className="size-3.5" aria-hidden />
           </a>
-        </div>
-      </div>
+        </header>
 
-      <Facts notice={notice} />
-
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <div className="flex min-w-0 flex-col gap-10">
-          <Eligibility checks={eligibility} notice={notice} profile={profile} />
-
-          <AiOverview doc={notice.doc_no} profile={profile} />
-
-          <div className="lg:hidden">
-            <TenderActions notice={notice} profile={profile} />
-          </div>
-
-          {notice.description && (
-            <section className="flex max-w-3xl flex-col gap-2">
-              <h2 className="text-base font-semibold tracking-tight">What the notice says</h2>
-              <p className="text-[15px] leading-relaxed break-words whitespace-pre-line">{notice.description}</p>
-            </section>
-          )}
-
-          {registrations.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-base font-semibold tracking-tight">Registrations named</h2>
-              <ul className="flex flex-col gap-2">
-                {registrations.map((r) => (
-                  <li key={r.code} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-lg bg-secondary px-4 py-3 text-sm">
-                    <span className="font-mono text-[13px] font-medium">{r.code}</span>
-                    <span className="text-muted-foreground">{r.label}</span>
-                    {r.detail && <span className="ml-auto tabular-nums">{r.detail}</span>}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {(notice.items ?? []).length > 0 && (
-            <section className="flex max-w-3xl flex-col gap-3">
-              <h2 className="text-base font-semibold tracking-tight">Items to respond</h2>
-              <ol className="flex list-decimal flex-col gap-1.5 pl-5 text-[15px]">
-                {notice.items!.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ol>
-            </section>
-          )}
-
-          {market && market.similar_count > 0 && <Market market={market} agency={notice.agency} />}
+        <div className="lg:hidden">
+          <Properties notice={notice} />
         </div>
 
-        <aside className="hidden flex-col gap-4 lg:sticky lg:top-20 lg:flex lg:self-start">
+        <Eligibility checks={eligibility} notice={notice} profile={profile} />
+
+        <AiOverview doc={notice.doc_no} profile={profile} />
+
+        <div className="lg:hidden">
           <TenderActions notice={notice} profile={profile} />
-        </aside>
+        </div>
+
+        {notice.description && (
+          <section className="flex max-w-3xl flex-col gap-2">
+            <h2 className="text-[14px] font-semibold tracking-[-0.01em]">What the notice says</h2>
+            <p className="text-[14px] leading-relaxed break-words whitespace-pre-line">{notice.description}</p>
+          </section>
+        )}
+
+        {registrations.length > 0 && (
+          <section className="flex flex-col gap-3">
+            <h2 className="text-[14px] font-semibold tracking-[-0.01em]">Registrations named</h2>
+            <ul className="flex flex-col overflow-hidden rounded-lg border bg-card">
+              {registrations.map((r) => (
+                <li key={r.code} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b px-4 py-2.5 text-[13px] last:border-b-0">
+                  <span className="font-mono text-[12.5px] font-medium">{r.code}</span>
+                  <span className="text-muted-foreground">{r.label}</span>
+                  {r.detail && <span className="ml-auto tabular-nums">{r.detail}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {(notice.items ?? []).length > 0 && (
+          <section className="flex max-w-3xl flex-col gap-3">
+            <h2 className="text-[14px] font-semibold tracking-[-0.01em]">Items to respond</h2>
+            <ol className="flex flex-col overflow-hidden rounded-lg border bg-card text-[13.5px]">
+              {notice.items!.map((item, i) => (
+                <li key={i} className="flex gap-3 border-b px-4 py-2.5 last:border-b-0">
+                  <span className="w-4 shrink-0 text-right text-muted-foreground tabular-nums">{i + 1}</span>
+                  <span className="min-w-0">{item}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {market && market.similar_count > 0 && <Market market={market} agency={notice.agency} />}
       </div>
+
+      <aside className="hidden flex-col gap-4 lg:sticky lg:top-18 lg:flex lg:self-start">
+        <Properties notice={notice} />
+        <TenderActions notice={notice} profile={profile} />
+      </aside>
     </article>
   );
 }

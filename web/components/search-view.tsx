@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, SearchX } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { FilterChip, type ChipOption } from "@/components/filter-chip";
@@ -8,7 +8,7 @@ import { useApi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
 import { QueryInput } from "@/components/query-input";
 import { EmptyState, ErrorState, RowsSkeleton } from "@/components/states";
-import { TenderRow } from "@/components/tender-row";
+import { ListCard, TenderRow } from "@/components/tender-row";
 import type { NoticeSummary, TenderFilters } from "@/lib/api";
 import { sgDayEnd } from "@/lib/format";
 import { useAsync } from "@/lib/use-async";
@@ -93,23 +93,18 @@ function summaryLine(result: Result, q: string): string {
 
 function Examples({ onPick }: { onPick: (query: string) => void }) {
   return (
-    <div className="flex flex-col gap-5 rounded-xl bg-secondary px-5 py-6 sm:px-6">
-      <div className="flex max-w-xl flex-col gap-1">
-        <p className="font-medium">Search by what you do</p>
-        <p className="text-sm text-muted-foreground">
-          Kopi searches every open notice by meaning, so describe the work in your own words. A few to start with:
-        </p>
-      </div>
+    <div className="flex flex-col gap-3">
+      <p className="text-[13px] text-muted-foreground">Describe the work in your own words; Kopi searches every open notice by meaning. A few to start with:</p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {EXAMPLES.map((example) => (
           <button
             key={example}
             type="button"
             onClick={() => onPick(example)}
-            className="group flex items-center justify-between gap-3 rounded-lg bg-background px-4 py-3 text-left text-sm transition-colors hover:text-kopi"
+            className="group flex items-center gap-3 rounded-lg border bg-card px-3.5 py-3 text-left text-[13.5px] transition-colors hover:bg-muted/60"
           >
+            <Search className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-kopi" aria-hidden />
             {example}
-            <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-kopi" aria-hidden />
           </button>
         ))}
       </div>
@@ -117,26 +112,24 @@ function Examples({ onPick }: { onPick: (query: string) => void }) {
   );
 }
 
-function Results({ rows }: { rows: Row[] }) {
+function Results({ rows, summary }: { rows: Row[]; summary: string }) {
   const [all, setAll] = useState(false);
   const visible = all ? rows : rows.slice(0, FIRST_PAGE);
   return (
-    <div className="flex flex-col gap-4">
-      <div className="-mx-3 flex flex-col">
-        {visible.map((row) => (
-          <TenderRow key={row.notice.doc_no} notice={row.notice} highlights={row.highlights} score={row.score} />
-        ))}
-      </div>
+    <ListCard id="results" title={summary}>
+      {visible.map((row) => (
+        <TenderRow key={row.notice.doc_no} notice={row.notice} highlights={row.highlights} score={row.score} />
+      ))}
       {visible.length < rows.length && (
         <button
           type="button"
           onClick={() => setAll(true)}
-          className="w-fit rounded-lg bg-secondary px-4 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent"
+          className="w-full border-t px-4 py-2.5 text-left text-[13px] font-medium text-kopi transition-colors hover:bg-muted/60"
         >
           Show all {rows.length}
         </button>
       )}
-    </div>
+    </ListCard>
   );
 }
 
@@ -176,7 +169,7 @@ export function SearchView() {
   return (
     <>
       <PageHeader title="Search" description="Every open GeBIZ opportunity, searched by meaning rather than exact words." />
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">
           <QueryInput
             value={box.text}
@@ -202,7 +195,7 @@ export function SearchView() {
               <button
                 type="button"
                 onClick={() => update({ category: null, method: null, closing: null, agency: null })}
-                className="h-8 rounded-full px-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="h-7 rounded-md px-2.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 Clear filters
               </button>
@@ -220,10 +213,10 @@ export function SearchView() {
           <section aria-label="Results" aria-busy={loading} className={cn("flex flex-col gap-3 transition-opacity", loading && "opacity-60")}>
             {shown.rows.length > 0 ? (
               <>
-                <p className="text-sm text-muted-foreground" aria-live="polite">
+                <p className="sr-only" aria-live="polite">
                   {summaryLine(shown, q)}
                 </p>
-                <Results key={shown.key} rows={shown.rows} />
+                <Results key={shown.key} rows={shown.rows} summary={summaryLine(shown, q)} />
               </>
             ) : (
               <EmptyState icon={SearchX} title={q ? `No open tenders match “${q}”` : "No open tenders fit these filters"}>

@@ -52,7 +52,7 @@ const REC = {
 } as const;
 
 function Heading({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-sm font-semibold">{children}</h3>;
+  return <h3 className="text-[13px] font-semibold">{children}</h3>;
 }
 
 function Verdict({ overview, profile }: { overview: Overview; profile: Profile }) {
@@ -60,19 +60,19 @@ function Verdict({ overview, profile }: { overview: Overview; profile: Profile }
   const score = Math.max(0, Math.min(100, overview.fit.score));
   return (
     <div className="grid grid-cols-2 gap-2 sm:gap-3">
-      <div className="flex flex-col gap-2.5 rounded-lg bg-background px-4 py-3.5">
+      <div className="flex flex-col gap-2 rounded-lg border px-4 py-3">
         <p className="text-xs text-muted-foreground">Recommendation</p>
-        <span className={cn("inline-flex h-8 w-fit items-center rounded-full px-3.5 text-base font-semibold tracking-tight uppercase", rec.className)}>
+        <span className={cn("inline-flex h-7 w-fit items-center rounded-md px-2.5 text-[13px] font-semibold tracking-wide uppercase", rec.className)}>
           {rec.label}
         </span>
       </div>
-      <div className="flex flex-col gap-2.5 rounded-lg bg-background px-4 py-3.5">
+      <div className="flex flex-col gap-2 rounded-lg border px-4 py-3">
         <p className="truncate text-xs text-muted-foreground">Fit for {profile.name}</p>
         <p className="flex items-baseline gap-1">
-          <span className="text-2xl leading-none font-semibold tracking-tight tabular-nums">{score}</span>
+          <span className="text-[20px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{score}</span>
           <span className="text-sm text-muted-foreground">/ 100</span>
         </p>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary" role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label="Fit score">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-muted" role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label="Fit score">
           <div className="h-full rounded-full bg-kopi" style={{ width: `${score}%` }} />
         </div>
       </div>
@@ -85,14 +85,14 @@ const FOUND_IN = { notice: "Verified in the notice", profile: "From your profile
 
 function Reasons({ overview }: { overview: Overview }) {
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col overflow-hidden rounded-lg border">
       {overview.fit.reasons.map((reason, i) => (
-        <li key={i} className="flex flex-col gap-2.5 rounded-lg bg-background px-4 py-3.5">
-          <p className="text-sm font-medium">{reason.point}</p>
+        <li key={i} className="flex flex-col gap-2 border-b px-4 py-3 last:border-b-0">
+          <p className="text-[13.5px] font-medium">{reason.point}</p>
           {reason.quote && (
             <blockquote
               className={cn(
-                "rounded-md px-3 py-2 text-sm leading-relaxed",
+                "rounded-md px-3 py-2 text-[13px] leading-relaxed",
                 reason.verified ? "bg-secondary text-foreground/85" : "bg-unmet-soft text-muted-foreground",
               )}
             >
@@ -129,7 +129,7 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
   return (
     <div className="flex flex-col gap-6">
       {extractive ? (
-        <p className="rounded-lg bg-background px-4 py-3 text-sm text-muted-foreground">
+        <p className="rounded-lg border bg-muted/50 px-4 py-3 text-[13px] text-muted-foreground">
           Kopi&apos;s model isn&apos;t connected on this deployment yet, so this is the notice&apos;s own words rather than an assessment: no fit score,
           no recommendation.
         </p>
@@ -137,16 +137,16 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
         <Verdict overview={overview} profile={profile} />
       )}
 
-      <p className="text-[15px] leading-relaxed">{overview.summary}</p>
+      <p className="text-[14px] leading-relaxed">{overview.summary}</p>
 
       <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <dt className="text-xs text-muted-foreground">What they&apos;re buying</dt>
-          <dd className="text-sm leading-relaxed">{overview.buying}</dd>
+          <dd className="text-[13.5px] leading-relaxed">{overview.buying}</dd>
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-xs text-muted-foreground">Who can bid</dt>
-          <dd className="text-sm leading-relaxed">{overview.who_can_bid}</dd>
+          <dd className="text-[13.5px] leading-relaxed">{overview.who_can_bid}</dd>
         </div>
       </dl>
 
@@ -155,7 +155,7 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
             <div className="flex flex-col gap-2.5">
               <Heading>In the notice&apos;s words</Heading>
               {quotes.map((r, i) => (
-                <blockquote key={i} className="rounded-lg bg-background px-4 py-3 text-sm leading-relaxed text-foreground/85">
+                <blockquote key={i} className="rounded-md bg-muted px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground/85">
                   <span aria-hidden>“</span>
                   {r.quote}
                   <span aria-hidden>”</span>
@@ -167,7 +167,7 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
             <div className="flex flex-col gap-2.5">
               <Heading>Why</Heading>
               {overview.unverified_quotes > 0 && (
-                <p className="flex items-start gap-2 rounded-lg bg-unmet-soft px-3.5 py-2.5 text-sm text-unmet">
+                <p className="flex items-start gap-2 rounded-lg border border-unmet/20 bg-unmet-soft px-3.5 py-2.5 text-[13px] text-unmet">
                   <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
                   {overview.unverified_quotes === 1
                     ? "One quote below wasn't found in the notice or your profile. It is shown so you can see it, not as evidence."
@@ -181,9 +181,9 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
       {overview.key_dates.length > 0 && (
         <div className="flex flex-col gap-2.5">
           <Heading>Key dates</Heading>
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col overflow-hidden rounded-lg border">
             {overview.key_dates.map((d, i) => (
-              <li key={i} className="flex flex-col gap-0.5 rounded-lg bg-background px-4 py-2.5 text-sm sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+              <li key={i} className="flex flex-col gap-0.5 border-b px-4 py-2 text-[13px] last:border-b-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
                 <span className="text-muted-foreground">{d.label}</span>
                 <span className="font-medium tabular-nums">{dateTime(d.at)}</span>
               </li>
@@ -195,7 +195,7 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
       {overview.risks.length > 0 && (
         <div className="flex flex-col gap-2.5">
           <Heading>What could go wrong</Heading>
-          <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed marker:text-muted-foreground/70">
+          <ul className="flex list-disc flex-col gap-1.5 pl-5 text-[13.5px] leading-relaxed marker:text-muted-foreground/70">
             {overview.risks.map((risk, i) => (
               <li key={i}>{risk}</li>
             ))}
@@ -206,14 +206,14 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
       {overview.questions_for_agency.length > 0 && (
         <div className="flex flex-col gap-2.5">
           <Heading>Questions for the agency</Heading>
-          <ol className="flex list-decimal flex-col gap-1.5 pl-5 text-sm leading-relaxed marker:text-muted-foreground">
+          <ol className="flex list-decimal flex-col gap-1.5 pl-5 text-[13.5px] leading-relaxed marker:text-muted-foreground">
             {overview.questions_for_agency.map((q, i) => (
               <li key={i}>{q}</li>
             ))}
           </ol>
           <Link
             href={copilotHref(doc, `Draft clarification questions for ${doc}, starting from these: ${overview.questions_for_agency.join(" ")}`)}
-            className="flex w-fit items-center gap-1 text-sm font-medium text-kopi hover:underline"
+            className="flex w-fit items-center gap-1 text-[13px] font-medium text-kopi hover:underline"
           >
             Draft these as clarification questions <ArrowRight className="size-3.5" aria-hidden />
           </Link>
@@ -265,45 +265,44 @@ export function AiOverview({ doc, profile }: { doc: string; profile: Profile }) 
 
   const extractive = overview?.model === "extractive";
   return (
-    <section aria-labelledby="ai-overview" aria-busy={busy} className="flex flex-col gap-5 rounded-xl bg-secondary px-5 py-5 sm:px-6 sm:py-6">
-      <div className="flex items-center gap-3">
-        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-background">
-          <Sparkles className="size-4 text-kopi" aria-hidden />
-        </span>
-        <h2 id="ai-overview" className="text-base font-semibold tracking-tight">
+    <section aria-labelledby="ai-overview" aria-busy={busy} className="overflow-hidden rounded-lg border bg-card">
+      <div className="flex h-11 items-center gap-2.5 border-b bg-muted/60 px-4">
+        <Sparkles className="size-4 text-kopi" aria-hidden />
+        <h2 id="ai-overview" className="text-[13.5px] font-semibold">
           AI overview
         </h2>
         {overview && (
-          <span className="rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          <span className="rounded-md border bg-card px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
             {extractive ? "From the notice" : `For ${profile.name}`}
           </span>
         )}
         {overview && (
-          <Button variant="ghost" size="icon-sm" className="ml-auto hover:bg-background" onClick={read} disabled={busy} aria-label="Read it again">
+          <Button variant="ghost" size="icon-sm" className="ml-auto" onClick={read} disabled={busy} aria-label="Read it again">
             {busy ? <Loader2 className="animate-spin" /> : <RotateCcw />}
           </Button>
         )}
       </div>
+      <div className="flex flex-col gap-5 p-4 sm:p-5">
 
       {overview ? (
         <OverviewBody overview={overview} profile={profile} doc={doc} />
       ) : (
         <div className="flex flex-col gap-4">
-          <p className="max-w-2xl text-sm text-muted-foreground">
+          <p className="max-w-2xl text-[13.5px] text-muted-foreground">
             A short read of this notice for {profile.name}: what the agency is buying, who can bid, how well it fits and what could go wrong,
             with every claim quoted from the notice and checked against it.
           </p>
           {busy ? (
             <div className="flex flex-col gap-2.5" aria-label="Reading the notice">
-              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <p className="flex items-center gap-2 text-[13px] text-muted-foreground">
                 <Loader2 className="size-3.5 animate-spin text-kopi" aria-hidden /> Reading the notice
               </p>
-              <Skeleton className="h-4 w-full max-w-xl bg-background" />
-              <Skeleton className="h-4 w-4/5 max-w-lg bg-background" />
+              <Skeleton className="h-4 w-full max-w-xl" />
+              <Skeleton className="h-4 w-4/5 max-w-lg" />
             </div>
           ) : (
             <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={read} className="h-9 px-3.5">
+              <Button onClick={read}>
                 <Sparkles /> Read it for {profile.name}
               </Button>
               <span className="text-xs text-muted-foreground">Takes a few seconds.</span>
@@ -313,11 +312,12 @@ export function AiOverview({ doc, profile }: { doc: string; profile: Profile }) 
       )}
 
       {error && (
-        <p role="alert" className="flex items-start gap-2 rounded-lg bg-background px-3.5 py-2.5 text-sm">
+        <p role="alert" className="flex items-start gap-2 rounded-lg border bg-muted/50 px-3.5 py-2.5 text-[13px]">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
           <span className="text-muted-foreground">{overviewError(error)}</span>
         </p>
       )}
+      </div>
     </section>
   );
 }
@@ -332,23 +332,23 @@ export function TenderActions({ notice, profile }: { notice: Notice; profile: Pr
     { label: "Build submission checklist", what: "Every document and form to send, and when", icon: ListChecks, ask: asks.checklist },
   ];
   return (
-    <section aria-labelledby="actions" className="flex flex-col gap-4 rounded-xl bg-secondary p-5">
-      <div className="flex flex-col gap-1">
-        <h2 id="actions" className="text-base font-semibold tracking-tight">
+    <section aria-labelledby="actions" className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+      <div className="flex flex-col gap-0.5">
+        <h2 id="actions" className="text-[13.5px] font-semibold">
           Prepare a response
         </h2>
-        <p className="text-sm text-muted-foreground">Kopi drafts these from the notice and your profile. You review and submit.</p>
+        <p className="text-[13px] text-muted-foreground">Kopi drafts these from the notice and your profile. You review and submit.</p>
       </div>
       <ul className="flex flex-col gap-1.5">
         {actions.map(({ label, what, icon: Icon, ask }) => (
           <li key={label}>
             <Link
               href={copilotHref(notice.doc_no, ask)}
-              className="group flex w-full items-start gap-3 rounded-lg bg-background px-3.5 py-3 text-left transition-colors hover:bg-background/60"
+              className="group flex w-full items-start gap-3 rounded-md border px-3 py-2.5 text-left transition-colors hover:bg-muted/60"
             >
               <Icon className="mt-0.5 size-4 shrink-0 text-kopi" aria-hidden />
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="text-sm font-medium">{label}</span>
+                <span className="text-[13px] font-medium">{label}</span>
                 <span className="text-xs text-muted-foreground">{what}</span>
               </span>
               <ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/60 group-hover:text-kopi" aria-hidden />
@@ -356,7 +356,7 @@ export function TenderActions({ notice, profile }: { notice: Notice; profile: Pr
           </li>
         ))}
       </ul>
-      <Link href={copilotHref(notice.doc_no)} className={cn(buttonVariants({ variant: "outline" }), "h-9 w-full bg-background")}>
+      <Link href={copilotHref(notice.doc_no)} className={cn(buttonVariants({ variant: "outline" }), "w-full")}>
         <Sparkles className="text-kopi" /> Ask Kopi about this tender
       </Link>
     </section>
@@ -367,22 +367,22 @@ export function TrackButton({ notice }: { notice: Notice }) {
   const { isTracked, track, untrack } = useTracked();
   const tracked = isTracked(notice.doc_no);
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+    <div className="flex items-center gap-3">
+      {tracked && (
+        <Link href="/submissions" className="hidden items-center gap-1 text-[13px] font-medium text-kopi hover:underline md:flex">
+          Open in Submissions <ArrowRight className="size-3.5" aria-hidden />
+        </Link>
+      )}
       <Button
         variant={tracked ? "secondary" : "default"}
         aria-pressed={tracked}
         onClick={() => (tracked ? untrack(notice.doc_no) : track(notice))}
         title={tracked ? "Stop tracking this tender" : "Add it to Submissions"}
-        className={cn("h-9 px-3.5", tracked && "bg-kopi-soft text-kopi hover:bg-kopi-soft/70")}
+        className={cn("h-7 px-2.5", tracked && "bg-kopi-soft text-kopi hover:bg-kopi-soft/70")}
       >
         {tracked ? <BookmarkCheck /> : <BookmarkPlus />}
         {tracked ? "Tracking" : "Track this tender"}
       </Button>
-      {tracked && (
-        <Link href="/submissions" className="flex items-center gap-1 text-sm font-medium text-kopi hover:underline">
-          Open in Submissions <ArrowRight className="size-3.5" aria-hidden />
-        </Link>
-      )}
     </div>
   );
 }
