@@ -258,3 +258,21 @@ view (the old `tender()`), and computing insights through `tender()` one tender 
 - One lookup everywhere means a card's price band always agrees with the tender page
   beside it. Market figures on tender pages changed after this deploy; 12 of 25 sampled
   medians moved by more than 25%.
+
+## D29 — A bid is a chat with an artifacts panel, and drafts stream (KP-37, KP-38)
+**Picked:**
+- The bid page is two panes on one full-height page: the conversation on the left, and the
+  bid's documents on the right as tabs (Plan, Questions, Matrix, Checklist, Outline, uploads,
+  Memory, Tasks).
+- Documents stream into their tab while the model writes them. The runner decodes the
+  Write call's input from the SDK's partial stream events and sends `writing` events.
+
+**Rejected:**
+- The KP-35 rail and sheet: documents as a list, each opened over the page.
+- Showing a document only when its Write completes: the model spends 20–40 s composing a
+  document, and the panel sat empty through all of it.
+
+**Why:** Teddy, 29 Sep: working a bid "should feel like ChatGPT / artifacts panel, same page,
+clean". A probe of the real SDK showed the document's text arriving in `input_json_delta`
+fragments long before the finished tool call. So the panel can type as the model writes,
+which is what makes it feel like one.

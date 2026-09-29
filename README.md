@@ -30,7 +30,7 @@ cd web && npm ci && npm run dev        # http://localhost:3000, mock mode by def
 **Backend and tests.** The tests are offline: fixtures, fakes, and NeedleDB's embedded engine.
 
 ```bash
-cd backend && uv sync && uv run pytest -q           # 326 tests
+cd backend && uv sync && uv run pytest -q           # 345 tests
 make dev-api                                        # FastAPI over the fixtures at :8000
 NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8000 npm run dev   # (in web/) the UI against it
 ```
@@ -48,7 +48,7 @@ cd backend && MODAL_PROFILE=<workspace> uv run --extra deploy modal deploy modal
 | **Overview** | All ~730 open GeBIZ opportunities, searchable by meaning. Results are cards: eligibility for your company (blockers named), why it matched, what similar work sold for, closing, method; Start bid in one click; a preview pane and j/k keys. Per tender: an AI brief with a BID / MAYBE / NO BID call | Qwen3 embeddings in NeedleDB, with a light BM25 boost. Card insights load after the hits (25 in about 1–2 s, cached). Claude Opus 5.5 structured output, **every quote checked against the notice by code** |
 | **Permits & licences** | Can we bid? Met / not met / unknown for the closing date, GRA supply head and grade, BCA workhead and grade, and named or implied licences, each with a reason and a source. Plus 324 licences searchable by activity | Deterministic rules over the GRA and BCA tables and the GoBusiness catalogue. Live register lookups by company registration number (UEN) |
 | **Drafting** | A copilot that searches, checks eligibility, reads notices and writes drafts you can download | Claude Agent SDK with Kopi's own MCP tools, in a locked-down Modal Sandbox |
-| **Bids** (submissions) | Start a bid and Kopi works it. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. Upload the tender documents and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission checklist and deadline in Singapore time | A bid playbook for the same agent, with `remember` and `set_bid_stage` tools. The memory, drafts and uploads live outside the sandbox and are restored into a fresh one, so a bid survives the copilot restarting |
+| **Bids** (submissions) | Start a bid and Kopi works it, as a chat with an artifacts panel on one page. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. **Each document types itself into the panel as the model writes it.** Upload the tender documents (PDFs preview in place) and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission tasks and deadline in Singapore time | A bid playbook for the same agent, with `remember` and `set_bid_stage` tools. The memory, drafts and uploads live outside the sandbox and are restored into a fresh one, so a bid survives the copilot restarting |
 
 ![Search results as cards, with the selected tender in the preview pane](docs/images/search.png)
 
@@ -74,7 +74,7 @@ GoBusiness licences (324) ──────────────────
 ```
 
 The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
-behind it (D1–D28) are in [planning/02-decisions.md](planning/02-decisions.md).
+behind it (D1–D29) are in [planning/02-decisions.md](planning/02-decisions.md).
 
 ## Numbers
 
@@ -194,7 +194,7 @@ behind it (D1–D28) are in [planning/02-decisions.md](planning/02-decisions.md)
     then two background agents built the backend halves in their own worktrees while the
     main agent built the UI. The main agent reviewed each diff before merging.
 - **Planning:** [`planning/`](planning/) holds the brief, the discovery research (every
-  source probed with real requests), the decisions D1–D28, the superseded v1 plan, and one
+  source probed with real requests), the decisions D1–D29, the superseded v1 plan, and one
   handoff per task.
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the
