@@ -127,6 +127,12 @@ function saveDraft(session: string, name: string, body: string) {
 }
 
 /** A quote the fixtures never contain, so the overview always shows how an unverified quote reads. */
+/** Mirrors kopi.overview: MAYBE_CEILING, CAPPED_NOTE and UNVERIFIED_RISK. */
+const MAYBE_CEILING = 69;
+const CAPPED_NOTE = "Capped from BID to MAYBE: some cited evidence could not be found in the notice.";
+const UNVERIFIED_RISK = "Some cited evidence could not be found in the notice; treat those points with care.";
+/** Mirrors kopi.sources.awards: placeholder supplier names and $0/$1 panel amounts are not market data. */
+const PLACEHOLDER_SUPPLIERS = new Set(["", "na", "unknown"]);
 const UNVERIFIED_QUOTE = "Vendors must have delivered at least three projects of a similar scale in the past five years";
 
 export class MockApi implements KopiApi {
@@ -228,7 +234,8 @@ export class MockApi implements KopiApi {
     return checks;
   }
 
-  /** Written as a model would: a recommendation, a score and quoted reasons, one of them deliberately unverified. */
+  /** Written as a model would: a recommendation, a score and quoted reasons, one of them deliberately unverified,
+   *  with the backend's cap applied, so the demo shows what the real verifier does to such an answer. */
   async overview(doc: string, profile: Profile): Promise<Overview> {
     const notice = find(doc);
     await pause(900);
@@ -237,20 +244,24 @@ export class MockApi implements KopiApi {
     const first = sentences[0]?.replace(/\.$/, "") ?? notice.title;
     const fit = overlap(tokens([...(profile.capabilities ?? []), profile.summary].join(" ")), `${notice.title} ${notice.description}`);
     const blocked = checks.some((c) => c.status === "unmet");
-    const score = Math.max(5, Math.min(92, Math.round(20 + 260 * fit) - (blocked ? 30 : 0)));
+    const raw = Math.max(5, Math.min(92, Math.round(20 + 260 * fit) - (blocked ? 30 : 0)));
+    // The backend (kopi.overview.verify) caps BID at MAYBE when any quote is unverified, and this mock
+    // always carries one unverified quote, so it applies the same rule rather than showing an impossible BID.
+    const capped = raw >= 65;
+    const score = capped ? Math.min(raw, MAYBE_CEILING) : raw;
     const unknown = checks.filter((c) => c.status === "unknown");
     const heads = (notice.gra_heads ?? []).map((h) => `${h.code}${h.grade ? ` at ${h.grade}` : ""}`);
     return {
       doc_no: doc,
       profile_id: profile.id,
-      summary: `${notice.agency} is tendering for "${notice.title}". ${
-        score >= 65 ? `It sits squarely in what ${profile.name} does` : score >= 40 ? `It overlaps with part of what ${profile.name} does` : `It is outside most of what ${profile.name} does`
+      summary: `${capped ? `${CAPPED_NOTE} ` : ""}${notice.agency} is tendering for "${notice.title}". ${
+        raw >= 65 ? `It sits squarely in what ${profile.name} does` : score >= 40 ? `It overlaps with part of what ${profile.name} does` : `It is outside most of what ${profile.name} does`
       }${unknown.length ? `, but ${unknown.length === 1 ? "one requirement" : `${unknown.length} requirements`} can't be checked until the profile says more` : ""}.`,
       buying: `${first}.`,
       who_can_bid: heads.length ? `Suppliers registered under ${heads.join(", ")}.` : "Any GeBIZ trading partner; the notice names no registration.",
       fit: {
         score,
-        recommendation: score >= 65 ? "BID" : score >= 40 ? "MAYBE" : "NO_BID",
+        recommendation: score >= 40 ? "MAYBE" : "NO_BID",
         reasons: [
           { point: "The work matches the company's capabilities", quote: first, verified: true },
           ...(sentences[1] ? [{ point: "Delivery terms are clear enough to price", quote: sentences[1].replace(/\.$/, ""), verified: true }] : []),
@@ -266,6 +277,7 @@ export class MockApi implements KopiApi {
         ...unknown.map((c) => `${c.requirement}: ${c.reason.charAt(0).toLowerCase()}${c.reason.slice(1)}.`),
         ...(notice.two_envelope ? ["Two envelopes: the price is opened only if the technical proposal passes, so a thin technical proposal loses the bid outright."] : []),
         "The tender documents sit behind the GeBIZ login; they may add requirements this notice does not show.",
+        UNVERIFIED_RISK,
       ],
       questions_for_agency: [
         ...(notice.items?.[0] ? [`What volumes or service levels should "${notice.items[0]}" be priced on?`] : []),
@@ -285,6 +297,7 @@ export class MockApi implements KopiApi {
   async similarAwards(q: string, agency?: string, k = 25): Promise<MarketContext> {
     const terms = tokens(q);
     const ranked = awards
+      .filter((row) => !PLACEHOLDER_SUPPLIERS.has(row.supplier_name.trim().toLowerCase()) && (amount(row) ?? 2) > 1)
       .map((row) => ({ row, score: overlap(terms, row.tender_description) }))
       .filter((x) => x.score > 0)
       .sort((a, b) => b.score - a.score)
