@@ -68,6 +68,17 @@ api_image = (
 )
 
 
+# The copilot's sandbox: the agent SDK (with its bundled Claude Code binary) and Kopi's
+# package, nothing else. No torch, no NeedleDB client, no keys but the Claude token.
+agent_image = (
+    modal.Image.debian_slim(python_version="3.13")
+    .uv_pip_install("httpx>=0.28", "pydantic>=2.9", "claude-agent-sdk>=0.2.161")
+    .add_local_dir(BACKEND / "kopi", "/root/kopi")
+)
+PUBLIC_API = "https://kryptonairc-lc--kopi-api.modal.run"
+SANDBOX_EGRESS = ["api.anthropic.com", "claude.ai", "kryptonairc-lc--kopi-api.modal.run"]
+
+
 # ---------------------------------------------------------------- NeedleDB
 
 
@@ -190,6 +201,23 @@ def embed_and_push() -> list[dict]:
 def api():
     """The Kopi API over live data; the store re-reads the Volume (after ingest commits) every 5 minutes."""
     from kopi.api.app import create_app
+    from kopi.api.auth import mint_agent_token
     from kopi.api.live import from_environment
+    from kopi.sandbox import Copilot, ModalBoxes, ModalDictStore
 
-    return create_app(from_environment(reload=volume.reload))
+    copilot = Copilot(
+        boxes=ModalBoxes(agent_image, [modal.Secret.from_name("kopi-claude")], SANDBOX_EGRESS),
+        store=ModalDictStore("kopi-sessions"),
+        mint_token=lambda session: mint_agent_token(os.environ["KOPI_SIGNING_KEY"], session),
+        api_url=PUBLIC_API,
+        model=os.environ.get("KOPI_MODEL"),
+    )
+    return create_app(from_environment(reload=volume.reload, copilot=copilot))
+
+
+@app.function(image=agent_image, timeout=60)
+def agent_image_ready() -> str:
+    """Exists so `modal deploy` builds the sandbox image ahead of the first chat."""
+    import claude_agent_sdk
+
+    return claude_agent_sdk.__version__

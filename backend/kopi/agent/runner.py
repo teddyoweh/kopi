@@ -10,7 +10,6 @@ line and forwards each event to the browser as server-sent events.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 from collections.abc import AsyncIterator, Iterable
@@ -25,7 +24,6 @@ from claude_agent_sdk import (
     HookMatcher,
     ResultMessage,
     StreamEvent,
-    TextBlock,
     ToolResultBlock,
     ToolUseBlock,
     UserMessage,
@@ -156,11 +154,15 @@ class Translator:
 
 async def run_turn(message: str, opts: ClaudeAgentOptions, drafts: Path) -> AsyncIterator[ChatEvent]:
     translator = Translator(drafts)
+    finished = False
     try:
         async for sdk_message in query(prompt=message, options=opts):
             for event in translator.events(sdk_message):
+                finished = finished or event.type == ChatEventType.DONE
                 yield event
     except Exception as error:  # the browser needs an event, not a dead stream
+        if finished:  # the SDK raises after an error result it already reported
+            return
         yield ChatEvent(type=ChatEventType.ERROR, text=f"{type(error).__name__}: {error}", session_id=translator.session_id)
         yield ChatEvent(type=ChatEventType.DONE, session_id=translator.session_id)
 
@@ -168,14 +170,14 @@ async def run_turn(message: str, opts: ClaudeAgentOptions, drafts: Path) -> Asyn
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run one Kopi copilot turn.")
     parser.add_argument("--message", required=True)
-    parser.add_argument("--profile-file", type=Path, required=True)
+    parser.add_argument("--profile-file", type=Path, help="company profile JSON (default: $KOPI_PROFILE_JSON)")
     parser.add_argument("--workspace", type=Path, default=Path(os.environ.get("KOPI_WORKSPACE", "/workspace")))
     parser.add_argument("--resume")
     parser.add_argument("--doc")
     parser.add_argument("--model", default=os.environ.get("KOPI_MODEL", "claude-opus-5-5"))
     args = parser.parse_args()
 
-    profile = Profile.model_validate_json(args.profile_file.read_text())
+    profile = Profile.model_validate_json(args.profile_file.read_text() if args.profile_file else os.environ["KOPI_PROFILE_JSON"])
     client = KopiClient(os.environ["KOPI_API"], os.environ.get("KOPI_SESSION_TOKEN"))
     opts = options(profile, client, args.workspace, args.model, args.resume, args.doc)
 

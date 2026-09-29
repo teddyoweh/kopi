@@ -16,6 +16,7 @@ from functools import cached_property
 from statistics import median
 from typing import Protocol
 
+from kopi.checklist import submission_checklist
 from kopi.config import FIXTURES_DIR
 from kopi.models import (
     Award,
@@ -23,6 +24,7 @@ from kopi.models import (
     ChatEvent,
     ChatEventType,
     ChatRequest,
+    ChecklistItem,
     EligibilityCheck,
     EligibilityStatus,
     Fit,
@@ -62,10 +64,11 @@ class Store(Protocol):
     def tender(self, doc_no: str, profile: Profile | None) -> TenderDetail: ...
     def eligibility(self, doc_no: str, profile: Profile) -> list[EligibilityCheck]: ...
     def overview(self, doc_no: str, profile: Profile) -> Overview: ...
+    def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]: ...
     def similar_awards(self, query: str, agency: str | None, k: int) -> MarketContext: ...
     def licences(self, limit: int, offset: int) -> list[Licence]: ...
     def search_licences(self, query: str, limit: int) -> list[Licence]: ...
-    def chat(self, request: ChatRequest) -> AsyncIterator[ChatEvent]: ...
+    def chat(self, request: ChatRequest, caller: str = "local") -> AsyncIterator[ChatEvent]: ...
     def session_files(self, session_id: str) -> list[SessionFile]: ...
     def session_file(self, session_id: str, name: str) -> bytes: ...
 
@@ -169,6 +172,9 @@ class FixtureStore:
             checks.append(EligibilityCheck(kind="gra", requirement=f"{head.code} {head.grade or ''}".strip(), status=status, reason=reason))
         return checks
 
+    def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]:
+        return submission_checklist(self._notice(doc_no), self.eligibility(doc_no, profile))
+
     def overview(self, doc_no: str, profile: Profile) -> Overview:
         notice = self._notice(doc_no)
         first_sentence = notice.description.split(". ")[0].rstrip(".")
@@ -225,7 +231,7 @@ class FixtureStore:
         ranked = sorted(self._licences, key=lambda x: -overlap_score(terms, f"{x.name} {x.description} {x.who_needs_it}"))
         return [x for x in ranked if overlap_score(terms, f"{x.name} {x.description} {x.who_needs_it}") > 0][:limit]
 
-    async def chat(self, request: ChatRequest) -> AsyncIterator[ChatEvent]:
+    async def chat(self, request: ChatRequest, caller: str = "local") -> AsyncIterator[ChatEvent]:
         """A scripted conversation, so the copilot UI can be built without Claude or Modal."""
         session = request.session_id or "fixture-session"
         results = self.search(request.message, _NoFilters(), 3)
