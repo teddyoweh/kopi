@@ -248,7 +248,7 @@ def extractive_overview(notice: Notice, profile: Profile) -> Overview:
         summary=f"{notice.agency}: {notice.title}.",
         buying=f"{first}.",
         who_can_bid=", ".join(f"{h.code} {h.grade or ''}".strip() for h in notice.gra_heads) or "Any GeBIZ trading partner",
-        fit=Fit(score=0, recommendation=Recommendation.MAYBE, reasons=[Reason(point="What the notice asks for", quote=first, verified=True)]),
+        fit=Fit(score=0, recommendation=Recommendation.MAYBE, reasons=[Reason(point="What the notice asks for", quote=first, verified=True, found_in="notice")]),
         model="extractive",
         generated_at=datetime.now(UTC),
     )

@@ -1856,6 +1856,22 @@
       "type": "boolean",
       "title": "Verified",
       "default": false
+     },
+     "found_in": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "notice",
+         "profile"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Found In",
+      "description": "Where code found the quote word for word; None when it wasn't found"
      }
     },
     "type": "object",

@@ -263,9 +263,11 @@ export class MockApi implements KopiApi {
         score,
         recommendation: score >= 40 ? "MAYBE" : "NO_BID",
         reasons: [
-          { point: "The work matches the company's capabilities", quote: first, verified: true },
-          ...(sentences[1] ? [{ point: "Delivery terms are clear enough to price", quote: sentences[1].replace(/\.$/, ""), verified: true }] : []),
-          { point: "A track record of similar projects is expected", quote: UNVERIFIED_QUOTE, verified: false },
+          { point: "The work matches the company's capabilities", quote: first, verified: true, found_in: "notice" },
+          ...(sentences[1]
+            ? [{ point: "Delivery terms are clear enough to price", quote: sentences[1].replace(/\.$/, ""), verified: true, found_in: "notice" as const }]
+            : []),
+          { point: "A track record of similar projects is expected", quote: UNVERIFIED_QUOTE, verified: false, found_in: null },
         ],
       },
       key_dates: [

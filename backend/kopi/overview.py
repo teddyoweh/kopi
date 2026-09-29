@@ -3,7 +3,7 @@
 Claude writes the brief as structured output in a one-shot Claude Agent SDK call that has no
 tools at all. Code then checks each quoted piece of evidence against the notice and the
 profile, word for word after normalising both sides, and sets the fields the model never
-sets: `verified`, `unverified_quotes`, `model`, `generated_at`, `doc_no` and `profile_id`.
+sets: `verified`, `found_in`, `unverified_quotes`, `model`, `generated_at`, `doc_no` and `profile_id`.
 
 The notice is described with the copilot's own `notice_block`, `checks_text` and
 `market_text`, so the overview and the copilot see a tender identically.
@@ -20,7 +20,7 @@ import tempfile
 from collections.abc import Awaitable, Callable, Iterable
 from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from claude_agent_sdk import ClaudeAgentOptions, ClaudeSDKError, ResultMessage, query
 
@@ -209,10 +209,22 @@ def is_verified(quote: str, sources: list[str]) -> bool:
     return bool(wanted) and any(wanted in source for source in sources)
 
 
+def found_in(quote: str, notice: list[str], profile: list[str]) -> Literal["notice", "profile"] | None:
+    """Where the quote is, word for word. The notice wins a tie: it is the evidence that matters."""
+    if is_verified(quote, notice):
+        return "notice"
+    if is_verified(quote, profile):
+        return "profile"
+    return None
+
+
 def verify(overview: Overview, notice: Notice, profile: Profile) -> Overview:
     """Check every quote; if any fails, cap BID at MAYBE (NO_BID is never raised) and say so."""
-    sources = notice_texts(notice) + profile_texts(profile)
-    reasons = [r.model_copy(update={"verified": is_verified(r.quote, sources)}) for r in overview.fit.reasons]
+    notice_sources, profile_sources = notice_texts(notice), profile_texts(profile)
+    reasons = []
+    for reason in overview.fit.reasons:
+        where = found_in(reason.quote, notice_sources, profile_sources)
+        reasons.append(reason.model_copy(update={"verified": where is not None, "found_in": where}))
     unverified = sum(not r.verified for r in reasons)
     fit = overview.fit.model_copy(update={"reasons": reasons})
     summary, risks = overview.summary, list(overview.risks)

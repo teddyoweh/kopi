@@ -80,6 +80,9 @@ function Verdict({ overview, profile }: { overview: Overview; profile: Profile }
   );
 }
 
+/** Where code found a verified quote word for word. Overviews cached before `found_in` existed say only "Verified". */
+const FOUND_IN = { notice: "Verified in the notice", profile: "From your profile", unknown: "Verified" } as const;
+
 function Reasons({ overview }: { overview: Overview }) {
   return (
     <ul className="flex flex-col gap-2">
@@ -101,14 +104,14 @@ function Reasons({ overview }: { overview: Overview }) {
           {reason.quote &&
             (reason.verified ? (
               <p className="flex items-center gap-1.5 text-xs font-medium text-met">
-                <Check className="size-3.5" aria-hidden /> Verified in the notice
+                <Check className="size-3.5" aria-hidden /> {FOUND_IN[reason.found_in ?? "unknown"]}
               </p>
             ) : (
               <p className="flex items-start gap-1.5 text-xs text-unmet">
                 <AlertTriangle className="mt-px size-3.5 shrink-0" aria-hidden />
                 <span>
-                  <span className="font-medium">Not found in the notice.</span> Kopi couldn&apos;t match these words to the notice, so don&apos;t rely on
-                  them.
+                  <span className="font-medium">Not found in the notice or your profile.</span> Kopi couldn&apos;t match these words to either, so
+                  don&apos;t rely on them.
                 </span>
               </p>
             ))}
@@ -167,8 +170,8 @@ function OverviewBody({ overview, profile, doc }: { overview: Overview; profile:
                 <p className="flex items-start gap-2 rounded-lg bg-unmet-soft px-3.5 py-2.5 text-sm text-unmet">
                   <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
                   {overview.unverified_quotes === 1
-                    ? "One quote below wasn't found in the notice. It is shown so you can see it, not as evidence."
-                    : `${overview.unverified_quotes} quotes below weren't found in the notice. They are shown so you can see them, not as evidence.`}
+                    ? "One quote below wasn't found in the notice or your profile. It is shown so you can see it, not as evidence."
+                    : `${overview.unverified_quotes} quotes below weren't found in the notice or your profile. They are shown so you can see them, not as evidence.`}
                 </p>
               )}
               <Reasons overview={overview} />
