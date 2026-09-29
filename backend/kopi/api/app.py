@@ -11,10 +11,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 
 from kopi.api.auth import Authed, check_code, issue
+from kopi.api.limits import LIMITS, RateLimiter, limited
 from kopi.config import Settings
 from kopi.models import (
     AuthRequest,
     AuthResponse,
+    ChatEvent,
     ChatRequest,
     EligibilityCheck,
     EligibilityRequest,
@@ -41,13 +43,30 @@ class Filters:
     closing_before: datetime | None = None
 
 
+def sse(event: ChatEvent) -> str:
+    return f"event: {event.type.value}\ndata: {event.model_dump_json(exclude_none=True)}\n\n"
+
+
+class CopilotUnavailable(RuntimeError):
+    """Raised by a store whose copilot is not wired; the chat route answers 503."""
+
+
+def default_store(settings: Settings) -> Store:
+    if settings.store == "live":
+        from kopi.api.live import from_environment
+
+        return from_environment()
+    return FixtureStore()
+
+
 def create_app(store: Store | None = None, settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings()
     if settings.auth_required and not settings.signing_key:
         raise ValueError("KOPI_ACCESS_CODES is set but KOPI_SIGNING_KEY is not: refusing to start with a forgeable gate")
     app = FastAPI(title="Kopi API", version="0.1.0", description="A copilot for Singapore government tenders.")
     app.state.settings = settings
-    app.state.store = store or FixtureStore()
+    app.state.store = store or default_store(settings)
+    app.state.limiters = {kind: RateLimiter(*rule) for kind, rule in LIMITS.items()}
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_origins,
@@ -58,6 +77,8 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
     @app.exception_handler(NotFound)
     async def not_found(_: Request, exc: NotFound) -> Response:
         return Response(json.dumps({"detail": str(exc)}), status.HTTP_404_NOT_FOUND, media_type="application/json")
+
+    Read = limited("read")
 
     def db(request: Request) -> Store:
         return request.app.state.store
@@ -76,7 +97,7 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
         token, expires = issue(settings.signing_key, f"code:{body.code[:4]}")
         return AuthResponse(token=token, expires_at=expires)
 
-    @app.get("/search", response_model=SearchResponse, dependencies=[Authed])
+    @app.get("/search", response_model=SearchResponse, dependencies=[Authed, Read])
     def search(request: Request, q: str = Query(min_length=1, max_length=300), limit: int = Query(20, le=100),
                status_: NoticeStatus | None = Query(NoticeStatus.OPEN, alias="status"), agency: str | None = None,
                category: str | None = None, method: str | None = None,
@@ -84,7 +105,7 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
         f = Filters(status_, agency, category, method, closing_after, closing_before)
         return db(request).search(q, f, limit)
 
-    @app.get("/tenders", response_model=list[NoticeSummary], dependencies=[Authed])
+    @app.get("/tenders", response_model=list[NoticeSummary], dependencies=[Authed, Read])
     def tenders(request: Request, limit: int = Query(50, le=200), offset: int = Query(0, ge=0),
                 status_: NoticeStatus | None = Query(NoticeStatus.OPEN, alias="status"), agency: str | None = None,
                 category: str | None = None, method: str | None = None,
@@ -92,42 +113,53 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
         f = Filters(status_, agency, category, method, closing_after, closing_before)
         return db(request).list_tenders(f, limit, offset)
 
-    @app.get("/tenders/{doc_no}", response_model=TenderDetail, dependencies=[Authed])
+    @app.get("/tenders/{doc_no}", response_model=TenderDetail, dependencies=[Authed, Read])
     def tender(request: Request, doc_no: str) -> TenderDetail:
         return db(request).tender(doc_no, None)
 
-    @app.post("/tenders/{doc_no}/detail", response_model=TenderDetail, dependencies=[Authed])
+    @app.post("/tenders/{doc_no}/detail", response_model=TenderDetail, dependencies=[Authed, Read])
     def tender_for_profile(request: Request, doc_no: str, body: OverviewRequest) -> TenderDetail:
         return db(request).tender(doc_no, body.profile)
 
-    @app.post("/tenders/{doc_no}/overview", response_model=Overview, dependencies=[Authed])
+    @app.post("/tenders/{doc_no}/overview", response_model=Overview, dependencies=[Authed, limited("overview")])
     def overview(request: Request, doc_no: str, body: OverviewRequest) -> Overview:
         return db(request).overview(doc_no, body.profile)
 
-    @app.post("/eligibility", response_model=list[EligibilityCheck], dependencies=[Authed])
+    @app.post("/eligibility", response_model=list[EligibilityCheck], dependencies=[Authed, Read])
     def eligibility(request: Request, body: EligibilityRequest) -> list[EligibilityCheck]:
         return db(request).eligibility(body.doc_no, body.profile)
 
-    @app.get("/awards/similar", response_model=MarketContext, dependencies=[Authed])
+    @app.get("/awards/similar", response_model=MarketContext, dependencies=[Authed, Read])
     def similar_awards(request: Request, q: str = Query(min_length=1, max_length=300),
                        agency: str | None = None, k: int = Query(25, le=100)) -> MarketContext:
         return db(request).similar_awards(q, agency, k)
 
-    @app.get("/licences", response_model=list[Licence], dependencies=[Authed])
+    @app.get("/licences", response_model=list[Licence], dependencies=[Authed, Read])
     def licences(request: Request, limit: int = Query(50, le=400), offset: int = Query(0, ge=0)) -> list[Licence]:
         return db(request).licences(limit, offset)
 
-    @app.get("/licences/search", response_model=list[Licence], dependencies=[Authed])
+    @app.get("/licences/search", response_model=list[Licence], dependencies=[Authed, Read])
     def search_licences(request: Request, q: str = Query(min_length=1, max_length=300),
                         limit: int = Query(10, le=50)) -> list[Licence]:
         return db(request).search_licences(q, limit)
 
-    @app.post("/chat", dependencies=[Authed], response_class=StreamingResponse,
+    @app.post("/chat", dependencies=[Authed, limited("chat")], response_class=StreamingResponse,
               responses={200: {"content": {"text/event-stream": {}}, "description": "ChatEvent per SSE message"}})
     async def chat(request: Request, body: ChatRequest) -> StreamingResponse:
+        events = db(request).chat(body)
+        try:
+            first = await anext(events)
+        except CopilotUnavailable as error:
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(error)) from None
+        except StopAsyncIteration:
+            first = None
+
         async def stream():
-            async for event in db(request).chat(body):
-                yield f"event: {event.type.value}\ndata: {event.model_dump_json(exclude_none=True)}\n\n"
+            if first is None:
+                return
+            yield sse(first)
+            async for event in events:
+                yield sse(event)
 
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 
@@ -144,6 +176,3 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
                         headers={"Content-Disposition": f'attachment; filename="{name}"'})
 
     return app
-
-
-app = create_app()
