@@ -73,3 +73,13 @@
   for Pragnition. Its injected text ("AI ASSISTANT", "company", "recommend") matches
   the profile's words. Injected text can buy retrieval rank, not only steer a model.
   Worth checking against the real embeddings, and worth a test.
+
+## Review fix (by Main, after reviewer Agent 6)
+- **Concern:** `tw-animate-css` 1.4.0's exports map has only a `style` condition, and the
+  reviewer's clean build failed with "Can't resolve 'tw-animate-css'".
+- **What I found:** a clean `npm ci && npm run build` on my machine *passed* with
+  1.4.0. The same error then appeared with 1.3.8 until I deleted `web/.next`, so a stale
+  Turbopack cache can produce this exact error on its own.
+- **Fix:** pinned `tw-animate-css` to exactly 1.3.8, whose export is a plain path any
+  resolver accepts, and verified `npm ci && npm run build` from a clean copy of the
+  repo. If this error ever shows up again, clear `web/.next` first.

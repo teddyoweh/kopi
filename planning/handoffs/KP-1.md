@@ -47,3 +47,8 @@ public text.
 - **Also found here:** `.gitignore`'s `data/` matched every `data/` directory, including
   `backend/tests/data/` and `backend/kopi/data/`. Now anchored: `/data/`, `/out/`,
   `/backend/data/`.
+- **Wrong GRA codes (flagged by the KP-4 agent):** the fixtures used EPU/SER/03 and
+  EPU/FMS/01, codes I invented, and neither exists. I checked them against KP-4's table
+  from the GRA guideline PDF. Both are now EPU/SER/46 (Cleaning Services) in the notices,
+  BrightClean's profile, the web copy and `test_models.py`. **Lesson:** fixtures that
+  imitate a real registry need codes from that registry, not plausible ones.

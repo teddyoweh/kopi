@@ -36,7 +36,7 @@ def test_fixtures_include_prompt_injection_cases():
 
 def test_unknown_registrations_stay_none(pragnition: Profile, brightclean: Profile):
     assert pragnition.gra_registrations is None
-    assert brightclean.gra_registrations and brightclean.gra_registrations[0].code == "EPU/SER/03"
+    assert brightclean.gra_registrations and brightclean.gra_registrations[0].code == "EPU/SER/46"
 
 
 def test_models_round_trip():

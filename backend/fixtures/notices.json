@@ -385,8 +385,8 @@
   "wto_gpa": false,
   "gra_heads": [
    {
-    "code": "EPU/SER/03",
-    "label": "Cleaning and Housekeeping Services",
+    "code": "EPU/SER/46",
+    "label": "Cleaning Services",
     "capacity_sgd": 100000,
     "grade": "S2"
    }
@@ -420,8 +420,8 @@
   "wto_gpa": true,
   "gra_heads": [
    {
-    "code": "EPU/SER/03",
-    "label": "Cleaning and Housekeeping Services",
+    "code": "EPU/SER/46",
+    "label": "Cleaning Services",
     "capacity_sgd": 3000000,
     "grade": "S6"
    }
@@ -509,8 +509,8 @@
   "wto_gpa": true,
   "gra_heads": [
    {
-    "code": "EPU/FMS/01",
-    "label": "Integrated Facilities Management",
+    "code": "EPU/SER/46",
+    "label": "Cleaning Services",
     "capacity_sgd": 10000000,
     "grade": "S8"
    }
