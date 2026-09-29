@@ -1,0 +1,147 @@
+# 04 — Where the AI helped, where it failed, and how it was caught
+
+Kopi was built in one day, 29 Sep 2026, by coding agents working inside Universe, my
+agent workspace, on its Software Factory board (`artifacts/builds/kopi.json` in the
+session). I set the goal and the stack, approved the plan, made the calls that needed a
+person (the Modal workspace, the Claude credential), and read the results. The agents
+wrote the code, the tests, the evals and these notes.
+
+Every task's own account is in `planning/handoffs/<KEY>.md` under **Where the agent went
+wrong**. This page pulls those together and sorts them by the thing that matters most:
+*what caught the mistake*.
+
+## How the work was organised
+
+- **A plan first** (`00-brief.md`, `01-discovery.md`, `02-decisions.md`). The first plan,
+  a CLI report (`plan-v1-cli.md`), was replaced after I asked for a web copilot on my own
+  stack. Both plans are kept.
+- **Milestones of three to five tasks.** Each task declared the files it owns, so agents
+  could run in parallel in their own git worktrees without touching each other's work.
+  Every task ends with a check command that exits non-zero on failure, and a handoff note.
+- **One main agent, plus task agents staffed by the board.** A task that needed a fresh
+  context (the web pages, the overview) went to a subagent with a precise brief, and the
+  main agent closed it only after running the check and looking at the screenshots itself.
+- **An independent reviewer agent read every finished task.** It reran the check from
+  `main`, not the author's worktree, and filed `ok` or `concerns`. Concerns held the
+  milestone until they were fixed.
+- **Research before code.** The data sources and the Claude Agent SDK were probed with
+  real requests before anything was built (`planning/research/`).
+
+## What the AI did well
+
+- **Found and proved the data sources in minutes.**
+  - GeBIZ's full Open tab and its JSF partial-ajax paging (723 of 724 open opportunities
+    in 74 s).
+  - data.gov.sg's 18,464 awards.
+  - GoBusiness's 324 licences, reachable through an undocumented `RSC: 1` JSON response.
+  - The GRA supply-head table from a PDF.
+  - BCA's tendering limits, correcting third-party sites that had them wrong
+    (S$105m / S$50m, not 90 / 40).
+- **Ran real experiments instead of guessing.**
+  - The retrieval eval (30 queries, 12,052 tenders, 1,546 pooled judgements).
+  - The BM25 weight sweep.
+  - The Qwen3 padding and ALL-CAPS hypotheses.
+  - The int8 attempt.
+  - The egress probe from inside a live sandbox.
+- **Built security in, not on.**
+  - The copilot has no Bash or web tools at all, and its file tools are fenced by a hook.
+  - It runs in a sandbox whose egress reaches only Anthropic and the Kopi API (checked
+    live: github.com and gebiz.gov.sg are blocked).
+  - It holds a per-turn token that can read data but can't chat, read drafts or spend
+    Claude.
+  - Officials' contact details are dropped at scrape time.
+- **Quality from reading its own output.** A large share of the UI fixes came from agents
+  looking at their own screenshots at 1440 and 390, not from the build passing.
+
+## Where it failed, grouped by what caught it
+
+### Caught by the independent reviewer agent
+The author's own check passed every time. The reviewer's rerun from `main` did not.
+- **Auth bypass (KP-1).** With access codes set and no signing key, tokens were checked
+  against an empty HMAC key, so anyone could forge one. The reviewer reproduced it. The
+  app now refuses to start in that state.
+- **Test fixtures never committed (KP-2).** An unanchored `data/` in `.gitignore`
+  swallowed `backend/tests/data/`. "9 passed" was true only in a worktree that no longer
+  existed. The same trap was about to swallow two other tasks' files.
+- **A register's "no" overridden by the company's claim (KP-4).** When the bizSAFE
+  register said "not listed" or "expired", eligibility fell back to the profile's own
+  claim, so a company that *said* Level 3 would pass.
+- **A clean-install build failure (KP-5).** This one traced to a package export map and a
+  stale Turbopack cache. The version is now pinned.
+
+### Caught by tests the agent wrote first
+- **A 503 read as "not registered" (KP-4).** An unreachable BCA register would have
+  parsed as "holds nothing", a confident wrong answer. The failure-path test caught it.
+- **Stale status in search (KP-8).** Search could return a tender that had closed since
+  the last ingest. A test with one notice dropped from the listing caught it.
+- **An HTTP library mismatch (KP-11).** The test client uses `httpx2`, so errors escaped
+  as exceptions instead of becoming tool errors. Production worked only by coincidence.
+
+### Caught by the eval
+- **The instruction that made the best model the worst (KP-6).** A domain-specific query
+  instruction I would have signed off on made Qwen3 score nDCG@10 0.444, below BM25. The
+  model's own generic instruction scores 0.695. Two other explanations were tested and
+  ruled out before the instruction was blamed. Both variants stay in the eval.
+
+### Caught only by running it for real (the fakes hid it)
+- **Chunked stdout (KP-12).** Modal's sandbox stdout arrives in chunks, not lines; one
+  chunk carried two events, so every second copilot event would have been dropped. The
+  fake sandbox yielded tidy lines.
+- **Volume reload silently failing (KP-8).** Model weights on the network volume held
+  files open, so the API would never have seen a new ingest. The graceful fallback turned
+  this into a warning. Proven fixed when the API went from 727 to 733 open without a
+  redeploy.
+- **37.5 s to list tenders (KP-8).** 732 separate file reads over a network filesystem.
+  One bundle file now takes 0.31 s.
+- **Best matches never loaded on live (KP-9).** Pragnition's profile text is longer than
+  the API's 300-character query limit. The mock has no limit, so only the live build
+  showed it.
+- **Wrong container (KP-8, KP-12).** Twice, the previous deploy's container was still
+  answering. Reading which code produced the response saved debugging code that was fine.
+
+### Caught by reading screenshots
+- **Timezone (KP-5).** A tender closing at 4:00 pm SGT showed as "4:00 am", because this
+  laptop is on US time. Every date now pins Singapore.
+- **Mock logic (KP-13).** The mock showed "BID 82" next to an unverified quote, and
+  "Unknown" as a top supplier. Both contradict the real rules, which cap that case at
+  MAYBE and exclude placeholder suppliers. The mock now obeys the same rules.
+- **Layout and text faults:** a double period after a company name, a document number
+  breaking mid-token at 390 px, a sentence built as "no a BCA registration", sticky bars
+  painted mid-page.
+
+### Caught by the product itself
+- **Closing days (KP-11).** On its first live run, the copilot noticed that our
+  eligibility rules said "closes today" for a tender closing tomorrow at 13:00, and said
+  so in its answer. The rules counted 24-hour periods; they now count Singapore calendar
+  days.
+
+### Mistakes in the agents' own reports
+- **Overview and redeploy (KP-10).** The main agent reported that AI overviews would
+  switch on "with no redeploy" once the Claude secret existed. That's wrong: the secret
+  is attached at deploy time. Corrected on the build feed within minutes.
+- **Invented registry codes (KP-1).** An agent invented plausible-looking registration
+  codes (EPU/SER/03, EPU/FMS/01) for test fixtures. Another agent, building the real
+  table from the GRA PDF, flagged that they don't exist.
+
+## What the agents couldn't do
+
+- **The Claude credential.** Creating `kopi-claude` needs my browser sign-in
+  (`claude setup-token`). Until it exists, the live copilot answers with a designed 503
+  and overviews use the extractive fallback. The same copilot ran end to end locally
+  against the live API: $0.18 and a 14-question clarification draft.
+- **Choosing whose money to spend.** My personal Modal workspace was paused on billing.
+  The agents stopped and asked, and I chose the workspace.
+- **A tool bug.** Universe's own build tool couldn't mark review concerns answered on
+  finished tasks. The agent found the cause in the app's code, applied the same field
+  the app would write, only for verified fixes, and reported the bug.
+
+## Patterns worth keeping
+
+1. **Run the reviewer's check from `main`.** Most "works for me" failures lived in
+   the gap between a worktree and the repo.
+2. **A fallback that turns a failure into a warning needs a test that the failure can't
+   happen**, or it hides the failure indefinitely (the volume reload).
+3. **Fakes are only as good as your knowledge of the real system.** Chunked stdout,
+   stale containers, the 300-character limit: each passed its tests and failed live.
+4. **Measure prompt text.** The most confident design choice in the build, the domain
+   instruction, was the worst one, and only the eval showed it.
