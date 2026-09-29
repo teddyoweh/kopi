@@ -250,6 +250,7 @@ class ChatEventType(StrEnum):
     TOOL_CALL = "tool_call"
     TOOL_RESULT = "tool_result"
     FILE = "file"
+    WRITING = "writing"  # the next piece of a draft while the model is still writing it: `file` and `text`
     DONE = "done"
     ERROR = "error"
 

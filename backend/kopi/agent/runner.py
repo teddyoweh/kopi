@@ -38,6 +38,7 @@ from claude_agent_sdk import (
 )
 
 from kopi.agent.prompts import bid_prompt, system_prompt
+from kopi.agent.streaming import PartialWrite
 from kopi.agent.tools import SERVER, KopiClient, build_server, read_memory
 from kopi.models import ChatEvent, ChatEventType, Profile
 
@@ -48,6 +49,7 @@ BID_MAX_TURNS = 40
 BUDGET_USD = "2.0"
 BID_BUDGET_USD = "5.0"
 SUMMARY_CHARS = 160
+WRITING_BATCH = 60  # characters of a draft per "writing" event: live, without an event per token
 
 
 def within(path: str | None, root: Path) -> bool:
@@ -143,15 +145,16 @@ class Translator:
         self.pending_tools: dict[str, str] = {}
         self.pending_files: dict[str, str] = {}
         self.session_id: str | None = None
+        # Drafts being written right now, by stream block index: the partial Write and its unsent text.
+        self.writing: dict[int, tuple[PartialWrite, list[str]]] = {}
 
     def events(self, message: Any) -> Iterable[ChatEvent]:
         session = getattr(message, "session_id", None)
         if session:
             self.session_id = session
         if isinstance(message, StreamEvent):
-            delta = message.event.get("delta") or {}
-            if message.event.get("type") == "content_block_delta" and delta.get("type") == "text_delta" and message.parent_tool_use_id is None:
-                yield ChatEvent(type=ChatEventType.TEXT, text=delta["text"], session_id=self.session_id)
+            if message.parent_tool_use_id is None:
+                yield from self._stream(message.event)
         elif isinstance(message, AssistantMessage):
             for block in message.content:
                 if isinstance(block, ToolUseBlock):
@@ -166,6 +169,32 @@ class Translator:
             if message.is_error:
                 yield ChatEvent(type=ChatEventType.ERROR, text=message.result or message.subtype, session_id=message.session_id)
             yield ChatEvent(type=ChatEventType.DONE, session_id=message.session_id, cost_usd=message.total_cost_usd)
+
+    def _stream(self, event: dict) -> Iterable[ChatEvent]:
+        kind, index = event.get("type"), event.get("index")
+        if kind == "content_block_start":
+            block = event.get("content_block") or {}
+            if block.get("type") == "tool_use" and block.get("name") == "Write":
+                self.writing[index] = (PartialWrite(), [])
+        elif kind == "content_block_delta":
+            delta = event.get("delta") or {}
+            if delta.get("type") == "text_delta":
+                yield ChatEvent(type=ChatEventType.TEXT, text=delta["text"], session_id=self.session_id)
+            elif delta.get("type") == "input_json_delta" and index in self.writing:
+                partial, unsent = self.writing[index]
+                unsent.append(partial.feed(delta.get("partial_json", "")))
+                yield from self._flush(partial, unsent, WRITING_BATCH)
+        elif kind == "content_block_stop" and index in self.writing:
+            partial, unsent = self.writing.pop(index)
+            yield from self._flush(partial, unsent, 0)
+
+    def _flush(self, partial: PartialWrite, unsent: list[str], at_least: int) -> Iterable[ChatEvent]:
+        """Send what has built up once there is enough of it, and only for a draft Kopi may write."""
+        text = "".join(unsent)
+        if not text or len(text) < at_least or not partial.file_path or not within(partial.file_path, self.drafts):
+            return
+        unsent.clear()
+        yield ChatEvent(type=ChatEventType.WRITING, file=Path(partial.file_path).name, text=text, session_id=self.session_id)
 
     def _remember_draft(self, block: ToolUseBlock) -> None:
         path = block.input.get("file_path") if block.name in WRITING_TOOLS else None

@@ -30,10 +30,11 @@ export const UPLOAD_LIMIT = 8 * 1024 * 1024;
  * One event of a copilot turn (kopi.models.ChatEvent). The /chat route streams these as
  * SSE, so FastAPI's OpenAPI spec does not carry the schema; it is mirrored here by hand.
  * `text` is a delta to append; a `tool_result` answers the oldest unanswered `tool_call` (the
- * live runner also names its tool; the mock does not); an `error` carries its message in `text`.
+ * live runner also names its tool; the mock does not); an `error` carries its message in `text`;
+ * a `writing` event is the next piece (`text`) of a draft (`file`) the model is still writing.
  */
 export type ChatEvent = {
-  type: "text" | "tool_call" | "tool_result" | "file" | "done" | "error";
+  type: "text" | "tool_call" | "tool_result" | "file" | "writing" | "done" | "error";
   text?: string;
   tool?: string;
   input?: Record<string, unknown>;
