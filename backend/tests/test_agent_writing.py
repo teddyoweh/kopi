@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
-from claude_agent_sdk import StreamEvent
+from claude_agent_sdk import AssistantMessage, StreamEvent, ToolUseBlock
 
 from kopi.agent.runner import Translator
 from kopi.agent.streaming import PartialWrite, decode
@@ -97,3 +97,18 @@ def test_partial_write_stops_at_the_closing_quote():
     assert partial.feed('{"file_path": "/w/drafts/a.md", "content": "hel') == "hel"
     assert partial.feed('lo", "extra": "not content"}') == "lo"
     assert partial.file_path == "/w/drafts/a.md"
+
+
+def test_nothing_streams_after_the_finished_write(tmp_path: Path):
+    """The CLI sends the complete Write before content_block_stop; a tail sent after it would replace the document in the panel."""
+    drafts = tmp_path / "drafts"
+    path = str(drafts / "x.md")
+    raw = json.dumps({"file_path": path, "content": DOC})
+    events = stream(fragments(raw, 40))
+    finished = AssistantMessage(content=[ToolUseBlock(id="t1", name="Write", input={"file_path": path, "content": DOC})], model="m")
+    t = Translator(drafts)
+    out = [e for m in [*events[:-1], finished, events[-1]] for e in t.events(m)]
+    kinds = [e.type for e in out]
+    last_call = max(i for i, k in enumerate(kinds) if k == ChatEventType.TOOL_CALL)
+    assert ChatEventType.WRITING not in kinds[last_call:]
+    assert "".join(e.text for e in out if e.type == ChatEventType.WRITING) == DOC[: len("".join(e.text for e in out if e.type == ChatEventType.WRITING))]

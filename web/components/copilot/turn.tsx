@@ -70,6 +70,7 @@ function cleanSummary(tool: string, summary: string): string {
   if (tool === "remember" && !summary.startsWith("Error:")) return "Saved to the bid memory";
   if (tool === "set_bid_stage" && !summary.startsWith("Error:")) return "Saved";
   // Read returns the file with line numbers; show it from its first line, without the "1".
+  if (tool === "Read" && /^(1\s+)?\{"notes":/.test(text)) return "The bid memory";
   if (tool === "Read") return text.replace(/^1\s+/, "").replace(/^#\s*/, "");
   return text.replace(/(^|\s)\/\S*\/drafts\//g, "$1drafts/");
 }

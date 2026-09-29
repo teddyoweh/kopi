@@ -158,6 +158,8 @@ class Translator:
         elif isinstance(message, AssistantMessage):
             for block in message.content:
                 if isinstance(block, ToolUseBlock):
+                    if block.name == "Write":
+                        self._finish_writing(block.input.get("file_path"))
                     self.pending_tools[block.id] = short_tool(block.name)
                     yield ChatEvent(type=ChatEventType.TOOL_CALL, tool=self.pending_tools[block.id], input=block.input, session_id=self.session_id)
                     self._remember_draft(block)
@@ -187,6 +189,13 @@ class Translator:
         elif kind == "content_block_stop" and index in self.writing:
             partial, unsent = self.writing.pop(index)
             yield from self._flush(partial, unsent, 0)
+
+    def _finish_writing(self, path: str | None) -> None:
+        """The finished Write carries the exact document, and the CLI sends it before the stream's
+        content_block_stop: drop what is still unsent for that file, or it would land after it."""
+        for index, (partial, _) in list(self.writing.items()):
+            if partial.file_path == path:
+                del self.writing[index]
 
     def _flush(self, partial: PartialWrite, unsent: list[str], at_least: int) -> Iterable[ChatEvent]:
         """Send what has built up once there is enough of it, and only for a draft Kopi may write."""
