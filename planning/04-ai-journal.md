@@ -112,6 +112,20 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
   breaking mid-token at 390 px, a sentence built as "no a BCA registration", sticky bars
   painted mid-page.
 
+### Caught by the person
+- **Taste (KP-29).** The Linear pass (KP-25 to KP-27) matched the reference's tokens and
+  passed every screenshot check, and Teddy still called it sloppy. The checks looked for
+  faults (overflow, wrong dates, broken text), not for how the whole thing felt. The things
+  he meant were:
+  - 8px corners;
+  - 500–600 weights;
+  - grey header strips;
+  - bordered boxes inside bordered cards;
+  - a fifth of the titles in GeBIZ's capitals.
+
+  The fix was rounder, lighter and flatter (D26), plus title-casing the capitals. The
+  title-case rule was checked against all 727 real titles before any screen used it.
+
 ### Caught by the product itself
 - **Closing days (KP-11).** On its first live run, the copilot noticed that our
   eligibility rules said "closes today" for a tender closing tomorrow at 13:00, and said
