@@ -293,3 +293,23 @@ def test_omit_rule_hides_a_private_call(redact):
     ]
     events = export_logs.convert(records, set(), redact, "x", "x").events
     assert "omitted" in events[0]["input"] and events[1]["text"].startswith("[omitted")
+
+
+def test_browser_profile_listing_is_omitted(redact):
+    records = [
+        _msg("a1", "assistant", [{"type": "tool_use", "id": "t1", "name": "mcp__browser__browser_profiles", "input": {}}]),
+        _msg("u1", "user", [{"type": "tool_result", "tool_use_id": "t1", "content": '{"signed_into": ["youtube.com", "bank.example"]}'}]),
+    ]
+    events = export_logs.convert(records, set(), redact, "x", "x").events
+    assert events[1]["text"] == "[omitted: the browser profiles and the accounts they are signed into]"
+
+
+def test_browser_steps_keep_the_result_not_the_network_log(redact):
+    answer = {"result": {"bytes": 12}, "url": "https://example.org/app", "api": [{"url": "https://x.example/collect?cid=123.456"}],
+              "failed": [], "errors": [], "note": "…", "downloaded": [{"name": "a.mp3"}]}
+    records = [
+        _msg("a1", "assistant", [{"type": "tool_use", "id": "t1", "name": "mcp__browser__browser_act", "input": {"script": "return 1"}}]),
+        _msg("u1", "user", [{"type": "tool_result", "tool_use_id": "t1", "content": json.dumps(answer)}]),
+    ]
+    kept = json.loads(export_logs.convert(records, set(), redact, "x", "x").events[1]["text"])
+    assert kept == {"result": {"bytes": 12}, "url": "https://example.org/app", "downloaded": [{"name": "a.mp3"}]}
