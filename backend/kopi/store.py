@@ -45,6 +45,8 @@ from kopi.models import (
 )
 from kopi.sources.awards import group_tenders
 
+SIMILAR_AWARDS = 25  # a tender's market is its 25 nearest past awards
+
 
 class NotFound(LookupError):
     """The requested tender, licence, session or file does not exist."""
@@ -62,7 +64,9 @@ class SearchFilters(Protocol):
 class Store(Protocol):
     def search(self, query: str, filters: SearchFilters, limit: int) -> SearchResponse: ...
     def list_tenders(self, filters: SearchFilters, limit: int, offset: int) -> list[NoticeSummary]: ...
+    def notice(self, doc_no: str) -> Notice: ...
     def tender(self, doc_no: str, profile: Profile | None) -> TenderDetail: ...
+    def market_for(self, notice: Notice) -> MarketContext: ...
     def eligibility(self, doc_no: str, profile: Profile) -> list[EligibilityCheck]: ...
     def overview(self, doc_no: str, profile: Profile) -> Overview: ...
     def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]: ...
@@ -128,7 +132,7 @@ class FixtureStore:
     def _licences(self) -> list[Licence]:
         return [Licence.model_validate(x) for x in json.loads((self.dir / "licences.json").read_text())]
 
-    def _notice(self, doc_no: str) -> Notice:
+    def notice(self, doc_no: str) -> Notice:
         try:
             return self.notices[doc_no]
         except KeyError:
@@ -153,12 +157,15 @@ class FixtureStore:
         return found[offset : offset + limit]
 
     def tender(self, doc_no: str, profile: Profile | None) -> TenderDetail:
-        notice = self._notice(doc_no)
+        notice = self.notice(doc_no)
         checks = self.eligibility(doc_no, profile) if profile else []
-        return TenderDetail(notice=notice, eligibility=checks, market=self.similar_awards(notice.title, notice.agency, 25))
+        return TenderDetail(notice=notice, eligibility=checks, market=self.market_for(notice))
+
+    def market_for(self, notice: Notice) -> MarketContext:
+        return self.similar_awards(notice.title, notice.agency, SIMILAR_AWARDS)
 
     def eligibility(self, doc_no: str, profile: Profile) -> list[EligibilityCheck]:
-        notice = self._notice(doc_no)
+        notice = self.notice(doc_no)
         open_ = notice.closing > datetime.now(UTC)
         checks = [
             EligibilityCheck(
@@ -180,10 +187,10 @@ class FixtureStore:
         return checks
 
     def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]:
-        return submission_checklist(self._notice(doc_no), self.eligibility(doc_no, profile))
+        return submission_checklist(self.notice(doc_no), self.eligibility(doc_no, profile))
 
     def overview(self, doc_no: str, profile: Profile) -> Overview:
-        notice = self._notice(doc_no)
+        notice = self.notice(doc_no)
         first_sentence = notice.description.split(". ")[0].rstrip(".")
         score = int(100 * overlap_score(tokens(" ".join(profile.capabilities)), notice.description + notice.title))
         return Overview(

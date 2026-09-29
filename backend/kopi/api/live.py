@@ -24,6 +24,7 @@ from kopi import eligibility, market
 from kopi.bundle import read_bundle
 from kopi.checklist import submission_checklist
 from kopi.config import DATA_DIR
+from kopi.embed import notice_text
 from kopi.index import AWARDS, LICENCES, NOTICES, notice_filter, query
 from kopi.models import (
     BidMemory,
@@ -56,7 +57,7 @@ from kopi.search import (
     distinct_awards,
     rerank,
 )
-from kopi.store import NotFound, SearchFilters, matches, summarise
+from kopi.store import SIMILAR_AWARDS, NotFound, SearchFilters, matches, summarise
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -137,7 +138,7 @@ class LiveStore:
         path = self.data_dir / "licences" / "gobusiness.json"
         return [Licence.model_validate(x) for x in json.loads(path.read_text())] if path.exists() else []
 
-    def _notice(self, doc_no: str) -> Notice:
+    def notice(self, doc_no: str) -> Notice:
         self._fresh()
         try:
             return self.notices[doc_no]
@@ -171,25 +172,24 @@ class LiveStore:
     # ------------------------------------------------------------ one tender
 
     def tender(self, doc_no: str, profile: Profile | None) -> TenderDetail:
-        notice = self._notice(doc_no)
+        notice = self.notice(doc_no)
         checks = self.eligibility(doc_no, profile) if profile else []
-        text = f"{notice.title}\n{notice.agency}\n{notice.description}"
-        return TenderDetail(notice=notice, eligibility=checks, market=self._market(self.embed_document(text), notice.agency, 25))
+        return TenderDetail(notice=notice, eligibility=checks, market=self.market_for(notice))
 
     def eligibility(self, doc_no: str, profile: Profile) -> list[EligibilityCheck]:
-        notice = self._notice(doc_no)
+        notice = self.notice(doc_no)
         return eligibility.check(notice, profile, registry=self.registry, catalogue=self.catalogue)
 
     def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]:
-        return submission_checklist(self._notice(doc_no), self.eligibility(doc_no, profile))
+        return submission_checklist(self.notice(doc_no), self.eligibility(doc_no, profile))
 
     def overview(self, doc_no: str, profile: Profile) -> Overview:
         """Claude's verified triage brief, or the notice's own words when Claude is unavailable."""
-        notice = self._notice(doc_no)
+        notice = self.notice(doc_no)
         if not self.claude:
             return extractive_overview(notice, profile)
         checks = self.eligibility(doc_no, profile)
-        market = self._market(self.embed_document(f"{notice.title}\n{notice.agency}\n{notice.description}"), notice.agency, 25)
+        market = self.market_for(notice)
         brief = partial(generate_overview, notice, profile, checks, market, cache_dir=self.overview_cache)
         try:
             return run_async(brief)
@@ -201,6 +201,15 @@ class LiveStore:
 
     def similar_awards(self, query_text: str, agency: str | None, k: int) -> MarketContext:
         return self._market(self.embed_query(query_text), agency, k)
+
+    def market_for(self, notice: Notice) -> MarketContext:
+        """Awards near the notice's own vector in the notices index, the one search ranks it by.
+
+        A notice the index does not hold yet is embedded here, from the same text ingest embeds.
+        """
+        stored = self.db.Index(NOTICES).get(notice.doc_no)
+        vector = np.asarray(stored["values"], dtype=np.float32) if stored else self.embed_document(notice_text(notice))
+        return self._market(vector, notice.agency, SIMILAR_AWARDS)
 
     def _market(self, vector: np.ndarray, agency: str | None, k: int) -> MarketContext:
         """Stats over every similar award; examples with repeated descriptions collapsed."""

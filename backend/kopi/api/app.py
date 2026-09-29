@@ -15,6 +15,7 @@ from fastapi.responses import Response, StreamingResponse
 from kopi.api.auth import AppOnly, Authed, check_code, issue
 from kopi.api.limits import LIMITS, RateLimiter, limited
 from kopi.config import Settings
+from kopi.insights import MarketBands
 from kopi.insights import insights as tender_insights
 from kopi.models import (
     AuthRequest,
@@ -89,6 +90,7 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
     app = FastAPI(title="Kopi API", version="0.1.0", description="A copilot for Singapore government tenders.")
     app.state.settings = settings
     app.state.store = store or default_store(settings)
+    app.state.bands = MarketBands(app.state.store)
     app.state.limiters = {kind: RateLimiter(*rule) for kind, rule in LIMITS.items()}
     app.add_middleware(
         CORSMiddleware,
@@ -134,7 +136,7 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
 
     @app.post("/search/insights", response_model=list[TenderInsight], dependencies=[Authed, Read])
     def insights(request: Request, body: InsightsRequest) -> list[TenderInsight]:
-        return tender_insights(db(request), body.doc_nos, body.profile, body.query)
+        return tender_insights(db(request), request.app.state.bands, body.doc_nos, body.profile, body.query)
 
     @app.get("/tenders", response_model=list[NoticeSummary], dependencies=[Authed, Read])
     def tenders(request: Request, limit: int = Query(50, le=200), offset: int = Query(0, ge=0),
