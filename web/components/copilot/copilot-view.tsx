@@ -15,6 +15,7 @@ import type { SessionFile } from "@/lib/api";
 import { EMPTY, examples, problemOf, reducer, restored, type Conversation, type Example } from "@/lib/copilot";
 import { fileSize } from "@/lib/format";
 import { draftTender, recordDraft, useKnownTitle } from "@/lib/submissions";
+import { displayTitle } from "@/lib/title-case";
 import { useAsync } from "@/lib/use-async";
 import { useUrlParams } from "@/lib/use-url-query";
 import { cn } from "@/lib/utils";
@@ -71,10 +72,10 @@ function ContextChip({ doc, onClear }: { doc: string | null; onClear: () => void
   const api = useApi();
   const known = useKnownTitle(doc ?? "");
   const state = useAsync(async () => (api && doc && !known ? (await api.tender(doc)).notice.title : null), [api, doc, known]);
-  const chip = "flex h-7 max-w-full min-w-0 items-center gap-1.5 rounded-md border bg-card text-[13px]";
+  const chip = "flex h-8 max-w-full min-w-0 items-center gap-1.5 rounded-full border bg-card text-[13px]";
   if (!doc) {
     return (
-      <span className={cn(chip, "px-2 text-muted-foreground")} title="Kopi searches every open GeBIZ tender">
+      <span className={cn(chip, "px-3 text-muted-foreground")} title="Kopi searches every open GeBIZ tender">
         <Layers className="size-3.5 shrink-0" aria-hidden />
         All open tenders
       </span>
@@ -82,18 +83,18 @@ function ContextChip({ doc, onClear }: { doc: string | null; onClear: () => void
   }
   const title = known ?? state.data;
   return (
-    <span className={cn(chip, "pr-0.5 pl-2")}>
+    <span className={cn(chip, "pr-1 pl-3")}>
       <FileText className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
       <Link href={`/tender/?doc=${doc}`} className="flex min-w-0 items-center gap-1.5 hover:underline" title={title ?? doc}>
         <span className="sr-only">About </span>
-        <span className="shrink-0 font-medium tabular-nums">{doc}</span>
-        {title && <span className="hidden max-w-[16rem] min-w-0 truncate text-muted-foreground sm:inline">{title}</span>}
+        <span className="shrink-0 font-book tabular-nums">{doc}</span>
+        {title && <span className="hidden max-w-[16rem] min-w-0 truncate text-muted-foreground sm:inline">{displayTitle(title)}</span>}
       </Link>
       <button
         type="button"
         onClick={onClear}
         aria-label="Remove the tender from this conversation"
-        className="grid size-6 shrink-0 place-items-center rounded-[5px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className="grid size-6 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       >
         <X className="size-3.5" aria-hidden />
       </button>
@@ -117,11 +118,13 @@ function Examples({ doc, onAsk }: { doc: string | null; onAsk: (text: string) =>
                 type="button"
                 onClick={() => onAsk(example.ask)}
                 title={example.ask}
-                className="flex w-full items-start gap-3 rounded-lg border bg-card px-3.5 py-3 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:outline-none sm:flex-col sm:gap-9 sm:p-4"
+                className="group flex w-full items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:outline-none sm:flex-col sm:gap-8 sm:p-4"
               >
-                <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground sm:mt-0" aria-hidden />
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-muted transition-colors group-hover:bg-kopi-soft">
+                  <Icon className="size-3.5 text-muted-foreground transition-colors group-hover:text-kopi" aria-hidden />
+                </span>
                 <span className="flex min-w-0 flex-col gap-1">
-                  <span className="text-[14px] font-medium">{example.title}</span>
+                  <span className="text-[14px] font-book">{example.title}</span>
                   <span className="text-[13px] leading-snug text-muted-foreground">{example.description}</span>
                 </span>
               </button>
@@ -178,7 +181,7 @@ function Composer({
         // The whole card is the field, as in Linear: a click on its padding puts the cursor in the box.
         if (e.target === e.currentTarget) box.current?.focus();
       }}
-      className="flex flex-col rounded-xl border bg-card shadow-float transition-colors focus-within:border-foreground/20"
+      className="flex flex-col rounded-3xl border bg-card shadow-float transition-colors focus-within:border-foreground/15"
     >
       <label htmlFor="copilot-message" className="sr-only">
         Message Kopi
@@ -200,7 +203,7 @@ function Composer({
         }}
         placeholder={doc ? "Ask about this tender" : "Ask Kopi anything about a bid"}
         className={cn(
-          "max-h-[220px] w-full resize-none bg-transparent px-4 pt-3 pb-1 text-[15px] leading-6 outline-none placeholder:text-muted-foreground",
+          "max-h-[220px] w-full resize-none bg-transparent px-5 pt-4 pb-1 text-[15px] leading-6 outline-none placeholder:text-muted-foreground/80",
           roomy ? "min-h-[3.5rem]" : "min-h-10",
         )}
       />
@@ -239,8 +242,8 @@ type DraftRow = { name: string; title?: string; size?: number; saving: boolean }
 
 function DraftsPanel({ rows, sessionId, onOpen }: { rows: DraftRow[]; sessionId: string | null; onOpen: (row: DraftRow) => void }) {
   return (
-    <section aria-labelledby="drafts" className="flex flex-col rounded-lg border bg-card">
-      <div className="flex flex-col gap-0.5 border-b px-3.5 py-3">
+    <section aria-labelledby="drafts" className="flex flex-col rounded-xl border bg-card">
+      <div className="flex flex-col gap-0.5 border-b border-border/70 px-4 py-3.5">
         <h2 id="drafts" className="flex items-center gap-2 text-[13px] font-medium">
           Drafts
           {rows.length > 0 && <span className="text-muted-foreground tabular-nums">{rows.length}</span>}
@@ -248,22 +251,22 @@ function DraftsPanel({ rows, sessionId, onOpen }: { rows: DraftRow[]; sessionId:
         <p className="text-xs leading-relaxed text-muted-foreground">Documents Kopi writes in this conversation, as markdown.</p>
       </div>
       {rows.length === 0 ? (
-        <p className="px-3.5 py-3 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
           None yet. Ask for clarification questions, a compliance matrix or a submission checklist.
         </p>
       ) : (
-        <ul className="flex flex-col p-1">
+        <ul className="flex flex-col p-1.5">
           {rows.map((row) => (
-            <li key={row.name} className="flex items-center gap-0.5 rounded-md pr-1 transition-colors hover:bg-muted/60">
+            <li key={row.name} className="flex items-center gap-0.5 rounded-lg pr-1 transition-colors hover:bg-muted/70">
               <button
                 type="button"
                 onClick={() => onOpen(row)}
                 disabled={row.saving || !sessionId}
-                className="flex min-w-0 flex-1 items-start gap-2.5 rounded-md px-2.5 py-2 text-left disabled:cursor-default"
+                className="flex min-w-0 flex-1 items-start gap-2.5 rounded-lg px-2.5 py-2 text-left disabled:cursor-default"
               >
                 <FileText className="mt-0.5 size-3.5 shrink-0 text-kopi" aria-hidden />
                 <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="line-clamp-2 text-[13px] font-medium">{row.title || row.name}</span>
+                  <span className="line-clamp-2 text-[13px] font-book">{row.title || row.name}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {row.saving ? "Saving when Kopi finishes" : [row.name, row.size !== undefined && fileSize(row.size)].filter(Boolean).join(" · ")}
                   </span>
@@ -509,7 +512,7 @@ export function CopilotView() {
       </div>
 
       <Sheet open={draftsOpen} onOpenChange={setDraftsOpen}>
-        <SheetContent side="right" className="w-full gap-3 border-l p-4 pt-12 data-[side=right]:w-full data-[side=right]:sm:max-w-sm">
+        <SheetContent side="right" className="gap-3 p-4 pt-12 data-[side=right]:w-[calc(100%-1rem)] data-[side=right]:sm:max-w-sm">
           <SheetTitle className="sr-only">Drafts</SheetTitle>
           <DraftsPanel
             rows={rows}

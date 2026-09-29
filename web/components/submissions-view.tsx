@@ -16,6 +16,7 @@ import { tenderAsks } from "@/lib/copilot";
 import { dateTime, daysUntil, shortDate, timeLeft } from "@/lib/format";
 import { useTenderDrafts, useTicks, useTracked, type Tracked } from "@/lib/submissions";
 import { useAsync } from "@/lib/use-async";
+import { displayTitle } from "@/lib/title-case";
 import { cn } from "@/lib/utils";
 
 const SOURCE: Record<ChecklistItem["source"], string> = {
@@ -56,7 +57,7 @@ function Countdown({ closing, now, className }: { closing: string; now: number; 
   const urgent = !left.closed && left.hours < 48;
   return (
     <div className={cn("flex flex-col gap-0.5", className)}>
-      <p className={cn("text-[13px] font-medium tabular-nums", left.closed ? "text-muted-foreground" : urgent && "text-unmet")}>
+      <p className={cn("text-[13px] font-book tabular-nums", left.closed ? "text-muted-foreground" : urgent && "text-unmet")}>
         {left.closed ? "Closed" : `${[left.lead, left.rest].filter(Boolean).join(" ")} left`}
       </p>
       <p className="text-xs text-muted-foreground tabular-nums">
@@ -103,26 +104,26 @@ function ChecklistRow({
         <span
           aria-hidden
           className={cn(
-            "mt-0.5 grid size-4 shrink-0 place-items-center rounded-[4px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-kopi/40",
+            "mt-0.5 grid size-4 shrink-0 place-items-center rounded-[5px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-kopi/40",
             ticked ? "border-kopi bg-kopi text-white" : "border-foreground/25 bg-card",
           )}
         >
           {ticked && <Check className="size-3" strokeWidth={3} />}
         </span>
         <span className="flex min-w-0 flex-1 basis-[calc(100%-1.75rem)] flex-col gap-0.5 sm:basis-auto">
-          <span className={cn("text-[13px] font-medium break-words", ticked && "text-muted-foreground")}>{item.label}</span>
+          <span className={cn("text-[13px] font-book break-words", ticked && "text-muted-foreground line-through decoration-foreground/20")}>{item.label}</span>
           {detail && <span className="text-[13px] break-words text-muted-foreground">{detail}</span>}
         </span>
         {/* Where it comes from and when it is due: under the item on a phone, on its right otherwise. */}
         <span className="flex flex-wrap gap-x-3 gap-y-0.5 pt-1 pl-7 text-xs text-muted-foreground sm:shrink-0 sm:flex-col sm:items-end sm:pt-0.5 sm:pl-0 sm:text-right">
           <span>{SOURCE[item.source]}</span>
-          {item.due && <span className={cn(overdue && !ticked && "font-medium text-unmet")}>{dueLabel(item.due, now, item.source === "submission")}</span>}
+          {item.due && <span className={cn(overdue && !ticked && "font-book text-unmet")}>{dueLabel(item.due, now, item.source === "submission")}</span>}
         </span>
       </label>
       {item.source === "drafting" && !ticked && (
         <Link
           href={copilotHref(tender.doc_no, tenderAsks(tender.doc_no, tender.agency, profile).clarification)}
-          className="flex shrink-0 items-center gap-1 pl-7 text-[13px] font-medium text-kopi hover:underline sm:pl-0"
+          className="flex shrink-0 items-center gap-1 pl-7 text-[13px] font-book text-kopi hover:underline sm:pl-0"
         >
           Draft with Kopi <ArrowRight className="size-3.5" aria-hidden />
         </Link>
@@ -133,10 +134,10 @@ function ChecklistRow({
 
 function ChecklistSkeleton() {
   return (
-    <div className="flex flex-col divide-y rounded-lg border bg-card" aria-busy="true" aria-label="Loading the checklist">
+    <div className="flex flex-col divide-y divide-border/70 rounded-xl border bg-card" aria-busy="true" aria-label="Loading the checklist">
       {Array.from({ length: 4 }, (_, i) => (
         <div key={i} className="flex items-start gap-3 px-3 py-3">
-          <Skeleton className="size-4 rounded-[4px]" />
+          <Skeleton className="size-4 rounded-[5px]" />
           <div className="flex flex-1 flex-col gap-1.5">
             <Skeleton className="h-3.5 w-2/5" />
             <Skeleton className="h-3 w-3/5" />
@@ -155,12 +156,12 @@ function TenderDrafts({ doc, onOpen }: { doc: string; onOpen: (draft: DraftRefLi
       {drafts.length === 0 ? (
         <p className="text-[13px] text-muted-foreground">
           None yet. Drafts the copilot writes for this tender are listed here.{" "}
-          <Link href={copilotHref(doc)} className="font-medium text-kopi hover:underline">
+          <Link href={copilotHref(doc)} className="font-book text-kopi hover:underline">
             Ask Kopi
           </Link>
         </p>
       ) : (
-        <ul className="flex flex-col divide-y rounded-lg border bg-card">
+        <ul className="flex flex-col divide-y divide-border/70 overflow-hidden rounded-xl border bg-card">
           {[...drafts].reverse().map((d) => (
             <li key={`${d.session_id}/${d.file}`} className="flex items-center gap-1 pr-1.5 transition-colors hover:bg-muted/30">
               <button
@@ -170,7 +171,7 @@ function TenderDrafts({ doc, onOpen }: { doc: string; onOpen: (draft: DraftRefLi
               >
                 <FileText className="size-3.5 shrink-0 text-kopi" aria-hidden />
                 <span className="flex min-w-0 flex-col">
-                  <span className="truncate text-[13px] font-medium">{draftName(d.file, doc)}</span>
+                  <span className="truncate text-[13px] font-book">{draftName(d.file, doc)}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {d.file} · written {shortDate(d.at)}
                   </span>
@@ -222,18 +223,18 @@ function TenderRow({
           aria-expanded={open}
           aria-controls={panel}
           aria-label={open ? "Hide checklist" : "Show checklist"}
-          className="grid size-6 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors outline-none after:absolute after:inset-0 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="grid size-6 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors outline-none after:absolute after:inset-0 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           <ChevronRight className={cn("size-4 transition-transform", open && "rotate-90")} aria-hidden />
         </button>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <Link
             href={`/tender/?doc=${item.doc_no}`}
-            className="relative z-10 line-clamp-2 w-fit text-[14px] leading-snug font-medium break-words hover:underline sm:line-clamp-1"
+            className="relative z-10 line-clamp-2 w-fit text-[14px] leading-snug font-book tracking-[-0.005em] break-words hover:underline sm:line-clamp-1"
           >
-            {item.title}
+            {displayTitle(item.title)}
           </Link>
-          <p className="truncate text-[13px] text-muted-foreground">
+          <p className="truncate text-[12.5px] text-muted-foreground">
             {item.agency} · <span className="tabular-nums">{item.doc_no}</span>
           </p>
           <div className="flex flex-col gap-1 pt-1.5 sm:hidden">
@@ -250,13 +251,13 @@ function TenderRow({
       </div>
 
       {open && (
-        <div id={panel} className="flex flex-col gap-6 border-t bg-background px-4 pt-4 pb-5 sm:pr-5 sm:pl-12">
+        <div id={panel} className="flex flex-col gap-6 border-t border-border/70 bg-background/60 px-4 pt-4 pb-5 sm:pr-5 sm:pl-12">
           <div className="flex flex-col gap-2">
             <h3 className="text-[13px] font-medium">Checklist for {profile.name}</h3>
             {checklist.status === "loading" && <ChecklistSkeleton />}
             {checklist.status === "error" && <ErrorState error={checklist.error} onRetry={() => setAttempt((n) => n + 1)} />}
             {checklist.status === "ready" && (
-              <ul className="flex flex-col divide-y rounded-lg border bg-card">
+              <ul className="flex flex-col divide-y divide-border/70 overflow-hidden rounded-xl border bg-card">
                 {items.map((i) => (
                   <ChecklistRow key={i.id} item={i} ticked={ticked.has(i.id)} onToggle={() => toggle(i.id)} now={now} tender={item} />
                 ))}
@@ -286,12 +287,12 @@ function TenderRow({
 /** A group of rows under a Linear list header: its name and count. */
 function Group({ id, label, count, children }: { id: string; label: string; count: number; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="overflow-hidden rounded-lg border bg-card">
-      <h2 id={id} className="flex h-9 items-center gap-2 border-b bg-muted/50 px-4 text-[13px] font-medium">
+    <section aria-labelledby={id} className="overflow-hidden rounded-xl border bg-card">
+      <h2 id={id} className="flex h-12 items-center gap-2 px-5 text-[14px] font-medium tracking-[-0.01em]">
         {label}
         <span className="font-normal text-muted-foreground tabular-nums">{count}</span>
       </h2>
-      <ul className="flex flex-col divide-y">{children}</ul>
+      <ul className="flex flex-col divide-y divide-border/70 border-t border-border/70">{children}</ul>
     </section>
   );
 }

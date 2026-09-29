@@ -95,15 +95,15 @@ function Examples({ onPick }: { onPick: (query: string) => void }) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[13px] text-muted-foreground">Describe the work in your own words; Kopi searches every open notice by meaning. A few to start with:</p>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-wrap gap-2">
         {EXAMPLES.map((example) => (
           <button
             key={example}
             type="button"
             onClick={() => onPick(example)}
-            className="group flex items-center gap-3 rounded-lg border bg-card px-3.5 py-3 text-left text-[13.5px] transition-colors hover:bg-muted/60"
+            className="group flex h-9 items-center gap-2 rounded-full border bg-card pr-4 pl-3 text-left text-[13px] transition-colors hover:border-kopi/30 hover:bg-kopi-soft/60"
           >
-            <Search className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-kopi" aria-hidden />
+            <Search className="size-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-kopi" aria-hidden />
             {example}
           </button>
         ))}
@@ -124,7 +124,7 @@ function Results({ rows, summary }: { rows: Row[]; summary: string }) {
         <button
           type="button"
           onClick={() => setAll(true)}
-          className="w-full border-t px-4 py-2.5 text-left text-[13px] font-medium text-kopi transition-colors hover:bg-muted/60"
+          className="mt-1 h-9 w-full rounded-lg text-center text-[13px] font-book text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           Show all {rows.length}
         </button>
@@ -170,7 +170,7 @@ export function SearchView() {
     <>
       <PageHeader title="Search" description="Every open GeBIZ opportunity, searched by meaning rather than exact words." />
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3.5">
           <QueryInput
             value={box.text}
             onChange={box.setText}
@@ -195,7 +195,7 @@ export function SearchView() {
               <button
                 type="button"
                 onClick={() => update({ category: null, method: null, closing: null, agency: null })}
-                className="h-7 rounded-md px-2.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="h-8 rounded-full px-3 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 Clear filters
               </button>

@@ -47,14 +47,17 @@ function allOpen(api: KopiApi): Promise<NoticeSummary[]> {
   return promise;
 }
 
-function Stat({ label, value, hint }: { label: string; value?: number; hint: string }) {
+function Stat({ label, short, value, hint }: { label: string; short: string; value?: number; hint: string }) {
   return (
-    <div className="flex flex-col gap-1.5 rounded-lg border bg-card px-3.5 py-3 sm:px-4">
-      <p className="text-[12.5px] text-muted-foreground">{label}</p>
+    <div className="flex flex-col gap-2 px-4 py-4 sm:px-6 sm:py-5">
+      <p className="text-[12.5px] text-muted-foreground">
+        <span className="sm:hidden">{short}</span>
+        <span className="hidden sm:inline">{label}</span>
+      </p>
       {value === undefined ? (
-        <Skeleton className="h-6 w-12" />
+        <Skeleton className="h-7 w-14 rounded-full" />
       ) : (
-        <p className="text-[22px] leading-none font-semibold tracking-[-0.02em] tabular-nums sm:text-2xl">{value.toLocaleString("en-SG")}</p>
+        <p className="text-[24px] leading-none font-medium tracking-[-0.03em] tabular-nums sm:text-[30px]">{value.toLocaleString("en-SG")}</p>
       )}
       <p className="hidden text-[12.5px] text-muted-foreground sm:block">{hint}</p>
     </div>
@@ -66,10 +69,10 @@ function Stats({ api }: { api: KopiApi }) {
   if (state.status === "error") return <ErrorState error={state.error} />;
   const open = state.data;
   return (
-    <div className="grid grid-cols-3 gap-2 sm:gap-3">
-      <Stat label="Open opportunities" value={open?.length} hint="Accepting responses on GeBIZ" />
-      <Stat label="Published today" value={open?.filter((n) => isToday(n.published)).length} hint="New since midnight, Singapore time" />
-      <Stat label="Closing in 7 days" value={open?.filter((n) => daysUntil(n.closing) <= 7).length} hint="Decide on these first" />
+    <div className="grid grid-cols-3 divide-x divide-border/80 rounded-xl border bg-card">
+      <Stat label="Open opportunities" short="Open" value={open?.length} hint="Accepting responses on GeBIZ" />
+      <Stat label="Published today" short="New today" value={open?.filter((n) => isToday(n.published)).length} hint="New since midnight, Singapore time" />
+      <Stat label="Closing in 7 days" short="Within 7 days" value={open?.filter((n) => daysUntil(n.closing) <= 7).length} hint="Decide on these first" />
     </div>
   );
 }
@@ -82,14 +85,17 @@ function BestMatches({ api }: { api: KopiApi }) {
       id="best-matches"
       title={`Best matches for ${profile.name}`}
       action={
-        <Link href="/search" className="flex items-center gap-1 text-[13px] font-medium text-kopi hover:underline">
+        <Link
+          href="/search"
+          className="-mr-2 flex h-7 items-center gap-1 rounded-full px-2.5 text-[12.5px] font-book text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
           Search all <ArrowRight className="size-3.5" aria-hidden />
         </Link>
       }
     >
       {state.status === "loading" && <RowsSkeleton rows={6} />}
       {state.status === "error" && (
-        <div className="p-3">
+        <div className="p-1">
           <ErrorState error={state.error} />
         </div>
       )}
@@ -97,7 +103,7 @@ function BestMatches({ api }: { api: KopiApi }) {
         (state.data.hits.length ? (
           state.data.hits.map((hit) => <TenderRow key={hit.notice.doc_no} notice={hit.notice} />)
         ) : (
-          <p className="px-4 py-3.5 text-[13px] text-muted-foreground">Nothing open matches this profile yet. Add capabilities on the Profile page.</p>
+          <p className="px-3 py-3 text-[13px] text-muted-foreground">Nothing open matches this profile yet. Add capabilities on the Profile page.</p>
         ))}
     </ListCard>
   );
@@ -109,7 +115,7 @@ function Newest({ api }: { api: KopiApi }) {
     <ListCard id="newest" title="Newest on GeBIZ">
       {state.status === "loading" && <RowsSkeleton rows={8} />}
       {state.status === "error" && (
-        <div className="p-3">
+        <div className="p-1">
           <ErrorState error={state.error} />
         </div>
       )}
@@ -125,9 +131,9 @@ export function OverviewPage() {
     <>
       <PageHeader title="Overview" description={`${longToday()}. What is open on GeBIZ, read for ${profile.name}.`} />
       {api && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           <Stats api={api} />
-          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5">
+          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-5">
             <div className="lg:col-span-3">
               <BestMatches api={api} />
             </div>

@@ -197,3 +197,24 @@ Kopi as a work tool, and Linear's density, hairlines and fixed frame read as one
 against separator lines is replaced by Linear's hairlines on panels, cards and rows. There
 are still no gradients, and the only shadow is a barely-there one on floating surfaces.
 
+
+## D26 — Rounder, thinner, calmer (KP-29)
+**Picked:** D25's Linear frame, made rounder and lighter:
+- radii: controls 10px, cards 16px, the panel 18px, the composer 24px; buttons, chips,
+  badges, filter chips and the search field are pills;
+- type: list titles at weight 450 (Inter is variable), headings at 500, nothing heavier
+  than 500 except search highlights; Inter's optical-size axis sets large headings in its
+  display cut; lucide icons at 1.75px instead of 2px;
+- lines: hairlines lightened to #ebebed; no grey header strips; clickable lists use inset
+  dividers that fade on hover, static lists use faint full-width ones;
+- no boxes inside boxes: the properties rail, verdict tiles, market figures and notes are
+  soft grey surfaces without borders; the overview's three stats are one card;
+- GeBIZ titles written in capitals (162 of 727 open) are shown in title case by
+  `web/lib/title-case.ts`, which keeps acronyms, reference numbers and names.
+
+**Rejected:** sentence case for the capitals. It would lower every name in a title
+("Valour Primary School", "Pasir Ris Park").
+**Why:** Teddy, 29 Sep: "make the ui rounder, rn its very sloppy, make thin and clean modern
+ui". The loudest mess on screen was a fifth of the titles shouting in capitals next to
+nested bordered boxes, grey header strips and 600-weight text. The original title is still
+one click away on GeBIZ.

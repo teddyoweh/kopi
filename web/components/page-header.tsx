@@ -47,7 +47,7 @@ export function PageHeader({
     <>
       {panel.title && createPortal(name, panel.title)}
       {panel.actions && actions && createPortal(actions, panel.actions)}
-      {description && <p className="max-w-2xl pb-7 text-[14px] leading-relaxed text-muted-foreground">{description}</p>}
+      {description && <p className="max-w-2xl pb-7 text-[14px] leading-relaxed text-pretty text-muted-foreground">{description}</p>}
     </>
   );
 }
@@ -66,7 +66,7 @@ export function SectionHeader({
   return (
     <div className="flex items-end justify-between gap-4 pb-3">
       <div className="flex flex-col gap-0.5">
-        <h2 id={id} className="text-[14px] font-semibold tracking-[-0.01em]">
+        <h2 id={id} className="text-[15px] font-medium tracking-[-0.01em]">
           {title}
         </h2>
         {description && <p className="text-[13px] text-muted-foreground">{description}</p>}

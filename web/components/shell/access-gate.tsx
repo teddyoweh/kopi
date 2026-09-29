@@ -38,14 +38,14 @@ function SignIn() {
 
   return (
     <Centered>
-      <form onSubmit={submit} className="flex flex-col gap-6 rounded-xl border bg-card p-8 shadow-float">
+      <form onSubmit={submit} className="flex flex-col gap-6 rounded-3xl border bg-card p-8 shadow-float">
         <Wordmark />
         <div className="flex flex-col gap-1.5">
-          <h1 className="text-lg font-semibold tracking-[-0.01em]">Enter your access code</h1>
+          <h1 className="text-[20px] font-medium tracking-[-0.02em]">Enter your access code</h1>
           <p className="text-sm text-muted-foreground">Kopi is in private preview. The code came with your invitation.</p>
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="access-code" className="text-sm font-medium">
+          <label htmlFor="access-code" className="text-[13px] font-book">
             Access code
           </label>
           <Input
@@ -54,7 +54,7 @@ function SignIn() {
             onChange={(e) => setCode(e.target.value)}
             autoComplete="off"
             autoFocus
-            className="h-10"
+            className="h-11 rounded-xl px-3.5"
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? "access-code-error" : undefined}
           />
@@ -64,7 +64,7 @@ function SignIn() {
             </p>
           )}
         </div>
-        <Button type="submit" size="lg" className="h-10" disabled={!code.trim() || busy}>
+        <Button type="submit" size="lg" className="h-10 w-full" disabled={!code.trim() || busy}>
           {busy ? <Loader2 className="animate-spin" /> : <ArrowRight />}
           Continue
         </Button>
@@ -81,9 +81,9 @@ export function AccessGate({ children }: { children: React.ReactNode }) {
   if (session === "unreachable")
     return (
       <Centered>
-        <div className="flex flex-col gap-4 rounded-xl border bg-card p-8 shadow-float">
+        <div className="flex flex-col gap-4 rounded-3xl border bg-card p-8 shadow-float">
           <Wordmark />
-          <h1 className="text-lg font-semibold tracking-[-0.01em]">Kopi is not reachable</h1>
+          <h1 className="text-[20px] font-medium tracking-[-0.02em]">Kopi is not reachable</h1>
           <p className="text-sm text-muted-foreground">The API did not answer. It may be starting up; this takes a few seconds.</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Try again

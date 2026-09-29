@@ -56,7 +56,7 @@ function Segmented<T extends string | null>({
   onChange: (value: T) => void;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-md border bg-muted/60 p-0.5">
+    <div role="radiogroup" aria-label={label} className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-full bg-muted p-1">
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -67,8 +67,8 @@ function Segmented<T extends string | null>({
             aria-checked={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              "h-7 rounded-[5px] px-2.5 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
-              selected ? "bg-card font-medium text-foreground ring-1 ring-border" : "text-muted-foreground hover:text-foreground",
+              "h-7 rounded-full px-3 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
+              selected ? "bg-card font-book text-foreground ring-1 ring-black/[0.06]" : "text-muted-foreground hover:text-foreground",
             )}
           >
             {option.label}
@@ -84,11 +84,11 @@ function Field({ label, hint, htmlFor, children }: { label: string; hint?: React
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5">
         {htmlFor ? (
-          <label htmlFor={htmlFor} className="text-[13px] font-medium">
+          <label htmlFor={htmlFor} className="text-[13px] font-book">
             {label}
           </label>
         ) : (
-          <p className="text-[13px] font-medium">{label}</p>
+          <p className="text-[13px] font-book">{label}</p>
         )}
         {hint && <p className="text-[13px] leading-relaxed text-muted-foreground">{hint}</p>}
       </div>
@@ -99,7 +99,7 @@ function Field({ label, hint, htmlFor, children }: { label: string; hint?: React
 
 /** The shared Input's look, for the textareas beside it. */
 const areaClass =
-  "w-full min-w-0 rounded-md border border-input bg-card px-2.5 text-base leading-5 transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/25 aria-invalid:border-destructive md:text-sm";
+  "w-full min-w-0 rounded-md border border-input bg-card px-3 text-base leading-5 transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-kopi/50 focus-visible:ring-3 focus-visible:ring-kopi/12 aria-invalid:border-destructive md:text-sm";
 
 function RemoveButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -128,7 +128,7 @@ function TextList({ values, onChange, placeholder, addLabel, noun }: { values: s
             aria-label={`${noun} ${i + 1}`}
             placeholder={placeholder}
             onChange={(e) => onChange(values.map((v, j) => (j === i ? e.target.value.replace(/\n/g, " ") : v)))}
-            className={cn(areaClass, "min-h-8 resize-none py-[5px] [field-sizing:content]")}
+            className={cn(areaClass, "min-h-9 resize-none py-[7px] [field-sizing:content]")}
           />
           <RemoveButton label={`Remove ${noun.toLowerCase()} ${i + 1}`} onClick={() => onChange(values.filter((_, j) => j !== i))} />
         </div>
@@ -227,9 +227,9 @@ function Known({
 
 function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <section className="grid grid-cols-1 gap-5 rounded-lg border bg-card p-5 sm:p-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
+    <section className="grid grid-cols-1 gap-5 rounded-xl border bg-card p-5 sm:p-7 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
       <div className="flex flex-col gap-1">
-        <h2 className="text-[14px] font-semibold tracking-[-0.01em]">{title}</h2>
+        <h2 className="text-[15px] font-medium tracking-[-0.01em]">{title}</h2>
         <p className="text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       </div>
       <div className="flex min-w-0 flex-col gap-6">{children}</div>
@@ -326,7 +326,7 @@ function ProfileForm({
         {label}
       </label>
       <div className="relative">
-        <span className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-sm text-muted-foreground">S$</span>
+        <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">S$</span>
         <Input
           id={`band-${key}`}
           inputMode="numeric"
@@ -336,7 +336,7 @@ function ProfileForm({
             const digits = e.target.value.replace(/[^\d]/g, "");
             setField("value_band_sgd", { ...band, [key]: digits ? Number(digits) : null });
           }}
-          className="pl-8 tabular-nums"
+          className="pl-9 tabular-nums"
         />
       </div>
     </div>
@@ -452,16 +452,16 @@ function ProfileForm({
 
       <div
         className={cn(
-          "flex flex-col gap-3 rounded-lg border bg-card px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between",
+          "flex flex-col gap-3 rounded-2xl border bg-card px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:rounded-full sm:py-2 sm:pr-2 sm:pl-5",
           // It floats at the foot of the panel only while there is something to save.
           (dirty || confirmReset) && "sticky bottom-4 z-10 shadow-float",
         )}
       >
         <div className="flex min-h-8 items-center gap-2 text-[13px] text-muted-foreground" aria-live="polite">
           {dirty ? (
-            <span className="font-medium text-foreground">Unsaved changes</span>
+            <span className="font-book text-foreground">Unsaved changes</span>
           ) : justSaved ? (
-            <span className="flex items-center gap-1.5 font-medium text-met">
+            <span className="flex items-center gap-1.5 font-book text-met">
               <Check className="size-4" aria-hidden /> Saved in this browser
             </span>
           ) : fromSeed ? (
@@ -526,13 +526,13 @@ function BiddingAs() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={`Bidding as ${profile.name}. Change the active profile`}
-        className="inline-flex h-7 max-w-[13rem] items-center gap-1.5 rounded-md border bg-card px-2.5 text-[13px] transition-colors outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/30 sm:max-w-xs"
+        className="inline-flex h-8 max-w-[13rem] items-center gap-1.5 rounded-full border bg-card pr-2.5 pl-3.5 text-[13px] transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/30 sm:max-w-xs"
       >
         <span className="hidden shrink-0 text-muted-foreground sm:inline">Bidding as</span>
-        <span className="truncate font-medium">{profile.name}</span>
+        <span className="truncate font-book">{profile.name}</span>
         <ChevronDown className="size-3.5 shrink-0 opacity-60" aria-hidden />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 p-1">
+      <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Bidding as</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={profile.id} onValueChange={(id: string) => setProfile(id)}>

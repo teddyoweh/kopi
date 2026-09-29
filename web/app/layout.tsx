@@ -7,7 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
 
-const sans = Inter({ variable: "--font-sans", subsets: ["latin"] });
+// The optical-size axis sets large type in Inter Display: tighter and finer at heading sizes.
+const sans = Inter({ variable: "--font-sans", subsets: ["latin"], axes: ["opsz"] });
 const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {

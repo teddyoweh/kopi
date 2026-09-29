@@ -96,7 +96,7 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
   const text = state.data ?? undefined;
   return (
     <>
-      <div className="flex flex-col gap-3 border-b px-5 pt-4 pb-3.5 pr-12 sm:px-8">
+      <div className="flex flex-col gap-3 border-b border-border/70 px-5 pt-4 pb-3.5 pr-12 sm:px-8">
         <div className="flex min-w-0 items-center gap-2 text-[13px] text-muted-foreground">
           <FileText className="size-3.5 shrink-0 text-kopi" aria-hidden />
           <span className="truncate">{draft.file}</span>
@@ -116,8 +116,8 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
           </div>
         )}
         {state.status === "error" && (
-          <div className="rounded-lg border bg-card px-4 py-3.5 text-[13px]">
-            <p className="font-medium">This draft can&apos;t be opened.</p>
+          <div className="rounded-xl bg-muted/70 px-4 py-3.5 text-[13px]">
+            <p className="font-book">This draft can&apos;t be opened.</p>
             <p className="text-muted-foreground">
               {state.error instanceof ApiError && state.error.status === 404
                 ? "Kopi no longer has it; drafts are kept with their conversation for a limited time."
@@ -135,7 +135,7 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
 export function DraftPreview({ draft, onClose }: { draft: DraftRefLike | null; onClose: () => void }) {
   return (
     <Sheet open={draft !== null} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-full gap-0 border-l p-0 shadow-float data-[side=right]:w-full data-[side=right]:sm:max-w-2xl">
+      <SheetContent side="right" className="gap-0 overflow-hidden p-0 shadow-float data-[side=right]:w-[calc(100%-1rem)] data-[side=right]:sm:max-w-2xl">
         {draft && <PreviewBody key={`${draft.session_id}/${draft.file}`} draft={draft} />}
       </SheetContent>
     </Sheet>

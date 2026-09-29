@@ -43,12 +43,12 @@ export function FilterChip({
         disabled={disabled}
         aria-label={selected ? `${label}: ${selected}. Change` : `Filter by ${label.toLowerCase()}`}
         className={cn(
-          "inline-flex h-7 max-w-full items-center gap-1.5 rounded-md border px-2.5 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-50",
-          selected ? "border-kopi/30 bg-kopi-soft font-medium text-kopi" : "bg-card text-foreground hover:bg-accent",
+          "inline-flex h-8 max-w-full items-center gap-1.5 rounded-full border pr-2.5 pl-3.5 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-50",
+          selected ? "border-kopi/25 bg-kopi-soft font-book text-kopi" : "bg-card text-foreground/85 hover:bg-muted",
         )}
       >
         <span className="truncate">{selected ?? label}</span>
-        <ChevronDown className="size-3.5 shrink-0 opacity-60" aria-hidden />
+        <ChevronDown className="size-3.5 shrink-0 opacity-50" aria-hidden />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="max-h-80 w-auto max-w-[calc(100vw-2rem)] min-w-56 p-1.5">
         <DropdownMenuGroup>

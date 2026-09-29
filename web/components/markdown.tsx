@@ -186,7 +186,7 @@ const INLINE = new RegExp(
 );
 
 function ExternalOrInternal({ href, children }: { href: string; children: ReactNode }) {
-  const className = "font-medium text-kopi underline-offset-4 hover:underline";
+  const className = "font-book text-kopi underline-offset-4 hover:underline";
   if (href.startsWith("/")) {
     return (
       <Link href={href} className={className}>
@@ -212,13 +212,13 @@ function inline(text: string, linkDocs: boolean): ReactNode[] {
     const key = n++;
     if (m[1] !== undefined) {
       out.push(
-        <code key={key} className="rounded-[4px] bg-muted px-1 py-px font-sans text-[0.93em]">
+        <code key={key} className="rounded-md bg-muted px-1.5 py-px font-sans text-[0.93em]">
           {m[1]}
         </code>,
       );
     } else if (m[2] !== undefined || m[3] !== undefined) {
       out.push(
-        <strong key={key} className="font-semibold">
+        <strong key={key} className="font-medium">
           {inline(m[2] ?? m[3], linkDocs)}
         </strong>,
       );
@@ -245,7 +245,7 @@ function inline(text: string, linkDocs: boolean): ReactNode[] {
       out.push(<em key={key}>{inline(m[8] ?? m[9], linkDocs)}</em>);
     } else if (m[10] !== undefined) {
       out.push(
-        <span key={key} className="rounded bg-kopi-soft px-1 py-0.5 text-[0.95em] text-kopi" title="To fill in">
+        <span key={key} className="rounded-md bg-kopi-soft px-1.5 py-0.5 text-[0.95em] text-kopi" title="To fill in">
           [{m[10]}]
         </span>,
       );
@@ -268,9 +268,9 @@ function inline(text: string, linkDocs: boolean): ReactNode[] {
 // ---------------------------------------------------------------- blocks
 
 const HEADING_CLASS: Record<number, string> = {
-  1: "text-lg font-semibold tracking-[-0.01em]",
-  2: "text-base font-semibold tracking-[-0.01em] pt-2 first:pt-0",
-  3: "text-[15px] font-semibold pt-1 first:pt-0",
+  1: "text-[19px] font-medium tracking-[-0.02em]",
+  2: "text-base font-medium tracking-[-0.01em] pt-2 first:pt-0",
+  3: "text-[15px] font-medium pt-1 first:pt-0",
 };
 
 function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) {
@@ -281,7 +281,7 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
           case "heading": {
             const Tag = `h${Math.min(block.level + 1, 6)}` as "h2";
             return (
-              <Tag key={i} className={HEADING_CLASS[block.level] ?? "text-sm font-semibold"}>
+              <Tag key={i} className={HEADING_CLASS[block.level] ?? "text-sm font-medium"}>
                 {inline(block.text, linkDocs)}
               </Tag>
             );
@@ -300,7 +300,7 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
             );
           case "code":
             return (
-              <pre key={i} className="overflow-x-auto rounded-lg border bg-muted/50 px-4 py-3 font-mono text-[12.5px] leading-relaxed">
+              <pre key={i} className="overflow-x-auto rounded-xl bg-muted/70 px-4 py-3 font-mono text-[12.5px] leading-relaxed">
                 {block.text}
               </pre>
             );
@@ -331,7 +331,7 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
                       <span
                         aria-label={item.checked ? "Done" : "To do"}
                         className={cn(
-                          "mt-[0.25em] grid size-4 shrink-0 place-items-center rounded-[4px] border text-[10px]",
+                          "mt-[0.25em] grid size-4 shrink-0 place-items-center rounded-[5px] border text-[10px]",
                           item.checked ? "border-kopi bg-kopi text-white" : "border-foreground/25 bg-card",
                         )}
                       >
@@ -349,14 +349,14 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
           }
           case "table":
             return (
-              <div key={i} className="overflow-x-auto rounded-lg border bg-card">
+              <div key={i} className="overflow-x-auto rounded-xl border bg-card">
                 <table className="w-full min-w-[32rem] border-collapse text-left text-[13px] leading-normal">
                   <thead>
                     <tr>
                       {block.head.map((cell, c) => (
                         <th
                           key={c}
-                          className="border-b bg-muted/50 px-3 py-2 align-bottom text-xs font-medium text-muted-foreground"
+                          className="border-b border-border/70 bg-muted/50 px-3 py-2 align-bottom text-xs font-book text-muted-foreground"
                           style={{ textAlign: block.align[c] ?? "left" }}
                         >
                           {inline(cell, linkDocs)}
@@ -366,7 +366,7 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
                   </thead>
                   <tbody>
                     {block.rows.map((row, r) => (
-                      <tr key={r} className="border-b last:border-b-0">
+                      <tr key={r} className="border-b border-border/70 last:border-b-0">
                         {block.head.map((_, c) => (
                           <td key={c} className="px-3 py-2 align-top" style={{ textAlign: block.align[c] ?? "left" }}>
                             {inline(row[c] ?? "", linkDocs)}

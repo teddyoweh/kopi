@@ -45,18 +45,21 @@
   --color-unmet-soft: var(--unmet-soft);
   --color-unknown: var(--unknown);
   --color-unknown-soft: var(--unknown-soft);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  /* Rounder than Linear (Teddy, 29 Sep): controls 10px, cards 16px, the panel 18px; pills are rounded-full. */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 18px;
+  --radius-3xl: 24px;
+  --radius-4xl: 28px;
+  --font-weight-book: 450;
 }
 
 :root {
-  /* Linear light, sampled from Teddy's reference (uploads/image.png): a grey frame holds the
-     sidebar, pages sit in an inset panel, hairlines separate, one indigo accent. */
+  /* Linear light, sampled from Teddy's reference (uploads/image.png), made rounder and lighter
+     (29 Sep): a grey frame holds the sidebar, pages sit in an inset panel, faint hairlines
+     separate, one indigo accent. */
   --frame: #efeff0;
   --background: #fcfcfc;
   --foreground: #1b1b1b;
@@ -66,25 +69,25 @@
   --popover-foreground: #1b1b1b;
   --primary: #5e6ad2;
   --primary-foreground: #ffffff;
-  --secondary: #f3f3f4;
+  --secondary: #f4f4f5;
   --secondary-foreground: #1b1b1b;
-  --muted: #f3f3f4;
-  --muted-foreground: #5c5c5e;
-  --accent: #f0f0f1;
+  --muted: #f4f4f5;
+  --muted-foreground: #6b6b70;
+  --accent: #f4f4f5;
   --accent-foreground: #1b1b1b;
   --destructive: oklch(0.56 0.19 27);
-  --border: #e2e2e2;
-  --input: #dcdcde;
+  --border: #ebebed;
+  --input: #e2e2e5;
   --ring: #5e6ad2;
-  --radius: 0.5rem;
+  --radius: 0.75rem;
   --sidebar: #efeff0;
-  --sidebar-foreground: #2c2c2e;
+  --sidebar-foreground: #3a3a3e;
   --sidebar-primary: #5e6ad2;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e1e1e2;
+  --sidebar-accent: #e3e3e5;
   --sidebar-accent-foreground: #1b1b1b;
-  --sidebar-hover: #e7e7e8;
-  --sidebar-border: #e2e2e2;
+  --sidebar-hover: #e8e8ea;
+  --sidebar-border: #e5e5e7;
   --sidebar-ring: #5e6ad2;
 
   /* The one accent (Linear indigo), and the three states every eligibility check can be in. */
@@ -94,11 +97,11 @@
   --met-soft: oklch(0.96 0.03 155);
   --unmet: oklch(0.55 0.18 27);
   --unmet-soft: oklch(0.96 0.025 27);
-  --unknown: #6b6b6e;
-  --unknown-soft: #f3f3f4;
+  --unknown: #6b6b70;
+  --unknown-soft: #f4f4f5;
 
   /* Floating surfaces only (menus, composer, toasts): barely there. */
-  --float-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
+  --float-shadow: 0 1px 2px rgb(0 0 0 / 0.03), 0 6px 24px rgb(0 0 0 / 0.05);
 }
 
 @layer base {
@@ -111,7 +114,12 @@
   html {
     @apply font-sans;
     font-feature-settings: "cv11";
+    font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
+  }
+  /* Thinner icons: lucide draws at 2px, which reads heavy next to 13–14px text. */
+  svg.lucide[stroke-width="2"] {
+    stroke-width: 1.75;
   }
   ::selection {
     background: var(--kopi-soft);
