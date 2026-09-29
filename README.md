@@ -26,7 +26,7 @@ cd web && npm ci && npm run dev        # http://localhost:3000, mock mode by def
 **Backend and tests.** The tests are offline: fixtures, fakes, and NeedleDB's embedded engine.
 
 ```bash
-cd backend && uv sync && uv run pytest -q           # 271 tests
+cd backend && uv sync && uv run pytest -q           # 272 tests
 make dev-api                                        # FastAPI over the fixtures at :8000
 NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8000 npm run dev   # (in web/) the UI against it
 ```

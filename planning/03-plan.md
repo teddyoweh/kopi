@@ -115,7 +115,7 @@ four concerns was a real bug that the author's own check had passed
 ## What was verified, and how
 
 - **Backend:** `cd backend && uv run pytest -q` runs with no network, Modal or Claude,
-  using fixtures, fakes and NeedleDB's embedded engine. 271 tests, run in CI.
+  using fixtures, fakes and NeedleDB's embedded engine. 272 tests, run in CI.
 - **Web:** `cd web && npm run build && npm run lint` checks the static export. Browser
   interaction tests were run against both mock and live data.
 - **Retrieval:** [`evals/RESULTS.md`](../evals/RESULTS.md) scores Qwen3-0.6B, BGE-small and
