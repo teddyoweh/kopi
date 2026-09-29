@@ -53,7 +53,13 @@ OMIT_RESULTS = {
     "mcp__crew__crew_transcript": "another agent's transcript; see its own log",
     "ToolSearch": "tool schemas loaded",
     "Skill": "skill instructions loaded",
+    "mcp__browser__browser_profiles": "the browser profiles and the accounts they are signed into",
+    "mcp__browser__browser_network": "the page's network log",
 }
+# Browser steps answer with the page's whole network log (analytics ids, session ids) beside the
+# result; only these keys are kept.
+BROWSER_STEPS = {"mcp__browser__browser_act", "mcp__browser__browser_open"}
+BROWSER_KEEP = ("result", "url", "title", "downloaded", "closed")
 # Tools whose inputs are dropped too (they carry account connection ids).
 OMIT_INPUTS = {"mcp__accounts__request"}
 # Calls whose OUTPUT is outside this project: other Modal workspaces' resource lists,
@@ -264,6 +270,16 @@ def redact_value(value: object, redact: Redactor) -> object:
     return value
 
 
+def slim_browser_result(text: str) -> str:
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return text
+    if not isinstance(data, dict):
+        return text
+    return json.dumps({k: data[k] for k in BROWSER_KEEP if k in data}, ensure_ascii=False)
+
+
 def clip_input(value: object) -> object:
     if isinstance(value, str):
         return clip(value, INPUT_LIMIT)
@@ -398,6 +414,8 @@ def convert(
                     text = f"[omitted: {OMIT_RESULTS[name]}]"
                 elif tool_id in tool_outside or MODAL_SECRETS_TABLE.search(result_text(block.get("content"))):
                     text = "[omitted: output lists resources outside this project]"
+                elif name in BROWSER_STEPS:
+                    text = scrub(clip(slim_browser_result(result_text(block.get("content"))), RESULT_LIMIT))
                 else:
                     text = scrub(clip(result_text(block.get("content")), RESULT_LIMIT))
                 events.append(
