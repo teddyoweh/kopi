@@ -112,3 +112,13 @@ def test_nothing_streams_after_the_finished_write(tmp_path: Path):
     last_call = max(i for i, k in enumerate(kinds) if k == ChatEventType.TOOL_CALL)
     assert ChatEventType.WRITING not in kinds[last_call:]
     assert "".join(e.text for e in out if e.type == ChatEventType.WRITING) == DOC[: len("".join(e.text for e in out if e.type == ChatEventType.WRITING))]
+
+
+def test_the_workspace_always_has_an_inputs_folder(tmp_path: Path):
+    """The agent looks for uploads first; an empty folder answers "none", a missing one reads as a failed step."""
+    from kopi.agent.runner import KopiClient, options
+    from kopi.models import Profile
+
+    profile = Profile(id="p", name="P", summary="s", capabilities=[], past_work=[])
+    options(profile, KopiClient("http://x", None), tmp_path, "claude-opus-5-5", None, "DOC1", bid=True)
+    assert (tmp_path / "inputs").is_dir() and not any((tmp_path / "inputs").iterdir())

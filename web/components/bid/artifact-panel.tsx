@@ -243,9 +243,12 @@ export function ArtifactPanel({
   const pane = useRef<HTMLDivElement>(null);
   const follow = useRef(true);
   const following = current !== null && writing.has(current);
-  useEffect(() => {
+  const tabKey = active ? `${active.kind}:${"name" in active ? active.name : ""}` : "";
+  // A tab opens at its top, unless its document is being written, which follows its newest line.
+  useLayoutEffect(() => {
     follow.current = true;
-  }, [current]);
+    if (pane.current) pane.current.scrollTop = 0;
+  }, [tabKey]);
   useEffect(() => {
     const el = pane.current;
     if (el && following && follow.current) el.scrollTop = el.scrollHeight;

@@ -94,6 +94,8 @@ def documents(workspace: Path) -> list[tuple[str, int]]:
 def options(profile: Profile, client: KopiClient, workspace: Path, model: str, resume: str | None, doc_no: str | None, bid: bool = False) -> ClaudeAgentOptions:
     drafts = workspace / "drafts"
     drafts.mkdir(parents=True, exist_ok=True)
+    # An empty inputs/ rather than a missing one: looking for uploads before any exist is not a failure.
+    (workspace / "inputs").mkdir(exist_ok=True)
     today = datetime.now(UTC)
     if bid:
         if not doc_no:
