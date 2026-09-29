@@ -9,11 +9,12 @@ dependencies = [
     "httpx>=0.28",
     "selectolax>=0.3",
     "pydantic>=2.9",
+    "numpy>=2.0",
 ]
 
 [project.optional-dependencies]
+index = ["needledb @ git+https://github.com/teddyoweh/needledb@b88f8b7"]
 search = [
-    "needledb @ git+https://github.com/teddyoweh/needledb@b88f8b7",
     "sentence-transformers>=3.0",
     "transformers>=4.51",
     "torch>=2.4",
@@ -22,7 +23,10 @@ agent = ["claude-agent-sdk>=0.2.161"]
 deploy = ["modal>=1.6"]
 
 [dependency-groups]
-dev = ["pytest>=8.3"]
+dev = [
+    "pytest>=8.3",
+    "needledb @ git+https://github.com/teddyoweh/needledb@b88f8b7",
+]
 
 [build-system]
 requires = ["hatchling"]
