@@ -1,5 +1,4 @@
 import json
-import shutil
 
 import numpy as np
 import pytest

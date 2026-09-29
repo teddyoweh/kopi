@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 
-from kopi.api.auth import AppOnly, Authed, check_code, issue, require_token
+from kopi.api.auth import AppOnly, Authed, check_code, issue
 from kopi.api.limits import LIMITS, RateLimiter, limited
 from kopi.config import Settings
 from kopi.models import (

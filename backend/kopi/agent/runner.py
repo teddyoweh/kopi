@@ -10,7 +10,6 @@ line and forwards each event to the browser as server-sent events.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 from collections.abc import AsyncIterator, Iterable
@@ -25,7 +24,6 @@ from claude_agent_sdk import (
     HookMatcher,
     ResultMessage,
     StreamEvent,
-    TextBlock,
     ToolResultBlock,
     ToolUseBlock,
     UserMessage,
