@@ -18,6 +18,7 @@ from kopi.models import (
     AuthResponse,
     ChatEvent,
     ChatRequest,
+    ChecklistItem,
     EligibilityCheck,
     EligibilityRequest,
     Licence,
@@ -127,6 +128,10 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
     @app.post("/tenders/{doc_no}/overview", response_model=Overview, dependencies=[AppOnly, limited("overview")])
     def overview(request: Request, doc_no: str, body: OverviewRequest) -> Overview:
         return db(request).overview(doc_no, body.profile)
+
+    @app.post("/tenders/{doc_no}/checklist", response_model=list[ChecklistItem], dependencies=[Authed, Read])
+    def checklist(request: Request, doc_no: str, body: OverviewRequest) -> list[ChecklistItem]:
+        return db(request).checklist(doc_no, body.profile)
 
     @app.post("/eligibility", response_model=list[EligibilityCheck], dependencies=[Authed, Read])
     def eligibility(request: Request, body: EligibilityRequest) -> list[EligibilityCheck]:

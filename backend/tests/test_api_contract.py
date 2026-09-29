@@ -83,3 +83,9 @@ def test_a_token_signed_with_an_empty_key_is_rejected(gated_client):
     signature = base64.urlsafe_b64encode(hmac.new(b"", payload, hashlib.sha256).digest()).rstrip(b"=")
     forged = f"{payload.decode()}.{signature.decode()}"
     assert gated_client.get("/search", params={"q": "x"}, headers={"Authorization": f"Bearer {forged}"}).status_code == 401
+
+
+def test_checklist_route_builds_the_list_from_the_notice(client, brightclean):
+    items = client.post("/tenders/GVT000ETT26000101/checklist", json={"profile": brightclean.model_dump(mode="json")}).json()
+    labels = [i["label"] for i in items]
+    assert "Prepare two envelopes" in labels and labels[-1] == "Submit on GeBIZ before closing"

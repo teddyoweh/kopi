@@ -507,6 +507,59 @@
     }
    }
   },
+  "/tenders/{doc_no}/checklist": {
+   "post": {
+    "summary": "Checklist",
+    "operationId": "checklist_tenders__doc_no__checklist_post",
+    "parameters": [
+     {
+      "name": "doc_no",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Doc No"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OverviewRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ChecklistItem"
+         },
+         "title": "Response Checklist Tenders  Doc No  Checklist Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/eligibility": {
    "post": {
     "summary": "Eligibility",
@@ -1006,6 +1059,52 @@
      "profile"
     ],
     "title": "ChatRequest"
+   },
+   "ChecklistItem": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "detail": {
+      "type": "string",
+      "title": "Detail",
+      "default": ""
+     },
+     "source": {
+      "type": "string",
+      "enum": [
+       "notice",
+       "eligibility",
+       "drafting",
+       "submission"
+      ],
+      "title": "Source"
+     },
+     "due": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Due"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "label",
+     "source"
+    ],
+    "title": "ChecklistItem"
    },
    "EligibilityCheck": {
     "properties": {

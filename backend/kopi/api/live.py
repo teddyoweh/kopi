@@ -20,12 +20,14 @@ import numpy as np
 
 from kopi import eligibility, market
 from kopi.bundle import read_bundle
+from kopi.checklist import submission_checklist
 from kopi.sandbox import Copilot, CopilotUnavailable
 from kopi.config import DATA_DIR
 from kopi.index import AWARDS, LICENCES, NOTICES, notice_filter, query
 from kopi.models import (
     ChatEvent,
     ChatRequest,
+    ChecklistItem,
     EligibilityCheck,
     Fit,
     Licence,
@@ -162,6 +164,9 @@ class LiveStore:
     def eligibility(self, doc_no: str, profile: Profile) -> list[EligibilityCheck]:
         notice = self._notice(doc_no)
         return eligibility.check(notice, profile, registry=self.registry, catalogue=self.catalogue)
+
+    def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]:
+        return submission_checklist(self._notice(doc_no), self.eligibility(doc_no, profile))
 
     def overview(self, doc_no: str, profile: Profile) -> Overview:
         """Extractive overview: the notice's own words, no model. Replaced by Claude's in KP-10."""

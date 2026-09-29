@@ -16,6 +16,7 @@ from functools import cached_property
 from statistics import median
 from typing import Protocol
 
+from kopi.checklist import submission_checklist
 from kopi.config import FIXTURES_DIR
 from kopi.models import (
     Award,
@@ -23,6 +24,7 @@ from kopi.models import (
     ChatEvent,
     ChatEventType,
     ChatRequest,
+    ChecklistItem,
     EligibilityCheck,
     EligibilityStatus,
     Fit,
@@ -62,6 +64,7 @@ class Store(Protocol):
     def tender(self, doc_no: str, profile: Profile | None) -> TenderDetail: ...
     def eligibility(self, doc_no: str, profile: Profile) -> list[EligibilityCheck]: ...
     def overview(self, doc_no: str, profile: Profile) -> Overview: ...
+    def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]: ...
     def similar_awards(self, query: str, agency: str | None, k: int) -> MarketContext: ...
     def licences(self, limit: int, offset: int) -> list[Licence]: ...
     def search_licences(self, query: str, limit: int) -> list[Licence]: ...
@@ -168,6 +171,9 @@ class FixtureStore:
                 status, reason = EligibilityStatus.UNMET, f"Not registered under {head.code}"
             checks.append(EligibilityCheck(kind="gra", requirement=f"{head.code} {head.grade or ''}".strip(), status=status, reason=reason))
         return checks
+
+    def checklist(self, doc_no: str, profile: Profile) -> list[ChecklistItem]:
+        return submission_checklist(self._notice(doc_no), self.eligibility(doc_no, profile))
 
     def overview(self, doc_no: str, profile: Profile) -> Overview:
         notice = self._notice(doc_no)
