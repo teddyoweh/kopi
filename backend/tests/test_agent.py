@@ -178,3 +178,19 @@ def test_system_prompt_names_company_date_and_rules(profile):
     prompt = system_prompt(profile, NOW, "/workspace/drafts")
     assert profile.name in prompt and "Tuesday 29 September 2026" in prompt
     assert "<notice>" in prompt and "never" in prompt.lower()
+
+
+def test_run_turn_does_not_repeat_done_when_the_sdk_raises_after_an_error_result(monkeypatch, tmp_path):
+    from kopi.agent import runner
+
+    async def fake_query(prompt, options):
+        yield ResultMessage(subtype="error", duration_ms=1, duration_api_ms=1, is_error=True, num_turns=0, session_id="s", result="Not logged in")
+        raise RuntimeError("Claude Code returned an error result")
+
+    monkeypatch.setattr(runner, "query", fake_query)
+
+    async def collect():
+        return [e async for e in runner.run_turn("hi", None, tmp_path)]
+
+    events = anyio.run(collect)
+    assert [e.type for e in events] == [ChatEventType.ERROR, ChatEventType.DONE]

@@ -26,6 +26,7 @@ deploy = ["modal>=1.6"]
 dev = [
     "pytest>=8.3",
     "needledb @ git+https://github.com/teddyoweh/needledb@b88f8b7",
+    "claude-agent-sdk>=0.2.161",
 ]
 
 [build-system]

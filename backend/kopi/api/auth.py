@@ -64,4 +64,19 @@ def require_token(request: Request) -> dict:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "sign in with an access code") from None
 
 
+def require_app_token(request: Request) -> dict:
+    """Dependency for routes a copilot sandbox must never call: chat, sessions, overviews."""
+    claims = require_token(request)
+    if claims.get("scope") != "app":
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "this token can only read Kopi data")
+    return claims
+
+
+def mint_agent_token(key: str, session_id: str, ttl: timedelta = timedelta(minutes=20)) -> str:
+    """A short-lived token for one copilot turn: read routes only."""
+    token, _ = issue(key, f"session:{session_id}", scope="agent", ttl=ttl)
+    return token
+
+
 Authed = Depends(require_token)
+AppOnly = Depends(require_app_token)

@@ -850,6 +850,7 @@ search = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "claude-agent-sdk" },
     { name = "needledb" },
     { name = "pytest" },
 ]
@@ -873,6 +874,7 @@ provides-extras = ["index", "search", "agent", "deploy"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "claude-agent-sdk", specifier = ">=0.2.161" },
     { name = "needledb", git = "https://github.com/teddyoweh/needledb?rev=b88f8b7" },
     { name = "pytest", specifier = ">=8.3" },
 ]
