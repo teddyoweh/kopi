@@ -66,6 +66,11 @@ function cleanSummary(tool: string, summary: string): string {
   const name = tool === "get_company_profile" ? text.match(/"name":\s*"([^"]+)"/)?.[1] : undefined;
   if (name) return `The profile of ${name}`;
   if (/^File created successfully at: /.test(text)) return "Saved to the drafts";
+  // The step already says what was remembered or where the bid moved; the tool's echo would repeat it.
+  if (tool === "remember" && !summary.startsWith("Error:")) return "Saved to the bid memory";
+  if (tool === "set_bid_stage" && !summary.startsWith("Error:")) return "Saved";
+  // Read returns the file with line numbers; show it from its first line, without the "1".
+  if (tool === "Read") return text.replace(/^1\s+/, "").replace(/^#\s*/, "");
   return text.replace(/(^|\s)\/\S*\/drafts\//g, "$1drafts/");
 }
 
