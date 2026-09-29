@@ -826,6 +826,7 @@ source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "httpx" },
+    { name = "numpy" },
     { name = "pydantic" },
     { name = "selectolax" },
     { name = "uvicorn" },
@@ -838,8 +839,10 @@ agent = [
 deploy = [
     { name = "modal" },
 ]
-search = [
+index = [
     { name = "needledb" },
+]
+search = [
     { name = "sentence-transformers" },
     { name = "torch" },
     { name = "transformers" },
@@ -847,6 +850,7 @@ search = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "needledb" },
     { name = "pytest" },
 ]
 
@@ -856,7 +860,8 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "modal", marker = "extra == 'deploy'", specifier = ">=1.6" },
-    { name = "needledb", marker = "extra == 'search'", git = "https://github.com/teddyoweh/needledb?rev=b88f8b7" },
+    { name = "needledb", marker = "extra == 'index'", git = "https://github.com/teddyoweh/needledb?rev=b88f8b7" },
+    { name = "numpy", specifier = ">=2.0" },
     { name = "pydantic", specifier = ">=2.9" },
     { name = "selectolax", specifier = ">=0.3" },
     { name = "sentence-transformers", marker = "extra == 'search'", specifier = ">=3.0" },
@@ -864,10 +869,13 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'search'", specifier = ">=4.51" },
     { name = "uvicorn", specifier = ">=0.32" },
 ]
-provides-extras = ["search", "agent", "deploy"]
+provides-extras = ["index", "search", "agent", "deploy"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8.3" }]
+dev = [
+    { name = "needledb", git = "https://github.com/teddyoweh/needledb?rev=b88f8b7" },
+    { name = "pytest", specifier = ">=8.3" },
+]
 
 [[package]]
 name = "markdown-it-py"
