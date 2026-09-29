@@ -1,6 +1,6 @@
 # Main agent (lead): planning, research, orchestration and most build tasks
 
-`01-main` · model claude-opus-5-5 · 353 assistant messages · 1270 tool calls · 29 Sep 07:20 UTC → 29 Sep 18:37 UTC
+`01-main` · model claude-opus-5-5 · 377 assistant messages · 1360 tool calls · 29 Sep 07:20 UTC → 29 Sep 19:32 UTC
 
 Redacted export: thinking, images, system reminders and mailbox results are removed; secrets, emails, phone numbers and home paths are masked; long tool output is cut.
 
@@ -31392,6 +31392,2214 @@ Now the README's build notes, the journal entries and the KP-36 handoff.
   </details>
 
 Docs committed. Now refreshing the main transcript and re-exporting the redacted logs, including the two new subagent sessions.
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+Pushed. Rebuilding and republishing for the one wording change in the "being connected" card.
+
+- **Bash** — Rebuild and stage the live web app
+  
+  ```
+  cd ~/Documents/codes/kopi/web && export PATH=/opt/homebrew/bin:$PATH && npm run build 2>&1 | grep -E "rror|✓ Gen" && S=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi && mv $S/demo /tmp/kopi-demo-keep && rm -rf $S && mkdir -p $S && cp -R out/. $S/ && mv /tmp/kopi-demo-keep $S/demo && ls $S/demo
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ✓ Generating static pages using 13 workers (12/12) in 394ms
+  kopi-demo.mp4
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__sites__site_publish** `{"path": "artifacts/apps/kopi"}`
+
+  <details><summary>result</summary>
+
+  ```
+  {
+    "url": "https://kopi.unv.run",
+    "label": "kopi",
+    "version": 13,
+    "framework": "static",
+    "filesUploaded": 41,
+    "visibility": "public",
+    "rolledBack": false
+  }
+  ```
+
+  </details>
+
+- **mcp__build__build_check** `{"task": "KP-36"}`
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 1s — `curl -sf https://kopi.unv.run >/dev/null && test -s planning/handoffs/KP-36.md` in ~/Documents/codes/kopi
+  
+  (no output)
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-36", "check": "curl -sf https://kopi.unv.run >/dev/null && test -s planning/handoffs/KP-36.md — passed; real Opus bid on live data via the local stack (kickoff 98 s: 5 docs, 7 notes, stage clarify; second turn in a deleted sandbox 87 s, US$0.36: restored drafts, read the upload, caught
+  [… 857 chars cut …]
+  "artifacts/media/kopi/livebid-done-local-1440.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-36.
+  Every task in "Bid copilot" is done. Check the milestone goal as a whole ("Starting a bid on a tender opens a bid workspace where Kopi's copilot works the bid on its own. In one kickoff it qualifies the tender, writes a bid plan with a timeline back-scheduled from closing, clarification questions, a compliance matrix, a submission checklist and a proposal outline, and moves the bid's stage (qualify → clarify → draft → review → submit). Every document is on the bid's shelf to open and download. The
+  [… 226 chars cut …]
+  in the sidebar, and each bid keeps its checklist. Proven with a real Opus kickoff on live data, QA'd at 1440 and 390, and published."), then call build_milestone_done.
+  ```
+
+  </details>
+
+- **Bash** — Save the bid QA screenshots
+  
+  ```
+  cp /tmp/kp36-shots/hosted-*.png /tmp/kp36-shots/livebid*.png ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/ 2>/dev/null; ls ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/ | grep -c "livebid\|hosted-"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  16
+  ```
+
+  </details>
+
+- **mcp__build__build_milestone_done** `{"milestone": "Bid copilot", "summary": "Starting a bid opens a workspace where Kopi works it. Proven with real Opus on live data (WSG000ETT26000004) through the local stack:\n- the kickoff (98 s) wrote the bid plan, clarification questions, compliance matrix, checklist and proposal outline, saved
+  [… 571 chars cut …]
+  "artifacts/media/kopi/bid-done-mock-1440.png", "artifacts/media/kopi/hosted-bid-1440.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Closed.
+  That was the last milestone.
+  ```
+
+  </details>
+
+Both milestones are closed. Stopping the local stack and updating my memory of the project and of your priorities.
+
+- **mcp__dev__dev_stop** `{"service": "film-api"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-api. Its exit shows up in dev_logs and in dev_services.
+  ```
+
+  </details>
+
+- **mcp__dev__dev_stop** `{"service": "film-web"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-web. Its exit shows up in dev_logs and in dev_services.
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **ToolSearch** `{"query": "select:mcp__chain__chain_ask", "max_results": 1}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__chain__chain_ask** `{"question": "The demo film (3:56) still shows the old Submissions page and plain result rows, not the new search cards and bid copilot. Should I re-cut it with a new 40-second section on cards and a bid Kopi works on its own (new voice lines, same rig, about 90 minutes), or leave the film and keep
+  [… 198 chars cut …]
+  for both every two hours. When the secret exists, redeploy and run a real bid on kopi.unv.run."}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. The question goes to the user when this turn ends and the next turn does the meanwhile work.
+  ```
+
+  </details>
+
+Search cards and bids are both live on kopi.unv.run (version 13), and a real Opus bid on live data ran end to end. On the public site the copilot still can't answer until you add its key (the `kopi-claude` Modal secret).
+
+**Search cards (live, real data):**
+- Each result is a card showing your eligibility (blockers named by registration code), why it matched, and the range similar past contracts sold for. It also has the closing countdown, the method, and Start bid, Ask Kopi and Open buttons.
+- Wide screens get a preview pane; `j`/`k` move between results, Enter opens one, `b` starts a bid.
+- The card details load in about 2 s for 25 results (it was 11.5 s before), and are cached after that.
+- The home page's "Best matches" use the same cards.
+
+**Bids, with a copilot that works them.** Start bid and Kopi runs the bid on its own:
+- it moves the bid through Qualify → Clarify → Draft → Review → Submit and says the next step;
+- it writes five documents to the bid's shelf: bid plan, clarification questions, compliance matrix, checklist and proposal outline;
+- it keeps a bid memory: its notes plus yours, which you can add or remove;
+- you can upload the tender documents from GeBIZ and it reads them;
+- the bid survives the copilot restarting, because the memory and documents live outside its sandbox.
+
+"Bids" replaces "Submissions" in the sidebar, and each bid keeps its checklist.
+
+**The real run** was on WSG000ETT26000004, a documents-and-records system maintenance tender closing 23 Oct, using Opus on live data through the local stack:
+- **Kickoff (98 s):**
+  - a conditional go with a decide-by date;
+  - the likely previous contract (S$501k in 2024) and the likely incumbent;
+  - a gaps table, and a timeline back from closing (review 20 Oct, submit 22 Oct);
+  - the four other documents;
+  - seven facts saved to memory.
+- **Second turn:** I added a test excerpt of the tender documents and a note that we'd bid with a GRA-registered partner, then deleted the sandbox to simulate a restart. Kopi still picked up the bid (87 s, US$0.36):
+  - it caught that the tender requires the bidding company itself to hold GRA EPU/CMP/10 at S6, so the partner would have to be the one bidding;
+  - it moved the clarification deadline to the tender's 5 Oct;
+  - it rewrote three documents.
+
+**What's done around it:**
+- Two background agents built the backend halves; I reviewed and merged both.
+- 326 backend tests pass, and the API is deployed to Modal.
+- The README, decisions, AI journal and handoffs are updated.
+- The logs are re-exported (15 sessions) and checked for secrets and the access code; none appear.
+- Everything is pushed to GitHub.
+
+**Still needed from you:**
+- **The `kopi-claude` Modal secret.** Run `claude setup-token`, then `modal secret create kopi-claude CLAUDE_CODE_OAUTH_TOKEN=…`. Until then, bids on the public site show "being connected". Once it exists I'll redeploy and run a bid on kopi.unv.run.
+- **The GitHub billing lock**, so CI can run.
+
+**One decision for you:** the demo film is now out of date. It still shows Submissions and the old result list. I've left it alone because you said "no demos"; re-cutting it with a short cards-and-bids section would take about 90 minutes.
+
+---
+
+## Turn 39 · Teddy · 29 Sep 18:40 UTC
+
+<details><summary>Universe build state</summary>
+
+```
+<software-factory build="artifacts/builds/kopi.json" key="KP">
+Kopi — 1 agent working
+Goal: A Singapore supplier's bid team reads every new GeBIZ opportunity, works out which ones it is eligible for, chases the registrations and licences each needs, and drafts a submission against a deadline. Kopi does that work alongside them. It indexes every open GeBIZ opportunity, 18,464 past awards and the permit and licence sources into NeedleDB (my own vector DB), embedded with Qwen3-Embedding-0.6B, which is free, Apache 2.0, and scores higher than OpenAI text-embedding-3-large on MTEB. On that index it offers four parts: overview (semantic search plus an AI overview per tender with verified quotes and market context), permits and licences (deterministic eligibility gates plus a licence explorer), document drafting (a Claude Agent SDK copilot with Kopi's own MCP tools, running in a Modal sandbox on a Claude OAuth token), and submissions (a checklist and tracker built from the notice itse…
+Stops for the person: Only at the end — run every milestone through without stopping; the person reviews at the end.
+Code lives
+[… 2,510 chars cut …]
+D21 — owner: Main — check: cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q — last check passed
+Milestone [m5] Demo film — done, 2/2 done
+Milestone [m6] Linear-style UI — done, 4/4 done
+Milestone [m7] Rounder, calmer UI — done, 2/2 done
+Milestone [m8] Search cards — done, 3/3 done
+Milestone [m9] Bid copilot — done, 3/3 done
+</software-factory>
+```
+
+</details>
+
+> <self-directed step="7">
+> This is your own note, written at the end of your last turn — not a message
+> from the user. You decided the next step is:
+>
+>     Leave the film as it is. Wait on your kopi-claude secret and the GitHub billing lock, and check for both every two hours. When the secret exists, redeploy and run a real bid on kopi.unv.run.
+>
+> because: You said "no demos"; the film is now out of date.
+> </self-directed>
+>
+> Do it now.
+>
+> This question is already in front of the user — do not ask it again and do not
+> wait for it: "The demo film (3:56) still shows the old Submissions page and plain result rows, not the new search cards and bid copilot. Should I re-cut it with a new 40-second section on cards and a bid Kopi works on its own (new voice lines, same rig, about 90 minutes), or leave the film and keep improving the product?"
+> If they answer, it arrives as a normal message. Until then, do the work above.
+>
+> When this turn's work is done, say what happens next with chain_next, chain_ask,
+> chain_wait or chain_done before you stop.
+
+Checking whether either of your two blockers has cleared.
+
+- **Bash** — Check for the kopi-claude secret and the CI billing lock
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && MODAL_PROFILE=kryptonairc-lc uv run --extra deploy modal secret list --json 2>/dev/null | python3 -c "import json,sys; print([s.get('Name') or s.get('name') for s in json.load(sys.stdin) if (s.get('Name') or s.get('name','')).startswith('kopi')])"; /opt/homebrew/bin/gh run view -R teddyoweh/kopi $(/opt/homebrew/bin/gh run list -R teddyoweh/kopi -L 1 --json databaseId -q '.[0].databaseId') 2>&1 | grep -E "billing|✓|X " | head -4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ['kopi-app', 'kopi-needledb-read', 'kopi-needledb-write', 'kopi-needledb']
+  X main ci · 36613470912
+  X web in 2s (ID 109560462821)
+  X backend in 2s (ID 109560463467)
+  X The job was not started because your account is locked due to a billing issue.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Neither has changed. There's no `kopi-claude` secret yet, and GitHub is still refusing to start CI jobs because of the billing lock.
+
+- **mcp__chain__chain_wait** `{"for": "Teddy's kopi-claude Modal secret (then: redeploy, run a real bid on kopi.unv.run, try an 8 MB upload, write planning/handoffs/live-copilot.md, update README weakest part 1), the GitHub billing lock (then: rerun CI to green), and his answer on re-cutting the film.", "minutes": 120, "why": "All remaining work needs Teddy's credentials or decision."}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. When this turn ends the session sleeps for 120 minutes, then wakes you to check.
+  ```
+
+  </details>
+
+Neither blocker has cleared: there's still no `kopi-claude` secret, and GitHub is still refusing to start CI jobs because of the billing lock. I'll check again in two hours.
+
+Once the secret exists, I'll redeploy and run a real bid on kopi.unv.run, including a large PDF upload. Until then, starting a bid on the site shows "being connected". The film stays as it is unless you tell me to re-cut it.
+
+---
+
+## Turn 40 · Teddy · 29 Sep 18:51 UTC
+
+<details><summary>Universe build state</summary>
+
+```
+New in this workspace since your last turn (yours, the crew's, or the user's):
+- artifacts/media/kopi/bid-done-mock-1440.png
+- artifacts/media/kopi/bid-done-mock-390.png
+- artifacts/media/kopi/bid-done-tall-mock-1440.png
+- artifacts/media/kopi/bid-list-mock-1440.png
+- artifacts/media/kopi/bid-list-mock-390.png
+- artifacts/media/kopi/bid-plan-mock-1440.png
+- artifacts/media/kopi/bid-rail-mock-390.png
+- artifacts/media/kopi/bid-working-mock-1440.png
+- artifacts/media/kopi/bid-working-mock-390.png
+- artifacts/media/kopi/cards-live-1440.png
+- artifacts/media/kopi/cards-live-390.png
+- artifacts/media/kopi/cards-mock-1440.png
+- artifacts/media/kopi/cards-mock-390.png
+- artifacts/media/kopi/cards-scrolled-live-390.png
+- artifacts/media/kopi/cards-scrolled-mock-390.png
+- artifacts/media/kopi/cards-selected-live-1440.png
+- artifacts/media/kopi/cards-selected-mock-1440.png
+- artifacts/media/kopi/cards2-live-1440.png
+- artifacts/media/kopi/cards2-live-390.png
+- artifacts/media/kopi/cards2-scrolled-live-390.png
+- artifacts/media/kopi/cards2-selected-live-1440.png
+- artifacts/media/kopi/hosted-bid-1440.png
+-
+[… 2,525 chars cut …]
+D21 — owner: Main — check: cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q — last check passed
+Milestone [m5] Demo film — done, 2/2 done
+Milestone [m6] Linear-style UI — done, 4/4 done
+Milestone [m7] Rounder, calmer UI — done, 2/2 done
+Milestone [m8] Search cards — done, 3/3 done
+Milestone [m9] Bid copilot — done, 3/3 done
+</software-factory>
+```
+
+</details>
+
+> the wokring on bid stuff hsodul feel ike chatpgpt / arftsiacpenpaeny oguet  smae page  yoguet cleand sutff
+
+You want the bid to feel like ChatGPT or Claude with an artifacts panel: the conversation on the left, and the documents open on the same page on the right, clean, updating live as Kopi writes them. No overlay sheets and no cluttered side rail.
+
+I'm rebuilding the bid workspace that way:
+- **Left:** the conversation.
+- **Right:** a document panel with a tab per document (bid plan, clarification questions, matrix, checklist, outline) plus Memory and Checklist tabs. The panel jumps to each document as Kopi writes it.
+- **Phones:** a Chat / Documents toggle.
+
+- **Bash** — Check repo state and the markdown component
+  
+  ```
+  cd ~/Documents/codes/kopi && git status --short | head -3; git log --oneline -1; grep -n "FILL\|min-h-\[calc" web/components/copilot/copilot-view.tsx | head -5; grep -n "export function Markdown" -A12 web/components/markdown.tsx | head -16
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0218192 Logs: re-exported through the bid copilot, with the KP-32 and KP-34 subagent sessions (15 sessions)
+  63:const FILL = "min-h-[calc(100dvh-76px)] sm:min-h-[calc(100dvh-84px)] lg:min-h-[calc(100dvh-102px)]";
+  475:        <div className={cn("flex min-w-0 flex-col", FILL)}>
+  387:export function Markdown({ text, className, linkDocs = true }: { text: string; className?: string; linkDocs?: boolean }) {
+  388-  const blocks = parseBlocks(text.replace(/\r\n?/g, "\n").split("\n"));
+  389-  return (
+  390-    <div
+  [… 87 chars cut …]
+  391-      <Blocks blocks={blocks} linkDocs={linkDocs} />
+  392-    </div>
+  393-  );
+  394-}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+I'm putting it on the board as its own task, then building.
+
+- **mcp__build__build_plan** `{"addMilestone": {"title": "Bid as chat and artifacts", "goal": "Working a bid feels like ChatGPT or Claude with an artifacts panel, all on one page. The conversation is on the left. On the right is a document panel with a tab per document (bid plan, clarification questions, compliance matrix,
+  [… 1,455 chars cut …]
+  "web/components/shell/app-shell.tsx"], "check": "cd web && npm run lint && npm run build"}]}}`
+
+  <details><summary>result</summary>
+
+  ```
+  Revised artifacts/builds/kopi.json.
+  ```
+
+  </details>
+
+- **mcp__build__build_next** `{"task": "Bid workspace as a chat with an artifacts panel"}`
+
+  <details><summary>result</summary>
+
+  ```
+  KP-37 — Bid workspace as a chat with an artifacts panel
+  - `/bid` goes full-bleed: the app shell drops its max width and padding there.
+  - Left pane (about 42%, 420–620px): a compact header (agency, title, countdown, a one-line stage with its next step), the turns, and the composer pinned to the bottom.
+  - Right pane (`components/bid/artifact-panel.tsx`):
+    - pill tabs for each document in reading order, then uploads, Memory and Checklist;
+    - a document renders as markdown in a readable column, with Download and Copy;
+   
+  [… 2,306 chars cut …]
+  need an Omit<>&{field?} wrapper in web/lib/api.ts. Regenerate types with `make types`.
+  
+  Run the check with build_check (it runs here, not in your turn), then build_task_done.
+  ```
+
+  </details>
+
+Starting the rebuild in the task's worktree.
+
+- **Bash** — Set up the KP-37 worktree
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37 && git log --oneline -1 && (cd web && PATH=/opt/homebrew/bin:$PATH npm ci --no-audit --no-fund > /tmp/kp37-npmci.log 2>&1 &) ; grep -n "<main" web/components/shell/app-shell.tsx; grep -n "usePathname" web/components/shell/app-shell.tsx | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0218192 Logs: re-exported through the bid copilot, with the KP-32 and KP-34 subagent sessions (15 sessions)
+  124:              <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8">{children}</main>
+  5:import { usePathname } from "next/navigation";
+  81:  const item = currentItem(usePathname());
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Let the bid page lay out edge to edge
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  p='components/shell/app-shell.tsx'
+  s=open(p).read()
+  old='''              <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8">{children}</main>'''
+  new='''              <main className={bleed ? "flex min-h-0 w-full flex-1 flex-col" : "mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8"}>{children}</main>'''
+  assert old in s
+  s=s.replace(old,new)
+  old='''export function AppShell({ children }: { children: React.ReactNode }) {
+    const [menuOpen, setMenuOpen] = useState(false);'''
+  new='''/** Pages that lay out their own panes edge to edge (the bid workspace), instead of a centred column. */
+  const BLEED = /^\\/bid\\/?$/;
+  
+  export function AppShell({ children }: { children: React.ReactNode }) {
+    const bleed = BLEED.test(usePathname());
+    const [menuOpen, setMenuOpen] = useState(false);'''
+  assert old in s
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  grep -n "BLEED\|bleed" components/shell/app-shell.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  92:const BLEED = /^\/bid\/?$/;
+  95:  const bleed = BLEED.test(usePathname());
+  128:              <main className={bleed ? "flex min-h-0 w-full flex-1 flex-col" : "mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8"}>{children}</main>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the panel bodies: memory and checklist become borderless panes that sit inside the document panel.
+
+- **Bash** — Turn the memory and checklist cards into panel panes
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  p='components/bid/memory-card.tsx'
+  s=open(p).read()
+  start=s.index('/**\n * The bid memory: what Kopi keeps')
+  s=s[:start]+'''/**
+   * The bid memory: what Kopi keeps about this bid and what the person tells it. It lives on the
+   * API, outside the sandbox, and every turn reads it, so it survives the copilot restarting.
+   */
+  export function MemoryPane({
+    memory,
+    loading,
+    disabled,
+    onAdd,
+    onForget,
+  }: {
+    memory: BidMemory | null;
+    loading: boolean;
+    /** No session yet: there is nowhere to keep a note until the bid starts. */
+    disabled: boolean;
+    onAdd: (text: string) => Promise<void>;
+    onForget: (id: string) => Promise<void>;
+  }) {
+    const [text, setText] = useState("");
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const notes = memory?.notes ?? [];
+  
+    async function add() {
+      const value = text.trim();
+      if (!value || saving) return;
+      setSaving(true);
+      setError(null);
+      try {
+        await onAdd(value);
+        setText("");
+      } catch (e) {
+        setError(e
+  [… 1,518 chars cut …]
+  error={state.error} />}
+        <ul className="-mx-2 flex flex-col">
+          {items.map((item) => (
+            <Row key={item.id} item={item} ticked={ticked.has(item.id)} onToggle={() => toggle(item.id)} now={now} />
+          ))}
+        </ul>
+      </section>
+    );
+  }
+  '''
+  open(p,'w').write(s)
+  EOF
+  grep -n "^export" components/bid/memory-card.tsx components/bid/checklist-card.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/bid/memory-card.tsx:54:export function MemoryPane({
+  components/bid/checklist-card.tsx:15:export function useChecklist(doc: string) {
+  components/bid/checklist-card.tsx:48:export function ChecklistPane({ doc, now }: { doc: string; now: number }) {
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the core: the document panel, with its tabs, live rendering of what Kopi is writing, previews for uploads (PDFs render inline), and memory and checklist tabs.
+
+- **Bash** — Rename the pane files and drop the old documents card
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && git mv components/bid/memory-card.tsx components/bid/memory-pane.tsx && git mv components/bid/checklist-card.tsx components/bid/checklist-pane.tsx && git rm -q components/bid/documents-card.tsx && ls components/bid
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  bid-view.tsx
+  bids-view.tsx
+  checklist-pane.tsx
+  memory-pane.tsx
+  moved.tsx
+  stage-stepper.tsx
+  time.tsx
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Write** `~/.universe/cache/worktrees/kp/kp-37/web/components/bid/artifact-panel.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  File created successfully at: ~/.universe/cache/worktrees/kp/kp-37/web/components/bid/artifact-panel.tsx (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+- **Bash** — Fetch the checklist once for tab and pane
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('components/bid/checklist-pane.tsx',[
+  ('''export function ChecklistPane({ doc, now }: { doc: string; now: number }) {
+    const { state, items, ticked, toggle, done } = useChecklist(doc);''','''export type Checklist = ReturnType<typeof useChecklist>;
+  
+  /** The checklist is fetched by the panel, which also shows its progress on the tab. */
+  export function ChecklistPane({ checklist, now }: { checklist: Checklist; now: number }) {
+    const { state, items, ticked, toggle, done } = checklist;'''),
+  ])
+  edit('components/bid/artifact-panel.tsx',[
+  ('''            <ChecklistPane doc={doc} now={now} />''','''            <ChecklistPane checklist={checklist} now={now} />'''),
+  ])
+  EOF
+  echo ok
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the compact stage line for the chat header, replacing the full-width stepper.
+
+- **Bash** — Replace the stepper with a one-line stage
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  p='components/bid/stage-stepper.tsx'
+  s=open(p).read()
+  start=s.index('/** Where the bid stands: five stages')
+  s=s[:start]+'''/** Where the bid stands, in one line: five segments, the stage by name, and the next step under them. */
+  export function StageLine({ memory, working }: { memory: BidMemory | null; working: boolean }) {
+    const current = STAGES.findIndex((s) => s.id === memory?.stage);
+    const next = memory?.next_step ?? (working ? "Kopi is working on the bid" : current < 0 ? "Start the bid and Kopi qualifies it, then drafts what you need" : null);
+    return (
+      <div className="flex flex-col gap-1.5" aria-label="Stage">
+        <div className="flex items-center gap-2.5">
+          <ol className="flex items-center gap-1" aria-hidden>
+            {STAGES.map((stage, i) => (
+              <li key={stage.id} title={stage.label} className={cn("h-1 w-5 rounded-full", current > i ? "bg-kopi" : current === i ? "bg-kopi/55" : "bg-foreground/10")} />
+            ))}
+          </ol>
+          <p className="text-[12.5px]">
+            {current >= 0 ? (
+             
+  [… 661 chars cut …]
+          </p>
+        )}
+      </div>
+    );
+  }
+  '''
+  s=s.replace('import { ArrowRight, Check } from "lucide-react";','import { ArrowRight } from "lucide-react";')
+  s=s.replace('import type { BidMemory, BidStage } from "@/lib/api";','import type { BidMemory, BidStage } from "@/lib/api";')
+  open(p,'w').write(s)
+  EOF
+  head -5 components/bid/stage-stepper.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  import { ArrowRight } from "lucide-react";
+  
+  import type { BidMemory, BidStage } from "@/lib/api";
+  import { cn } from "@/lib/utils";
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now rewriting the bid workspace into the two-pane layout.
+
+- **Write** `~/.universe/cache/worktrees/kp/kp-37/web/components/bid/bid-view.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  The file ~/.universe/cache/worktrees/kp/kp-37/web/components/bid/bid-view.tsx has been updated successfully. (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+- **Bash** — Lint and build the new bid workspace
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  p='components/bid/bid-view.tsx'
+  s=open(p).read()
+  old='''              setLive(({ [draft]: _, ...rest }) => (content === undefined ? rest : { ...rest, [draft]: content }));'''
+  new='''              setLive((docs) => {
+                  const next = { ...docs };
+                  if (content === undefined) delete next[draft];
+                  else next[draft] = content;
+                  return next;
+                });'''
+  assert old in s
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  tail -1 /tmp/kp37-npmci.log; export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -15 && NEXT_PUBLIC_KOPI_API=mock npm run build 2>&1 | grep -E "rror|Type|✓ Gen" | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+  
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+    Running TypeScript ...
+    Finished TypeScript in 1834ms ...
+  ✓ Generating static pages using 13 workers (12/12) in 237ms
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Builds clean. Screenshotting the new workspace in demo mode while a bid runs, then at rest, then the other tabs.
+
+- **Bash** — Shoot the chat-and-artifacts bid in mock mode
+  
+  ```
+  cat > /tmp/kopi-shots/shoot-bid3.mjs <<'EOF'
+  // The bid as chat + artifacts: start from search, watch the panel follow the writing, then the tabs.
+  // Usage: node shoot-bid3.mjs <out> <shots> <mock|local> [query]
+  import { createServer } from "node:http";
+  import { readFile, stat, mkdir } from "node:fs/promises";
+  import { extname, join } from "node:path";
+  import { chromium } from "playwright-core";
+  const [root, outDir, mode = "mock", q = "generative AI assistant chatbot", prefix = "art"] = process.argv.slice(2);
+  const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".txt": "text/plain", ".woff2": "font/woff2", ".json": "application/json" };
+  const BASE = mode === "local" ? "http://127.0.0.1:4790" : "http://127.0.0.1:4795";
+  const server = mode === "local" ? null : createServer(async (req, res) => {
+    let path = join(root, decodeURIComponent(new URL(req.url, "http://x").pathname));
+    try { if ((await stat(path)).isDirectory()) path = join(path, "index.html"); } catch { path += ".html"; }
+    try { res.writeHead(200, { "Content-Type": types[extname(path)] ??
+  [… 1,493 chars cut …]
+    if (overflow > 0) problems.push(`[${width}] overflow ${overflow}px`);
+    await ctx.close();
+  }
+  await browser.close(); server?.close();
+  console.log(problems.length ? "PROBLEMS:\n" + [...new Set(problems)].join("\n") : "no console errors");
+  EOF
+  cd /tmp/kopi-shots && /opt/homebrew/bin/node shoot-bid3.mjs ~/.universe/cache/worktrees/kp/kp-37/web/out /tmp/kp37-shots mock
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  Exit code 1
+  [1440] turn took 15 s
+  [1440] tabs: Bid plan | Clarification questions | Compliance matrix | Checklist | Proposal outline | Memory 3 | Checklist 0/8
+  node:internal/modules/run_main:107
+      triggerUncaughtException(
+      ^
+  
+  locator.click: Error: strict mode violation: getByRole('tab', { name: /^Checklist/ }) resolved to 2 elements:
+      1) <button role="tab" type="button" aria-selected="false" title="GVT000ETT26000101-checklist.md" class="flex h-8 max-w-[14rem] shrink-0 items-center gap-1.5 rounded-full px-3
+  [… 675 chars cut …]
+  { name: /^Checklist/ })
+  
+      at /private/tmp/kopi-shots/shoot-bid3.mjs:58:57 {
+    log: [ "  - waiting for getByRole('tab', { name: /^Checklist/ })" ]
+  }
+  
+  Node.js v26.7.0
+  ```
+
+  </details>
+
+A real UX clash: Kopi's checklist document and the tickable rules checklist were both called "Checklist". Renaming the tickable one to "Tasks".
+
+- **Bash** — Rename the tickable list to Tasks and reshoot
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('components/bid/artifact-panel.tsx',[
+  ('''            Checklist{checklist.items.length ? ` ${checklist.done}/${checklist.items.length}` : ""}''','''            Tasks{checklist.items.length ? ` ${checklist.done}/${checklist.items.length}` : ""}'''),
+  ])
+  edit('components/bid/checklist-pane.tsx',[
+  ('''          Submission checklist
+            {items.length > 0 && (''','''          Tasks
+            {items.length > 0 && ('''),
+  ('''        <p className="text-[13px] leading-snug text-muted-foreground">Built by rules from the notice and your profile. Ticks are kept in this browser.</p>''','''        <p className="text-[13px] leading-snug text-muted-foreground">
+            What to prepare and submit, built by rules from the notice and your profile. Tick them off as you go; the ticks stay in this browser.
+          </p>'''),
+  ])
+  EOF
+  sed -i '' 's|await page.getByRole("tab", { name: /^Checklist/ }).click();|await
+  [… 23 chars cut …]
+  { name: /^Tasks/ }).click();|; s|await shot("checklist");|await shot("tasks");|' /tmp/kopi-shots/shoot-bid3.mjs && export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -1 && NEXT_PUBLIC_KOPI_API=mock npm run build 2>&1 | grep -E "rror|✓ Gen" && cd /tmp/kopi-shots && node shoot-bid3.mjs ~/.universe/cache/worktrees/kp/kp-37/web/out /tmp/kp37-shots mock
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ✓ Generating static pages using 13 workers (12/12) in 331ms
+  [1440] turn took 15 s
+  [1440] tabs: Bid plan | Clarification questions | Compliance matrix | Checklist | Proposal outline | Memory 3 | Tasks 0/8
+  [390] turn took 15 s
+  [390] tabs: Chat | Documents 5
+  no console errors
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/art-writing-mock-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/art-done-mock-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Short tab names, compact upload, and reshoot
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('components/bid/artifact-panel.tsx',[
+  ('''/** The order a bid team reads its documents in; anything else follows. */''','''/** What a tab calls each document the playbook writes; the full name is in its tooltip. */
+  const SHORT: Record<string, string> = {
+    "bid plan": "Plan",
+    "clarification questions": "Questions",
+    "compliance matrix": "Matrix",
+    checklist: "Checklist",
+    "proposal outline": "Outline",
+    "cover letter": "Cover letter",
+    "pricing notes": "Pricing",
+    "risk register": "Risks",
+  };
+  const tabName = (file: string, doc: string) => {
+    const kind = draftKind(file, doc);
+    return SHORT[kind.toLowerCase()] ?? kind;
+  };
+  
+  /** The order a bid team reads its documents in; anything else follows. */'''),
+  ('''import { useEffect, useRef, useState } from "react";''','''import { useEffect, useLayoutEffect, useRef, useState } from "react";'''),
+  ('''function TabButton({ active, onClick, icon: Icon,
+  [… 1,476 chars cut …]
+  tender documents"}</span>'''),
+  ])
+  EOF
+  export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -1 && NEXT_PUBLIC_KOPI_API=mock npm run build 2>&1 | grep -E "rror|✓ Gen" && cd /tmp/kopi-shots && sed -i '' 's|name: /Clarification questions/|name: /^Questions/|' shoot-bid3.mjs && node shoot-bid3.mjs ~/.universe/cache/worktrees/kp/kp-37/web/out /tmp/kp37-shots mock
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ✓ Generating static pages using 13 workers (12/12) in 254ms
+  [1440] turn took 15 s
+  [1440] tabs: Plan | Questions | Matrix | Checklist | Outline | Memory 3 | Tasks 0/8
+  [390] turn took 15 s
+  [390] tabs: Chat | Documents 5
+  no console errors
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/art-questions-mock-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/art-docs-mock-390.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Drop repeated tab icons, re-reveal the open tab, reshoot
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37/web && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('components/bid/artifact-panel.tsx',[
+  ('''function TabButton({ active, onClick, icon: Icon, busy, children, title }: { active: boolean; onClick: () => void; icon?: typeof FileText; busy?: boolean; children: React.ReactNode; title?: string }) {
+    const ref = useRef<HTMLButtonElement>(null);
+    // The open tab stays in view as Kopi moves through the documents.
+    useLayoutEffect(() => {
+      if (active) ref.current?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }, [active]);''','''function TabButton({
+    active,
+    onClick,
+    icon: Icon,
+    busy,
+    children,
+    title,
+    reveal,
+  }: {
+    active: boolean;
+    onClick: () => void;
+    icon?: typeof FileText;
+    busy?: boolean;
+    children: React.ReactNode;
+    title?: string;
+    /** Changes when the panel is shown again (the phone's Documents toggle), so the open tab scrolls back into view. */
+    reveal?: unknown;
+  }) {
+    const ref =
+  [… 906 chars cut …]
+      now={now}
+                started={busy || !!session}
+                reveal={view}
+              />'''),
+  ])
+  EOF
+  export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -1 && NEXT_PUBLIC_KOPI_API=mock npm run build 2>&1 | grep -E "rror|✓ Gen" && cd /tmp/kopi-shots && node shoot-bid3.mjs ~/.universe/cache/worktrees/kp/kp-37/web/out /tmp/kp37-shots mock 2>&1 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ✓ Generating static pages using 13 workers (12/12) in 279ms
+  [390] turn took 15 s
+  [390] tabs: Chat | Documents 5
+  no console errors
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/art-memory-mock-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/art-docs-mock-390.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The new layout works at both widths: all tabs fit on desktop, and on phones the open tab scrolls into view. Committing, then doing the real Opus run through the new UI.
+
+- **Bash** — Write the KP-37 handoff and commit
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-37 && cat > planning/handoffs/KP-37.md <<'EOF'
+  # KP-37 — Bid workspace as a chat with an artifacts panel
+  
+  **Why:** Teddy, 29 Sep: working a bid "should feel like ChatGPT / artifacts panel, same page,
+  clean". The KP-35 layout put documents in a side rail and opened them in a sheet over the
+  page.
+  
+  **Built**
+  - **`/bid` goes full-bleed** (`components/shell/app-shell.tsx`, `BLEED`). The page sets its own
+    height (`100dvh` minus the 53px top bar, and minus the 16px inset from lg), and each pane
+    scrolls on its own.
+  - **Left pane, the chat** (`bid-view.tsx`, 42% wide, 26–40rem):
+    - a compact header: agency, countdown, a two-line title, and a `StageLine` (five segments,
+      "Draft · proposal, matrix, checklist · 3 of 5", with the next step under it);
+    - the turns, which follow the stream unless the reader has scrolled up;
+    - the composer pinned to the foot.
+  - **Right pane, the artifacts** (`artifact-panel.tsx`):
+    - **Tabs:** pill tabs in reading order with short names (Plan, Questions, Matrix,
+      Checklist, Outline; the full name is in the tooltip), then uploads
+  [… 1,493 chars cut …]
+  panel (tabs per document, live writing, uploads preview, memory and tasks tabs, phone toggle)
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1 && mkdir -p ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi && cp /tmp/kp37-shots/*.png ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  f1c8d85 KP-37: bid workspace as a chat with an artifacts panel (tabs per document, live writing, uploads preview, memory and tasks tabs, phone toggle)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__build__build_check** `{"task": "KP-37"}`
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 7s — `cd web && npm run lint && npm run build` in ~/.universe/cache/worktrees/kp/kp-37
+  
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  
+  > kopi-web@0.1.0 prebuild
+  > node scripts/sync-fixtures.mjs
+  
+  fixtures synced into ~/.universe/cache/worktrees/kp/kp-37/web/lib/fixtures
+  
+  > kopi-web@0.1.0 build
+  > next build
+  
+  ▲ Next.js 16.3.6 (Turbopack)
+  - Environments: .env.production
+  ✓ Running next.config.ts took 43ms
+  
+    Creating an optimized production build ...
+  ✓ Compiled successfully in 699ms
+    Running TypeScript ...
+    Finished
+  [… 456 chars cut …]
+  ├ ○ /licences
+  ├ ○ /profile
+  ├ ○ /search
+  ├ ○ /submissions
+  └ ○ /tender
+  
+  
+  ○  (Static)  prerendered as static content
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-37", "check": "cd web && npm run lint && npm run build — passed; mock kickoff at 1440 and 390: the panel follows each document as it is written, tabs Plan | Questions | Matrix | Checklist | Outline | Memory | Tasks, memory note added, phone Chat/Documents toggle; no console errors or
+  [… 583 chars cut …]
+  "artifacts/media/kopi/art-questions-mock-1440.png", "artifacts/media/kopi/art-docs-mock-390.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-37.
+  Every task in "Bid as chat and artifacts" is done. Check the milestone goal as a whole ("Working a bid feels like ChatGPT or Claude with an artifacts panel, all on one page. The conversation is on the left. On the right is a document panel with a tab per document (bid plan, clarification questions, compliance matrix, checklist, proposal outline, uploads) plus Memory and Checklist. The panel opens each document as Kopi writes it, showing the content as soon as the Write arrives, with download and
+  [… 62 chars cut …]
+  phones a Chat / Documents toggle switches the panes. Proven in mock and on the local stack with real Opus, at 1440 and 390, and published."), then call build_milestone_done.
+  ```
+
+  </details>
+
+- **Bash** — Confirm the merge and build the local copy for the real run
+  
+  ```
+  cd ~/Documents/codes/kopi && git log --oneline -2 && git status --short | head -3; cd web && export PATH=/opt/homebrew/bin:$PATH && NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8765 npm run build 2>&1 | grep -E "rror|✓ Gen" && rm -rf /tmp/kopi-film/web-local && cp -R out /tmp/kopi-film/web-local && echo ok
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  3ab3570 KP-37: Bid workspace as a chat with an artifacts panel
+  f1c8d85 KP-37: bid workspace as a chat with an artifacts panel (tabs per document, live writing, uploads preview, memory and tasks tabs, phone toggle)
+  ✓ Generating static pages using 13 workers (12/12) in 264ms
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__dev__dev_start** `{"service": "film-api"}`
+
+- **mcp__dev__dev_start** `{"service": "film-web"}`
+
+  <details><summary>result</summary>
+
+  ```
+  film-api — Kopi API (local, live data, for filming): running at http://localhost:8765 (pid 41074)
+      in ., `cd ~/Documents/codes/kopi/backend && KOPI_DATA_DIR=/tmp/kopi-film/data KOPI_EMBED_DEVICE=mps PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra search --extra agent python /tmp/kopi-film/film_api.py`
+  
+  Read its output with dev_logs({ service: "film-api" }).
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  film-web — Kopi web (local build against the film API): running, no address printed (pid 41118)
+      in ., `python3 -m http.server 4790 --bind 127.0.0.1 --directory /tmp/kopi-film/web-local`
+  
+  Read its output with dev_logs({ service: "film-web" }).
+  ```
+
+  </details>
+
+The local stack is up. Running a real Opus bid through the new layout on a different live tender: NYP's learning management system SaaS tender.
+
+- **Bash** — Run a real Opus bid through the chat-and-artifacts layout
+  
+  ```
+  for i in $(seq 1 40); do curl -sf http://127.0.0.1:8765/health >/dev/null && break; sleep 3; done; cd /tmp/kopi-shots && /opt/homebrew/bin/node shoot-bid3.mjs /tmp/kopi-film/web-local /tmp/kp37-shots local "next-generation learning management system software as a service" artlive 2>&1 | tail -6
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command did not complete within its 600s timeout and was moved to the background (ID: b00lwncqf). Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/b00lwncqf.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+- **mcp__dev__dev_logs** `{"service": "film-api", "limit": 12}`
+
+  <details><summary>result</summary>
+
+  ```
+  12 lines, seq 1507–1518. nextSeq: 1519 — pass that back as `since` to see only what is new.
+  
+  INFO:     127.0.0.1:55274 - "GET /sessions/638dbc04fd4341d4bce1708abd6f0456/memory HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:55750 - "GET /sessions/638dbc04fd4341d4bce1708abd6f0456/files HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:55750 - "GET /sessions/638dbc04fd4341d4bce1708abd6f0456/memory HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:55865 - "GET /sessions/638dbc04fd4341d4bce1708abd6f0456/files HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:55950 - "GET
+  [… 601 chars cut …]
+  /sessions/638dbc04fd4341d4bce1708abd6f0456/memory HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:59476 - "POST /sessions/638dbc04fd4341d4bce1708abd6f0456/memory HTTP/1.1" 200 OK
+  ```
+
+  </details>
+
+- **Bash** — Read the real run's result
+  
+  ```
+  tail -8 /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/b00lwncqf.output; ls -t /tmp/kp37-shots | grep artlive
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [1440] turn took 603 s
+  [1440] tabs: Plan | Questions | Matrix | Checklist | Outline | Memory 8 | Tasks 0/14
+  PROBLEMS:
+  [1440] never saw a document being written
+  
+  [exited with code 0]
+  artlive-tasks-local-1440.png
+  artlive-memory-local-1440.png
+  artlive-questions-local-1440.png
+  artlive-done-local-1440.png
+  artlive-writing-local-1440.png
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp37-shots/artlive-done-local-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Check the SDK notes on streamed tool input
+  
+  ```
+  cd ~/Documents/codes/kopi && grep -n -i "partial\|StreamEvent\|input_json" planning/research/agent-sdk.md | head -20; grep -n "class StreamEvent" -A12 backend/.venv/lib/python3.13/site-packages/claude_agent_sdk/types.py
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  57:`include_partial_messages=True` adds `StreamEvent`s for token-level streaming.
+  1381:class StreamEvent:
+  1382-    """Stream event for partial message updates during streaming."""
+  1383-
+  1384-    uuid: str
+  1385-    session_id: str
+  1386-    event: dict[str, Any]  # The raw Anthropic API stream event
+  1387-    parent_tool_use_id: str | None = None
+  1388-
+  1389-
+  1390-# Rate limit types — see https://docs.claude.com/en/docs/claude-code/rate-limits
+  1391-RateLimitStatus = Literal["allowed", "allowed_warning", "rejected"]
+  [… 20 chars cut …]
+  = Literal[
+  1393-    "five_hour", "seven_day", "seven_day_opus", "seven_day_sonnet", "overage"
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The SDK passes raw API stream events through. Before relying on their exact shape, I'm running a tiny real probe to capture what a Write call's streamed input looks like.
+
+- **Bash** — Probe how Write tool input streams from the SDK
+  
+  ```
+  mkdir -p /tmp/kp38-probe/drafts && cd ~/Documents/codes/kopi/backend && export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && cat > /tmp/kp38-probe/probe.py <<'EOF'
+  import anyio, json
+  from claude_agent_sdk import ClaudeAgentOptions, StreamEvent, query
+  
+  async def main():
+      opts = ClaudeAgentOptions(model="claude-opus-5-5", tools=["Write"], allowed_tools=["Write"], permission_mode="dontAsk",
+                                setting_sources=[], cwd="/tmp/kp38-probe", max_turns=3, include_partial_messages=True)
+      seen = []
+      async for m in query(prompt="Write a markdown file at /tmp/kp38-probe/drafts/probe.md with a '# Probe' title and a 5-item numbered list of fruits, each with one sentence. Then say done.", options=opts):
+          if isinstance(m, StreamEvent):
+              e = m.event
+              t = e.get("type")
+              if t == "content_block_start":
+                  seen.append(("start", e.get("index"), e.get("content_block", {}).get("type"), e.get("content_block", {}).get("name")))
+              elif t == "content_block_delta" and e.get("delta", {}).get("type") == "input_json_delta":
+                 
+  [… 172 chars cut …]
+    starts = [s for s in seen if s[0] == "start"]
+      jsons = [s for s in seen if s[0] == "json"]
+      print("starts:", starts)
+      print("json deltas:", len(jsons))
+      for s in jsons[:8]: print("  ", s)
+      print("stops:", [s for s in seen if s[0] == "stop"])
+  anyio.run(main)
+  EOF
+  uv run --extra agent python /tmp/kp38-probe/probe.py 2>&1 | tail -20; ls /tmp/kp38-probe/drafts
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  return await func(*args)
+             ^^^^^^^^^^^^^^^^^
+    File "/tmp/kp38-probe/probe.py", line 8, in main
+      async for m in query(prompt="Write a markdown file at /tmp/kp38-probe/drafts/probe.md with a '# Probe' title and a 5-item numbered list of fruits, each with one sentence. Then say done.", options=opts):
+      ...<8 lines>...
+                  seen.append(("stop", e.get("index")))
+    File "~/Documents/codes/kopi/backend/.venv/lib/python3.13/site-packages/claude_agent_sdk/query.py", line 129, in query
+      async for
+  [… 697 chars cut …]
+  Claude Code returned an error result: Not logged in · Please run /login (exit code: 1)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+My shell isn't signed in to Claude the way the local film API's service is. Running the probe through that same supervised environment instead of reaching for any credentials.
+
+- **ToolSearch** `{"query": "select:mcp__dev__dev_exec", "max_results": 1}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__dev__dev_exec** `{"folder": ".", "command": "cd ~/Documents/codes/kopi/backend && PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra agent python /tmp/kp38-probe/probe.py 2>&1 | tail -20", "timeout_ms": 300000}`
+
+  <details><summary>result</summary>
+
+  ```
+  exit 0 — succeeded. (cd ~/Documents/codes/kopi/backend && PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra agent python /tmp/kp38-probe/probe.py 2>&1 | tail -20)
+  Full output: dev_logs({ service: "exec:84b65d" }).
+  
+  starts: [('start', 0, 'tool_use', 'Write'), ('start', 0, 'text', None)]
+  json deltas: 49
+     ('json', 0, '')
+     ('json', 0, '{"file_path": "/tmp/')
+     ('json', 0, 'kp38-probe/dr')
+     ('json', 0, 'afts/probe.md')
+     ('json', 0, '", "content": "# Probe')
+     ('json', 0, '\\n\\n1. **')
+     ('json', 0, 'Apple** –')
+     ('json', 0, ' A crisp, s')
+  stops: [('stop', 0), ('stop', 0)]
+  ```
+
+  </details>
+
+- **mcp__build__build_plan** `{"addTasks": {"milestone": "Bid as chat and artifacts", "tasks": [{"title": "Stream documents into the panel while Kopi writes them", "detail": "Probe (29 Sep, real SDK): with include_partial_messages, a Write streams as content_block_start {type: tool_use, name: Write} followed by input_json_delta
+  [… 1,406 chars cut …]
+  "check": "cd backend && uv run pytest -q && cd ../web && npm run lint && npm run build"}]}}`
+
+  <details><summary>result</summary>
+
+  ```
+  Revised artifacts/builds/kopi.json. Added KP-38.
+  ```
+
+  </details>
+
+- **Bash** — Read the current Translator and its tests
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && sed -n 100,175p kopi/agent/runner.py && grep -n "Translator" tests/*.py | head -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  server, tool_names = build_server(client, profile, memory_file)
+          prompt = bid_prompt(profile, today, workspace, doc_no, read_memory(memory_file), documents(workspace))
+      else:
+          server, tool_names = build_server(client, profile)
+          prompt = system_prompt(profile, today, str(drafts), doc_no)
+      return ClaudeAgentOptions(
+          model=model,
+          system_prompt=prompt,
+          tools=FILE_TOOLS,
+          allowed_tools=[*tool_names, *FILE_TOOLS],
+          disallowed_tools=["Bash", "WebFetch",
+  [… 2,310 chars cut …]
+  tests/test_agent.py:174:    assert list(Translator(Path("/tmp")).events(event)) == []
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__build__build_next** `{"task": "KP-38"}`
+
+  <details><summary>result</summary>
+
+  ```
+  KP-38 — Stream documents into the panel while Kopi writes them
+  Probe (29 Sep, real SDK): with include_partial_messages, a Write streams as content_block_start {type: tool_use, name: Write} followed by input_json_delta fragments of '{"file_path": "…", "content": "…"}' while the model composes the document.
+  
+  Backend:
+  - ChatEventType.WRITING = "writing", with `file` (the draft's name) and `text` (the next piece of the document). Additive to models.py.
+  - kopi/agent/runner.py: the Translator keeps one partial Write per
+  [… 2,310 chars cut …]
+  need an Omit<>&{field?} wrapper in web/lib/api.ts. Regenerate types with `make types`.
+  
+  Run the check with build_check (it runs here, not in your turn), then build_task_done.
+  ```
+
+  </details>
+
+Writing the incremental decoder as its own small module, then wiring it into the runner's translator.
+
+- **Write** `~/.universe/cache/worktrees/kp/kp-38/backend/kopi/agent/streaming.py`
+
+  <details><summary>result</summary>
+
+  ```
+  File created successfully at: ~/.universe/cache/worktrees/kp/kp-38/backend/kopi/agent/streaming.py (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+- **Bash** — Emit writing events from the runner's translator
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-38/backend && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('kopi/models.py',[
+  ('''    FILE = "file"
+      DONE = "done"''','''    FILE = "file"
+      WRITING = "writing"  # the next piece of a draft while the model is still writing it: `file` and `text`
+      DONE = "done"'''),
+  ])
+  edit('kopi/agent/runner.py',[
+  ('''class Translator:
+      """Turns the SDK's message stream into ChatEvents; remembers which tool each call was, and which calls wrote drafts."""
+  
+      def __init__(self, drafts: Path) -> None:
+          self.drafts = drafts
+          self.pending_tools: dict[str, str] = {}
+          self.pending_files: dict[str, str] = {}
+          self.session_id: str | None = None
+  
+      def events(self, message: Any) -> Iterable[ChatEvent]:
+          session = getattr(message, "session_id", None)
+          if session:
+              self.session_id = session
+          if isinstance(message, StreamEvent):
+              delta = message.event.get("delta") or {}
+              if
+  [… 1,536 chars cut …]
+  import re
+  m=re.search(r'^SUMMARY_CHARS = .*$', s, re.M)
+  print(m.group(0) if m else 'no SUMMARY_CHARS')
+  s=s.replace(m.group(0), m.group(0)+'\nWRITING_BATCH = 60  # characters of a draft per "writing" event: live, without an event per token')
+  open('kopi/agent/runner.py','w').write(s)
+  EOF
+  grep -n "^from kopi\|^import\|WRITING_BATCH =" kopi/agent/runner.py
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  SUMMARY_CHARS = 160
+  19:import argparse
+  20:import os
+  21:import sys
+  27:import anyio
+  40:from kopi.agent.streaming import PartialWrite
+  41:from kopi.agent.prompts import bid_prompt, system_prompt
+  42:from kopi.agent.tools import SERVER, KopiClient, build_server, read_memory
+  43:from kopi.models import ChatEvent, ChatEventType, Profile
+  52:WRITING_BATCH = 60  # characters of a draft per "writing" event: live, without an event per token
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Test the streaming decoder and translator
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-38/backend && python3 - <<'EOF'
+  p='kopi/agent/runner.py'
+  s=open(p).read()
+  s=s.replace('''from kopi.agent.streaming import PartialWrite
+  from kopi.agent.prompts import bid_prompt, system_prompt
+  from kopi.agent.tools import SERVER, KopiClient, build_server, read_memory''','''from kopi.agent.prompts import bid_prompt, system_prompt
+  from kopi.agent.streaming import PartialWrite
+  from kopi.agent.tools import SERVER, KopiClient, build_server, read_memory''')
+  open(p,'w').write(s)
+  EOF
+  cat > tests/test_agent_writing.py <<'EOF'
+  """Drafts stream to the browser while the model writes them (KP-38)."""
+  
+  import json
+  from pathlib import Path
+  
+  import pytest
+  from claude_agent_sdk import StreamEvent
+  
+  from kopi.agent.runner import Translator
+  from kopi.agent.streaming import PartialWrite, decode
+  from kopi.models import ChatEventType
+  
+  DOC = '# Bid plan: GVT000\n\n**Call:** "bid" — café ☕ 😀 \\ tab\there.\n\n| a | b |\n|---|---|\n'
+  
+  
+  def fragments(text: str, size: int) -> list[str]:
+      return [text[i : i + size] for i in range(0, len(text), size)]
+  
+  
+  def stream(fragments_: list[str], name: str =
+  [… 1,514 chars cut …]
+  PartialWrite()
+      assert partial.feed('{"file_path": "/w/drafts/a.md", "content": "hel') == "hel"
+      assert partial.feed('lo", "extra": "not content"}') == "lo"
+      assert partial.file_path == "/w/drafts/a.md"
+  EOF
+  export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && uv sync -q --extra agent 2>&1 | tail -1; uv run pytest -q tests/test_agent_writing.py 2>&1 | tail -15
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  def test_decode_never_releases_half_an_escape():
+          assert decode(r"ab\\", 0) == ("ab\\", 4, False)
+          assert decode("ab\\", 0) == ("ab", 2, False)
+          assert decode(r"x\u00", 0) == ("x", 1, False)
+          assert decode(r"x\ud83d", 0) == ("x", 1, False)
+  >       assert decode(r"x😀", 0) == ("x😀", 13, False)
+  E       AssertionError: assert ('x😀', 2, False) == ('x😀', 13, False)
+  E         
+  E         At index 1 diff: 2 != 13
+  E         Use -v to get more diff
+  
+  tests/test_agent_writing.py:91: AssertionError
+  [… 160 chars cut …]
+  1 failed, 16 passed in 1.76s
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Fix the mangled surrogate test and run the suite
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-38/backend && python3 - <<'EOF'
+  p='tests/test_agent_writing.py'
+  s=open(p).read()
+  bs='\\'
+  emoji=chr(0x1F600)
+  old=f'    assert decode(r"x{emoji}", 0) == ("x{emoji}", 13, False)'
+  assert old in s, "line not found"
+  new=f'    assert decode("x" + chr(92) + "ud83d" + chr(92) + "ude00", 0) == ("x' + '\\U0001f600' + '", 13, False)'
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  print([l for l in s.splitlines() if 'ude00' in l])
+  EOF
+  export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && uv run pytest -q tests/test_agent_writing.py 2>&1 | tail -3 && uv run pytest -q 2>&1 | tail -2
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ['    assert decode("x" + chr(92) + "ud83d" + chr(92) + "ude00", 0) == ("x\\U0001f600", 13, False)']
+  .................                                                        [100%]
+  17 passed in 0.43s
+  .......................................................                  [100%]
+  343 passed in 7.60s
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The backend streams documents now: 17 new tests and all 343 pass. Now the web side, plus making the demo mode type its documents the same way.
+
+- **Bash** — Handle writing events on the bid page and stream the mock's drafts
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-38/web && (PATH=/opt/homebrew/bin:$PATH npm ci --no-audit --no-fund > /tmp/kp38-npmci.log 2>&1 &); python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('lib/api.ts',[
+  (''' * live runner also names its tool; the mock does not); an `error` carries its message in `text`.
+   */
+  export type ChatEvent = {
+    type: "text" | "tool_call" | "tool_result" | "file" | "done" | "error";''',''' * live runner also names its tool; the mock does not); an `error` carries its message in `text`;
+   * a `writing` event is the next piece (`text`) of a draft (`file`) the model is still writing.
+   */
+  export type ChatEvent = {
+    type: "text" | "tool_call" | "tool_result" | "file" | "writing" | "done" | "error";'''),
+  ])
+  edit('lib/mock-copilot.ts',[
+  ('''function write(name: string, body: string, files: Map<string, string>): Beat[] {
+    files.set(name, body);
+    return [
+      ...call("Write", { file_path: `${DRAFTS}/${name}`, content: body }, `File created successfully at: ${DRAFTS}/${name}`,
+  [… 1,004 chars cut …]
+  ({ ...docs, [name]: (docs[name] ?? "") + piece }));
+                setWriting((names) => (names.has(name) ? names : new Set(names).add(name)));
+                if (!picked.current) setActive((tab) => (tab?.kind === "doc" && tab.name === name ? tab : { kind: "doc", name }));
+              }'''),
+  ])
+  EOF
+  grep -n '"writing"' lib/mock-copilot.ts components/bid/bid-view.tsx | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/bid/bid-view.tsx:207:            if (event.type === "writing" && event.file && event.text) {
+  lib/mock-copilot.ts:265:    ...pieces.map((text): Beat => ({ event: { type: "writing", file: name, text }, pause: 22 })),
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Restart live copies per write, follow the text, and build
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-38/web && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('components/bid/bid-view.tsx',[
+  ('''  const picked = useRef(false);''','''  const picked = useRef(false);
+    /** Drafts whose text is arriving in pieces right now; the first piece of a new write replaces the old copy. */
+    const streaming = useRef(new Set<string>());'''),
+  ('''              setLive((docs) => ({ ...docs, [name]: (docs[name] ?? "") + piece }));''','''              const fresh = !streaming.current.has(name);
+                streaming.current.add(name);
+                setLive((docs) => ({ ...docs, [name]: (fresh ? "" : (docs[name] ?? "")) + piece }));'''),
+  ('''            const draft = draftOf(event);
+              if (draft) {''','''            const draft = draftOf(event);
+              if (draft) {
+                streaming.current.delete(draft);'''),
+  ('''        setWriting(new Set());''','''        setWriting(new Set());
+          streaming.current.clear();'''),
+  ])
+  [… 966 chars cut …]
+  el.scrollHeight - 80;
+          }}
+          className="min-h-0 flex-1 overflow-y-auto"
+        >'''),
+  ])
+  EOF
+  until grep -q "added\|up to date" /tmp/kp38-npmci.log 2>/dev/null || [ -d node_modules/.bin/next ] ; do sleep 2; done 2>/dev/null; export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -8 && NEXT_PUBLIC_KOPI_API=mock npm run build 2>&1 | grep -E "rror|✓ Gen"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  > kopi-web@0.1.0 lint
+  > eslint
+  
+  ✓ Generating static pages using 13 workers (12/12) in 256ms
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Watch the mock bid stream documents into the panel
+  
+  ```
+  cd /tmp/kopi-shots && /opt/homebrew/bin/node shoot-bid3.mjs ~/.universe/cache/worktrees/kp/kp-38/web/out /tmp/kp38-shots mock "generative AI assistant chatbot" stream 2>&1 | tail -6
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [1440] turn took 17 s
+  [1440] tabs: Plan | Questions | Matrix | Checklist | Outline | Memory 3 | Tasks 0/8
+  [390] turn took 17 s
+  [390] tabs: Chat | Documents 5
+  no console errors
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp38-shots/stream-writing-mock-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Demo mode now types each document into the panel as it's written. Committing, landing on main, then proving it with real Opus.
+
+- **Bash** — Write the KP-38 handoff and commit
+  
+  ```
+  cd ~/.universe/cache/worktrees/kp/kp-38 && cat > planning/handoffs/KP-38.md <<'EOF'
+  # KP-38 — Stream documents into the panel while Kopi writes them
+  
+  **Why:** in the first real run of the KP-37 artifacts panel, the "Kopi is writing this" state
+  never showed. The SDK hands over a finished tool call (`AssistantMessage` → `tool_call`) only
+  once the model has written the whole document, and the Write itself takes milliseconds. So a
+  document appeared in one jump, 20–40 s after the model started on it.
+  
+  **Probe (real SDK, not from memory):**
+  - With `include_partial_messages`, a Write arrives as `content_block_start`
+    `{type: tool_use, name: "Write"}`, then about 50 `input_json_delta` fragments of
+    `{"file_path": "/tmp/…/probe.md", "content": "# Probe\n\n1. **Apple** –…`, then
+    `content_block_stop`.
+  - The block index restarts at 0 in each message.
+  
+  **Built**
+  - **`ChatEventType.WRITING`** (additive): `file` is the draft's name and `text` is the next
+    piece of its content.
+  - **`kopi/agent/streaming.py`, `PartialWrite`:**
+    - takes the fragments and returns the content decoded so far, never half an escape
+     
+  [… 1,523 chars cut …]
+  assertion lost its escape on the way into the test file (it arrived as a
+    literal emoji). The test now builds the escape with `chr(92)`.
+  EOF
+  git add -A && git commit -q -m "KP-38: stream drafts into the panel while the model writes them (writing events from partial Write input)
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  111b641 KP-38: stream drafts into the panel while the model writes them (writing events from partial Write input)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__build__build_check** `{"task": "KP-38"}`
+
+  <details><summary>result</summary>
+
+  ```
+  PASSED in 13s — `cd backend && uv run pytest -q && cd ../web && npm run lint && npm run build` in ~/.universe/cache/worktrees/kp/kp-38
+  
+  ........................................................................ [ 20%]
+  ........................................................................ [ 41%]
+  ........................................................................ [ 62%]
+  ........................................................................ [ 83%]
+  .......................................................             
+  [… 905 chars cut …]
+  ├ ○ /licences
+  ├ ○ /profile
+  ├ ○ /search
+  ├ ○ /submissions
+  └ ○ /tender
+  
+  
+  ○  (Static)  prerendered as static content
+  
+  Report it with build_task_done, passing this command.
+  ```
+
+  </details>
+
+- **mcp__build__build_task_done** `{"task": "KP-38", "check": "cd backend && uv run pytest -q && cd ../web && npm run lint && npm run build — 343 passed (17 new), lint and build clean; mock bid at 1440 and 390 streams each document into its tab", "passed": true, "commit": "3ab3570..111b641", "summary": "Drafts now stream into the
+  [… 266 chars cut …]
+  the text, then swaps in the exact content when the Write lands. Demo mode streams the same way."}`
+
+- **Bash** — Confirm the merge and rebuild the local web copy
+  
+  ```
+  sleep 3; cd ~/Documents/codes/kopi && git log --oneline -2 | cut -c1-90 && grep -c "WRITING" backend/kopi/agent/runner.py && cd web && export PATH=/opt/homebrew/bin:$PATH && NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8765 npm run build 2>&1 | grep -E "rror|✓ Gen" && rm -rf /tmp/kopi-film/web-local && cp -R out /tmp/kopi-film/web-local && echo ok
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-38.
+  Every task in "Bid as chat and artifacts" is done. Check the milestone goal as a whole ("Working a bid feels like ChatGPT or Claude with an artifacts panel, all on one page. The conversation is on the left. On the right is a document panel with a tab per document (bid plan, clarification questions, compliance matrix, checklist, proposal outline, uploads) plus Memory and Checklist. The panel opens each document as Kopi writes it, showing the content as soon as the Write arrives, with download and
+  [… 62 chars cut …]
+  phones a Chat / Documents toggle switches the panes. Proven in mock and on the local stack with real Opus, at 1440 and 390, and published."), then call build_milestone_done.
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  f8448c0 KP-38: Stream documents into the panel while Kopi writes them
+  111b641 KP-38: stream drafts into the panel while the model writes them (writing events fr
+  6
+  ✓ Generating static pages using 13 workers (12/12) in 822ms
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__dev__dev_restart** `{"service": "film-api"}`
+
+  <details><summary>result</summary>
+
+  ```
+  film-api — Kopi API (local, live data, for filming): running at http://localhost:8765 (pid 48029)
+      in ., `cd ~/Documents/codes/kopi/backend && KOPI_DATA_DIR=/tmp/kopi-film/data KOPI_EMBED_DEVICE=mps PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra search --extra agent python /tmp/kopi-film/film_api.py`
+  ```
+
+  </details>
+
+Local stack restarted with the streaming backend. Running a real Opus bid on a new live tender (Raffles Girls' School HR system) to catch a document mid-write.
+
+- **Bash** — Real Opus bid through the streaming panel
+  
+  ```
+  for i in $(seq 1 40); do curl -sf http://127.0.0.1:8765/health >/dev/null && break; sleep 3; done; cd /tmp/kopi-shots && sed -i '' 's|timeout: 600000 }).catch(() => problems.push(`\[${width}\] never saw a document being written`));|timeout: 900000 }).catch(() => problems.push(`[${width}] never saw a document being written`));|' shoot-bid3.mjs && /opt/homebrew/bin/node shoot-bid3.mjs /tmp/kopi-film/web-local /tmp/kp38-shots local "human resource system" streamlive > /tmp/kp38-live.log 2>&1; echo "exit $?" >> /tmp/kp38-live.log; tail -6 /tmp/kp38-live.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: bopzqi8up. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/bopzqi8up.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+- **Bash** — Wait for the mid-write screenshot
+  
+  ```
+  until [ -f /tmp/kp38-shots/streamlive-writing-local-1440.png ] || grep -q "^exit" /tmp/kp38-live.log 2>/dev/null; do sleep 3; done; ls -la /tmp/kp38-shots/ | grep streamlive; cat /tmp/kp38-live.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  -rw-r--r--@   1 teddy  wheel  366532 Sep 29 15:22 streamlive-writing-local-1440.png
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp38-shots/streamlive-writing-local-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Drop pending pieces once the finished Write arrives, with a test
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('kopi/agent/runner.py',[
+  ('''                if isinstance(block, ToolUseBlock):
+                      self.pending_tools[block.id] = short_tool(block.name)''','''                if isinstance(block, ToolUseBlock):
+                      if block.name == "Write":
+                          self._finish_writing(block.input.get("file_path"))
+                      self.pending_tools[block.id] = short_tool(block.name)'''),
+  ('''    def _flush(self, partial: PartialWrite, unsent: list[str], at_least: int) -> Iterable[ChatEvent]:''','''    def _finish_writing(self, path: str | None) -> None:
+          """The finished Write carries the exact document, and the CLI sends it before the stream's
+          content_block_stop: drop what is still unsent for that file, or it would land after it."""
+          for index, (partial, _) in list(self.writing.items()):
+              if partial.file_path == path:
+                  del
+  [… 1,134 chars cut …]
+  out if e.type == ChatEventType.WRITING) == DOC[: len("".join(e.text for e in out if e.type == ChatEventType.WRITING))]
+  '''
+  open(p,'w').write(s)
+  EOF
+  grep -n "class AssistantMessage" -A8 .venv/lib/python3.13/site-packages/claude_agent_sdk/types.py | head -10; export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && uv run pytest -q tests/test_agent_writing.py 2>&1 | tail -4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  1139:class AssistantMessage:
+  1140-    """Assistant message with content blocks."""
+  1141-
+  1142-    content: list[ContentBlock]
+  1143-    model: str
+  1144-    parent_tool_use_id: str | None = None
+  1145-    error: AssistantMessageError | None = None
+  1146-    usage: dict[str, Any] | None = None
+  1147-    message_id: str | None = None
+  ..................                                                       [100%]
+  18 passed in 0.75s
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Tidy the memory read step and check the live run
+  
+  ```
+  cd ~/Documents/codes/kopi/web && python3 - <<'EOF'
+  p='components/copilot/turn.tsx'
+  s=open(p).read()
+  old='''  if (tool === "Read") return text.replace(/^1\\s+/, "").replace(/^#\\s*/, "");'''
+  new='''  if (tool === "Read" && /^(1\\s+)?\\{"notes":/.test(text)) return "The bid memory";
+    if (tool === "Read") return text.replace(/^1\\s+/, "").replace(/^#\\s*/, "");'''
+  assert old in s
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  cat /tmp/kp38-live.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Wait for the live run to finish
+  
+  ```
+  until grep -q "^exit" /tmp/kp38-live.log 2>/dev/null; do sleep 4; done; cat /tmp/kp38-live.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [1440] turn took 121 s
+  [1440] tabs: Plan | Questions | Matrix | Checklist | Outline | Memory 9 | Tasks 0/14
+  no console errors
+  exit 0
+  ```
+
+  </details>
+
+- **Bash** — Test, rebuild and commit the streaming fix
+  
+  ```
+  cd ~/Documents/codes/kopi && export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && (cd backend && uv run pytest -q 2>&1 | tail -1) && (cd web && npm run lint 2>&1 | tail -1 && NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8765 npm run build 2>&1 | grep -E "rror|✓ Gen") && rm -rf /tmp/kopi-film/web-local && cp -R web/out /tmp/kopi-film/web-local && git add -A backend web && git commit -q -m "Streaming drafts: drop the unsent tail once the finished Write arrives (the CLI sends it before content_block_stop); memory reads read as 'The bid memory'
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  344 passed in 10.00s
+  
+  ✓ Generating static pages using 13 workers (12/12) in 884ms
+  8a2d868 Streaming drafts: drop the unsent tail once the finished Write arrives (the CLI sends it before content_block_stop); memory reads read as 'The bid memory'
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__dev__dev_restart** `{"service": "film-api"}`
+
+  <details><summary>result</summary>
+
+  ```
+  film-api — Kopi API (local, live data, for filming): running at http://localhost:8765 (pid 49630)
+      in ., `cd ~/Documents/codes/kopi/backend && KOPI_DATA_DIR=/tmp/kopi-film/data KOPI_EMBED_DEVICE=mps PATH=/opt/homebrew/bin:$HOME/.local/bin:$PATH uv run --extra search --extra agent python /tmp/kopi-film/film_api.py`
+  ```
+
+  </details>
+
+- **Bash** — Second real Opus bid after the fix
+  
+  ```
+  for i in $(seq 1 40); do curl -sf http://127.0.0.1:8765/health >/dev/null && break; sleep 3; done; rm -f /tmp/kp38-shots/streamlive2-*; cd /tmp/kopi-shots && /opt/homebrew/bin/node shoot-bid3.mjs /tmp/kopi-film/web-local /tmp/kp38-shots local "maintenance and support services for national parks board applications" streamlive2 > /tmp/kp38-live2.log 2>&1; echo "exit $?" >> /tmp/kp38-live2.log; cat /tmp/kp38-live2.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: b49sjyfcq. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/b49sjyfcq.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+- **Bash** — Wait for the mid-write frame
+  
+  ```
+  until [ -f /tmp/kp38-shots/streamlive2-writing-local-1440.png ] || grep -q "^exit" /tmp/kp38-live2.log 2>/dev/null; do sleep 2; done; ls /tmp/kp38-shots | grep streamlive2
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  streamlive2-writing-local-1440.png
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp38-shots/streamlive2-writing-local-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Find where the runner prepares the workspace
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -n 'drafts.mkdir\|inputs' kopi/agent/runner.py | head -8
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  13:the documents (drafts/ and the person's uploads in inputs/), the remember and
+  64:    """PreToolUse hook: file tools stay inside the workspace (drafts/, the person's inputs/ and
+  90:    found = [path for folder in ("drafts", "inputs") for path in sorted((workspace / folder).glob("*")) if path.is_file()]
+  96:    drafts.mkdir(parents=True, exist_ok=True)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Always create an empty inputs folder
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && sed -n 92,100p kopi/agent/runner.py && python3 - <<'EOF'
+  p='kopi/agent/runner.py'
+  s=open(p).read()
+  old='''    drafts.mkdir(parents=True, exist_ok=True)'''
+  new='''    drafts.mkdir(parents=True, exist_ok=True)
+      # An empty inputs/ rather than a missing one: looking for uploads before any exist is not a failure.
+      (workspace / "inputs").mkdir(exist_ok=True)'''
+  assert s.count(old)==1
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  grep -n "def test.*options\|options(" tests/test_agent.py | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  def options(profile: Profile, client: KopiClient, workspace: Path, model: str, resume: str | None, doc_no: str | None, bid: bool = False) -> ClaudeAgentOptions:
+      drafts = workspace / "drafts"
+      drafts.mkdir(parents=True, exist_ok=True)
+      today = datetime.now(UTC)
+      if bid:
+          if not doc_no:
+              raise ValueError("a bid session works one tender: pass its doc_no")
+  98:def test_options_lock_the_agent_down(profile, tmp_path):
+  100:    opts = options(profile, client, tmp_path, "claude-opus-5-5", None, "GVT000ETT26000101")
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Test the inputs folder and wait for the live run
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && cat >> tests/test_agent_writing.py <<'EOF'
+  
+  
+  def test_the_workspace_always_has_an_inputs_folder(tmp_path: Path):
+      """The agent looks for uploads first; an empty folder answers "none", a missing one reads as a failed step."""
+      from kopi.agent.runner import KopiClient, options
+      from kopi.models import Profile
+  
+      profile = Profile(id="p", name="P", summary="s", capabilities=[], past_work=[])
+      options(profile, KopiClient("http://x", None), tmp_path, "claude-opus-5-5", None, "DOC1", bid=True)
+      assert (tmp_path / "inputs").is_dir() and not any((tmp_path / "inputs").iterdir())
+  EOF
+  export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && uv run pytest -q 2>&1 | tail -2; until grep -q "^exit" /tmp/kp38-live2.log 2>/dev/null; do sleep 4; done; cat /tmp/kp38-live2.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  .........................................................                [100%]
+  345 passed in 10.06s
+  [1440] turn took 157 s
+  [1440] tabs: Plan | Questions | Matrix | Checklist | Outline | Memory 8 | Tasks 0/4
+  no console errors
+  exit 0
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp38-shots/streamlive2-questions-local-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Open tabs at the top and recheck in mock
+  
+  ```
+  cd ~/Documents/codes/kopi/web && python3 - <<'EOF'
+  p='components/bid/artifact-panel.tsx'
+  s=open(p).read()
+  old='''  useEffect(() => {
+      follow.current = true;
+    }, [current]);'''
+  new='''  const tabKey = active ? `${active.kind}:${"name" in active ? active.name : ""}` : "";
+    // A tab opens at its top, unless its document is being written, which follows its newest line.
+    useLayoutEffect(() => {
+      follow.current = true;
+      if (pane.current) pane.current.scrollTop = 0;
+    }, [tabKey]);'''
+  assert old in s
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  export PATH=/opt/homebrew/bin:$PATH && npm run lint 2>&1 | tail -1 && NEXT_PUBLIC_KOPI_API=mock npm run build 2>&1 | grep -E "rror|✓ Gen" && cd /tmp/kopi-shots && node shoot-bid3.mjs ~/Documents/codes/kopi/web/out /tmp/kp38-shots mock "generative AI assistant chatbot" final 2>&1 | tail -4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ✓ Generating static pages using 13 workers (12/12) in 770ms
+  [1440] tabs: Plan | Questions | Matrix | Checklist | Outline | Memory 3 | Tasks 0/8
+  [390] turn took 17 s
+  [390] tabs: Chat | Documents 5
+  no console errors
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp38-shots/final-questions-mock-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Tabs open at the top now. Committing, deploying the streaming runner to Modal, and publishing.
+
+- **Bash** — Commit, deploy the backend, and stage the web app
+  
+  ```
+  cd ~/Documents/codes/kopi && git add -A backend web && git commit -q -m "Bids: an empty inputs/ in every workspace (no failed first look for uploads); tabs open at their top
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && cd backend && export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH && MODAL_PROFILE=kryptonairc-lc uv run --extra deploy modal deploy modal_app.py > /tmp/kopi-deploy-kp38.log 2>&1; echo "deploy exit $?"; grep -E "✓ App deployed|rror" /tmp/kopi-deploy-kp38.log | head -3; cd ../web && npm run build 2>&1 | grep -E "rror|✓ Gen" && S=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi && mv $S/demo /tmp/kopi-demo-keep && rm -rf $S && mkdir -p $S && cp -R out/. $S/ && mv /tmp/kopi-demo-keep $S/demo && ls $S/demo
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  deploy exit 0
+  ✓ App deployed in 2.698s! 🎉
+  ✓ Generating static pages using 13 workers (12/12) in 938ms
+  kopi-demo.mp4
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__sites__site_publish** `{"path": "artifacts/apps/kopi"}`
+
+  <details><summary>result</summary>
+
+  ```
+  {
+    "url": "https://kopi.unv.run",
+    "label": "kopi",
+    "version": 14,
+    "framework": "static",
+    "filesUploaded": 45,
+    "visibility": "public",
+    "rolledBack": false
+  }
+  ```
+
+  </details>
+
+- **Bash** — QA the published bid page
+  
+  ```
+  cd /tmp/kopi-shots && /opt/homebrew/bin/node qa-hosted-bid.mjs 2>&1 | tail -4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [1440] bid page: designed 'being connected' state
+  [390] bid page: designed 'being connected' state
+  no console errors besides the expected 503
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kp36-shots/hosted-bid-1440.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Record D29 and update the README
+  
+  ```
+  cp /tmp/kp38-shots/*.png /tmp/kp36-shots/hosted-bid-*.png ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi/ 2>/dev/null; cd ~/Documents/codes/kopi && python3 - <<'EOF'
+  def edit(p, pairs):
+      s=open(p).read()
+      for a,b in pairs:
+          assert a in s, (p,a)
+          s=s.replace(a,b)
+      open(p,'w').write(s)
+  edit('README.md',[
+  ('''| **Bids** (submissions) | Start a bid and Kopi works it. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. Upload the tender documents and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission checklist and deadline in Singapore time |''','''| **Bids** (submissions) | Start a bid and Kopi works it, as a chat with an artifacts panel on one page. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance
+  [… 1,512 chars cut …]
+  long before the finished tool call. So the panel can type as the model writes,
+  which is what makes it feel like one.
+  '''
+  open('planning/02-decisions.md','w').write(s)
+  EOF
+  git add -A README.md planning && git commit -q -m "D29 and README: the bid as a chat with a streaming artifacts panel
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  495438b D29 and README: the bid as a chat with a streaming artifacts panel
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
 
 - **Bash**
   
