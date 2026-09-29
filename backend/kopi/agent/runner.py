@@ -1,10 +1,17 @@
 """Run one copilot turn and print what happens as JSON lines (one ChatEvent each).
 
-    python -m kopi.agent.runner --message "…" --profile-file profile.json [--resume <session>] [--doc <doc_no>]
+    python -m kopi.agent.runner --message "…" [--profile-file profile.json] [--workspace /workspace]
+        [--resume <session>] [--doc <doc_no> [--bid]] [--model <model>]
 
-Environment: KOPI_API and KOPI_SESSION_TOKEN (the scoped token the tools use), plus
-CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY for Claude. The API reads stdout line by
+Environment: KOPI_API and KOPI_SESSION_TOKEN (the scoped token the tools use),
+KOPI_PROFILE_JSON unless --profile-file is given, and CLAUDE_CODE_OAUTH_TOKEN or
+ANTHROPIC_API_KEY for Claude. Optional: KOPI_WORKSPACE, KOPI_MODEL, and
+KOPI_MAX_BUDGET_USD, which overrides the per-turn budget. The API reads stdout line by
 line and forwards each event to the browser as server-sent events.
+
+--bid works the bid on --doc: the playbook prompt with the bid memory (memory.json) and
+the documents (drafts/ and the person's uploads in inputs/), the remember and
+set_bid_stage tools, and a bigger turn and budget cap.
 """
 
 from __future__ import annotations
@@ -30,13 +37,16 @@ from claude_agent_sdk import (
     query,
 )
 
-from kopi.agent.prompts import system_prompt
-from kopi.agent.tools import SERVER, KopiClient, build_server
+from kopi.agent.prompts import bid_prompt, system_prompt
+from kopi.agent.tools import SERVER, KopiClient, build_server, read_memory
 from kopi.models import ChatEvent, ChatEventType, Profile
 
 FILE_TOOLS = ["Read", "Write", "Edit", "Glob"]
 WRITING_TOOLS = {"Write", "Edit"}
 MAX_TURNS = 16
+BID_MAX_TURNS = 40
+BUDGET_USD = "2.0"
+BID_BUDGET_USD = "5.0"
 SUMMARY_CHARS = 160
 
 
@@ -49,7 +59,8 @@ def within(path: str | None, root: Path) -> bool:
 
 
 def workspace_guard(workspace: Path):
-    """PreToolUse hook: file tools stay inside the workspace, and only drafts/ is writable."""
+    """PreToolUse hook: file tools stay inside the workspace (drafts/, the person's inputs/ and
+    memory.json are all readable), and only drafts/ is writable."""
     drafts = workspace / "drafts"
 
     async def guard(hook_input: dict, tool_use_id: str | None, context: Any) -> dict:
@@ -59,7 +70,7 @@ def workspace_guard(workspace: Path):
         args = hook_input.get("tool_input") or {}
         path = args.get("file_path") or args.get("path")
         root = drafts if name in WRITING_TOOLS else workspace
-        if within(path, root):
+        if within(path and str(workspace / path), root):  # a relative path is relative to the cwd, the workspace
             return {}
         return {
             "hookSpecificOutput": {
@@ -72,13 +83,28 @@ def workspace_guard(workspace: Path):
     return guard
 
 
-def options(profile: Profile, client: KopiClient, workspace: Path, model: str, resume: str | None, doc_no: str | None) -> ClaudeAgentOptions:
-    server, tool_names = build_server(client, profile)
+def documents(workspace: Path) -> list[tuple[str, int]]:
+    """The drafts and the person's uploads in the workspace, with their sizes."""
+    found = [path for folder in ("drafts", "inputs") for path in sorted((workspace / folder).glob("*")) if path.is_file()]
+    return [(str(path), path.stat().st_size) for path in found]
+
+
+def options(profile: Profile, client: KopiClient, workspace: Path, model: str, resume: str | None, doc_no: str | None, bid: bool = False) -> ClaudeAgentOptions:
     drafts = workspace / "drafts"
     drafts.mkdir(parents=True, exist_ok=True)
+    today = datetime.now(UTC)
+    if bid:
+        if not doc_no:
+            raise ValueError("a bid session works one tender: pass its doc_no")
+        memory_file = workspace / "memory.json"
+        server, tool_names = build_server(client, profile, memory_file)
+        prompt = bid_prompt(profile, today, workspace, doc_no, read_memory(memory_file), documents(workspace))
+    else:
+        server, tool_names = build_server(client, profile)
+        prompt = system_prompt(profile, today, str(drafts), doc_no)
     return ClaudeAgentOptions(
         model=model,
-        system_prompt=system_prompt(profile, datetime.now(UTC), str(drafts), doc_no),
+        system_prompt=prompt,
         tools=FILE_TOOLS,
         allowed_tools=[*tool_names, *FILE_TOOLS],
         disallowed_tools=["Bash", "WebFetch", "WebSearch", "Task"],
@@ -88,8 +114,8 @@ def options(profile: Profile, client: KopiClient, workspace: Path, model: str, r
         setting_sources=[],
         hooks={"PreToolUse": [HookMatcher(matcher="|".join(FILE_TOOLS), hooks=[workspace_guard(workspace)])]},
         cwd=str(workspace),
-        max_turns=MAX_TURNS,
-        max_budget_usd=float(os.environ.get("KOPI_MAX_BUDGET_USD", "2.0")),
+        max_turns=BID_MAX_TURNS if bid else MAX_TURNS,
+        max_budget_usd=float(os.environ.get("KOPI_MAX_BUDGET_USD", BID_BUDGET_USD if bid else BUDGET_USD)),
         include_partial_messages=True,
         resume=resume,
     )
@@ -110,10 +136,11 @@ def summary(content: Any) -> str:
 
 
 class Translator:
-    """Turns the SDK's message stream into ChatEvents; remembers which tool calls wrote drafts."""
+    """Turns the SDK's message stream into ChatEvents; remembers which tool each call was, and which calls wrote drafts."""
 
     def __init__(self, drafts: Path) -> None:
         self.drafts = drafts
+        self.pending_tools: dict[str, str] = {}
         self.pending_files: dict[str, str] = {}
         self.session_id: str | None = None
 
@@ -128,7 +155,8 @@ class Translator:
         elif isinstance(message, AssistantMessage):
             for block in message.content:
                 if isinstance(block, ToolUseBlock):
-                    yield ChatEvent(type=ChatEventType.TOOL_CALL, tool=short_tool(block.name), input=block.input, session_id=self.session_id)
+                    self.pending_tools[block.id] = short_tool(block.name)
+                    yield ChatEvent(type=ChatEventType.TOOL_CALL, tool=self.pending_tools[block.id], input=block.input, session_id=self.session_id)
                     self._remember_draft(block)
         elif isinstance(message, UserMessage) and isinstance(message.content, list):
             for block in message.content:
@@ -146,7 +174,8 @@ class Translator:
 
     def _result(self, block: ToolResultBlock) -> Iterable[ChatEvent]:
         text = summary(block.content)
-        yield ChatEvent(type=ChatEventType.TOOL_RESULT, summary=f"Error: {text}" if block.is_error else text, session_id=self.session_id)
+        tool = self.pending_tools.pop(block.tool_use_id, None)
+        yield ChatEvent(type=ChatEventType.TOOL_RESULT, tool=tool, summary=f"Error: {text}" if block.is_error else text, session_id=self.session_id)
         name = self.pending_files.pop(block.tool_use_id, None)
         if name and not block.is_error:
             yield ChatEvent(type=ChatEventType.FILE, file=name, session_id=self.session_id)
@@ -174,12 +203,13 @@ def main() -> None:
     parser.add_argument("--workspace", type=Path, default=Path(os.environ.get("KOPI_WORKSPACE", "/workspace")))
     parser.add_argument("--resume")
     parser.add_argument("--doc")
+    parser.add_argument("--bid", action="store_true", help="work the bid on --doc, with the bid memory and its tools")
     parser.add_argument("--model", default=os.environ.get("KOPI_MODEL", "claude-opus-5-5"))
     args = parser.parse_args()
 
     profile = Profile.model_validate_json(args.profile_file.read_text() if args.profile_file else os.environ["KOPI_PROFILE_JSON"])
     client = KopiClient(os.environ["KOPI_API"], os.environ.get("KOPI_SESSION_TOKEN"))
-    opts = options(profile, client, args.workspace, args.model, args.resume, args.doc)
+    opts = options(profile, client, args.workspace, args.model, args.resume, args.doc, args.bid)
 
     async def stream() -> None:
         async for event in run_turn(args.message, opts, args.workspace / "drafts"):

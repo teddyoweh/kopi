@@ -1,25 +1,31 @@
 """Kopi's tools for the copilot, as an in-process MCP server.
 
-Every tool is read-only and goes through the Kopi API with the session's short-lived
+The Kopi tools are read-only and go through the Kopi API with the session's short-lived
 token, so the agent can see exactly what the signed-in user can see and nothing else.
 Notice text comes back inside <notice> delimiters; the system prompt tells the model
 that anything inside them is data.
+
+In a bid session two more tools, remember and set_bid_stage, write the bid memory file
+in the workspace. The API reads that file back after the turn (see kopi.sandbox).
 """
 
 from __future__ import annotations
 
 import json
+import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from pathlib import Path
+from typing import Any, get_args
 
 import httpx
 from claude_agent_sdk import create_sdk_mcp_server, tool
 
 from kopi.checklist import checklist_text, submission_checklist
-from kopi.models import EligibilityCheck, MarketContext, Notice, Profile
+from kopi.models import BidMemory, BidStage, EligibilityCheck, MarketContext, MemoryNote, Notice, Profile
 
 SERVER = "kopi"
+NOTE_CHARS = 1000
 
 
 def mcp_name(name: str) -> str:
@@ -206,7 +212,53 @@ def build_tools(client: KopiClient, profile: Profile, now: Callable[[], datetime
     return [tool(name, description, schema)(_guarded(fn)) for name, description, schema, fn in specs]
 
 
-def build_server(client: KopiClient, profile: Profile):
-    """The MCP server, and the tool names the agent may call without asking."""
-    tools = build_tools(client, profile)
+# ---------------------------------------------------------------- the bid memory
+
+
+def read_memory(path: Path) -> BidMemory:
+    """The bid memory in a workspace; empty before the first note."""
+    return BidMemory.model_validate_json(path.read_text()) if path.exists() else BidMemory()
+
+
+def write_memory(path: Path, memory: BidMemory) -> None:
+    """Replace the file whole, so the API never reads half of one while it syncs mid-turn."""
+    partial = path.with_suffix(".partial")
+    partial.write_text(memory.model_dump_json())
+    partial.replace(path)
+
+
+def build_bid_tools(memory_file: Path, now: Callable[[], datetime] = utc_now) -> list:
+    """remember and set_bid_stage, writing the bid memory at memory_file. Kopi's notes are source="kopi"."""
+
+    async def remember(args: dict) -> dict:
+        text = " ".join(args["note"].split())
+        if not text:
+            return _error("The note is empty.")
+        memory = read_memory(memory_file)
+        if any(note.text == text for note in memory.notes):
+            return _text(f"Already remembered: {text}")
+        note = MemoryNote(id=uuid.uuid4().hex[:12], text=text, source="kopi", created=now())
+        write_memory(memory_file, memory.model_copy(update={"notes": [*memory.notes, note], "updated": note.created}))
+        return _text(f"Remembered: {text}")
+
+    async def set_bid_stage(args: dict) -> dict:
+        next_step = " ".join(args["next_step"].split())
+        if not next_step:
+            return _error("Say what the next step is.")
+        memory = read_memory(memory_file)
+        write_memory(memory_file, memory.model_copy(update={"stage": args["stage"], "next_step": next_step, "updated": now()}))
+        return _text(f"Stage: {args['stage']}. Next step: {next_step}")
+
+    return [
+        tool("remember", "Save one key fact about this bid to the bid memory, which outlives this conversation. One fact per note, with where it came from.",
+             {"type": "object", "properties": {"note": {"type": "string", "minLength": 1, "maxLength": NOTE_CHARS}}, "required": ["note"]})(remember),
+        tool("set_bid_stage", "Move the bid to a stage (qualify, clarify, draft, review, submit) and say what the next step is.",
+             {"type": "object", "properties": {"stage": {"type": "string", "enum": list(get_args(BidStage))}, "next_step": {"type": "string", "minLength": 1}},
+              "required": ["stage", "next_step"]})(set_bid_stage),
+    ]
+
+
+def build_server(client: KopiClient, profile: Profile, memory_file: Path | None = None):
+    """The MCP server, and the tool names the agent may call without asking. A bid session passes its memory file."""
+    tools = build_tools(client, profile) + (build_bid_tools(memory_file) if memory_file else [])
     return create_sdk_mcp_server(name=SERVER, version="0.1.0", tools=tools), [mcp_name(t.name) for t in tools]
