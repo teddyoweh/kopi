@@ -202,9 +202,9 @@ are still no gradients, and the only shadow is a barely-there one on floating su
 **Picked:** D25's Linear frame, made rounder and lighter:
 - radii: controls 10px, cards 16px, the panel 18px, the composer 24px; buttons, chips,
   badges, filter chips and the search field are pills;
-- type: list titles at weight 450 (Inter is variable), headings at 500, nothing heavier
-  than 500 except search highlights; Inter's optical-size axis sets large headings in its
-  display cut; lucide icons at 1.75px instead of 2px;
+- type: list titles at weight 450 (Inter is variable), headings and search highlights at
+  500, nothing heavier; Inter's optical-size axis sets large headings in its display cut;
+  lucide icons at 1.75px instead of 2px;
 - lines: hairlines lightened to #ebebed; no grey header strips; clickable lists use inset
   dividers that fade on hover, static lists use faint full-width ones;
 - no boxes inside boxes: the properties rail, verdict tiles, market figures and notes are
