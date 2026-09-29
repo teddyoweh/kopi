@@ -11,7 +11,7 @@ import { ApiError } from "@/lib/api";
 
 function Centered({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid min-h-dvh place-items-center bg-sidebar px-4">
+    <div className="grid min-h-dvh place-items-center bg-frame px-4">
       <div className="w-full max-w-sm">{children}</div>
     </div>
   );
@@ -38,10 +38,10 @@ function SignIn() {
 
   return (
     <Centered>
-      <form onSubmit={submit} className="flex flex-col gap-6 rounded-xl bg-background p-8">
+      <form onSubmit={submit} className="flex flex-col gap-6 rounded-xl border bg-card p-8 shadow-float">
         <Wordmark />
         <div className="flex flex-col gap-1.5">
-          <h1 className="text-xl font-semibold tracking-tight">Enter your access code</h1>
+          <h1 className="text-lg font-semibold tracking-[-0.01em]">Enter your access code</h1>
           <p className="text-sm text-muted-foreground">Kopi is in private preview. The code came with your invitation.</p>
         </div>
         <div className="flex flex-col gap-2">
@@ -81,9 +81,9 @@ export function AccessGate({ children }: { children: React.ReactNode }) {
   if (session === "unreachable")
     return (
       <Centered>
-        <div className="flex flex-col gap-4 rounded-xl bg-background p-8">
+        <div className="flex flex-col gap-4 rounded-xl border bg-card p-8 shadow-float">
           <Wordmark />
-          <h1 className="text-xl font-semibold tracking-tight">Kopi is not reachable</h1>
+          <h1 className="text-lg font-semibold tracking-[-0.01em]">Kopi is not reachable</h1>
           <p className="text-sm text-muted-foreground">The API did not answer. It may be starting up; this takes a few seconds.</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Try again

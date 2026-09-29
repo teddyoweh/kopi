@@ -181,3 +181,19 @@ per line with the neighbouring lines as context, played at 1.07×.
 Every line of the final voice was then transcribed back and checked against the script. That
 check caught "git worktrees" being heard as "guide work trees", and the line was reworded.
 
+## D25 — Kopi looks like Linear (KP-25)
+**Picked:** Linear's light theme and layout, with tokens sampled from Teddy's screenshot of
+Linear Agent (`uploads/image.png`):
+- a #efeff0 frame holding the sidebar, with the company as the workspace switcher and
+  grouped, foldable sections;
+- every page in an inset panel (12px radius, #e2e2e2 hairline) with its own top bar, which
+  the page fills with its title, crumbs and actions;
+- Inter, and Linear indigo #5e6ad2 as the one accent.
+
+The panel, not the window, is the scroll container.
+**Rejected:** the earlier flat, borderless look (warm neutrals, orange accent, Geist).
+**Why:** Teddy asked for it on 29 Sep ("use Linear style ... for the UI"). A bid team uses
+Kopi as a work tool, and Linear's density, hairlines and fixed frame read as one. The rule
+against separator lines is replaced by Linear's hairlines on panels, cards and rows. There
+are still no gradients, and the only shadow is a barely-there one on floating surfaces.
+
