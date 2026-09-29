@@ -241,3 +241,20 @@ one click away on GeBIZ.
 document memory stuff all of that", and search cards "100x better". A bid team's work is
 per tender and spans days. The memory is what lets the copilot pick a bid up again after
 the sandbox has gone.
+
+## D28 — Market context comes from the notice's stored vector (KP-32)
+**Picked:** search cards, the tender page and the overview all look up past awards with
+the notice's own vector as stored in NeedleDB, through `Store.market_for`. Bands are cached
+per tender for five minutes and looked up in parallel. A batch waits at most 2 s, and a
+card whose band isn't ready shows none.
+**Rejected:** re-embedding a shorter title + agency + description text for every tender
+view (the old `tender()`), and computing insights through `tender()` one tender at a time.
+**Why:**
+- 25 cards took 11.5–11.9 s on the deployed CPU embedder; they now take 0.8–1.2 s cold and
+  3 ms cached.
+- The stored vector is built from the fuller notice text and finds clearly closer awards
+  (software-licence awards for a software-licensing tender, where the old text found
+  transcription and insurance).
+- One lookup everywhere means a card's price band always agrees with the tender page
+  beside it. Market figures on tender pages changed after this deploy; 12 of 25 sampled
+  medians moved by more than 25%.
