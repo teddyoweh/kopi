@@ -9,7 +9,7 @@ from kopi.api.auth import issue, mint_agent_token, verify
 from kopi.api.live import LiveStore
 from kopi.config import PROFILES_DIR, Settings
 from kopi.models import ChatEventType, ChatRequest, Profile
-from kopi.sandbox import DUMP_DRAFTS, Copilot, CopilotUnavailable, LimitReached, Limits, MemoryStore
+from kopi.sandbox import DUMP_DRAFTS, WRITE_FILES, Copilot, CopilotUnavailable, LimitReached, Limits, MemoryStore
 from kopi.store import NotFound
 
 KEY = "test-signing-key"
@@ -42,6 +42,9 @@ class FakeBox:
     def run(self, argv, env):
         self.calls.append((argv, env))
         if argv[:2] == ["python", "-c"]:
+            if argv[2] == WRITE_FILES:
+                yield str(len(json.loads(env["KOPI_PARTS"])))
+                return
             assert argv[2] == DUMP_DRAFTS
             yield json.dumps(self.drafts)
             return
@@ -105,8 +108,9 @@ def test_a_dead_sandbox_is_replaced_and_not_resumed():
     boxes.made[0].dead = True
     list(c.turn(request(session_id=session), "a"))
     assert len(boxes.made) == 2
-    argv, _ = boxes.made[1].calls[0]
-    assert "--resume" not in argv
+    (restore, env), (argv, _) = boxes.made[1].calls[:2]
+    assert restore[2] == WRITE_FILES and json.loads(env["KOPI_PARTS"]) == [["/workspace/drafts/X-clarification-questions.md", False]]
+    assert argv[:3] == ["python", "-m", "kopi.agent.runner"] and "--resume" not in argv
 
 
 def test_each_turn_gets_a_fresh_read_only_token_and_nothing_else_secret():
