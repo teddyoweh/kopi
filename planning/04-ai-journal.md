@@ -126,6 +126,11 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
   The fix was rounder, lighter and flatter (D26), plus title-casing the capitals. The
   title-case rule was checked against all 727 real titles before any screen used it.
 
+- **Scope (KP-31 to KP-36).** After the rounder UI, Teddy's next message redirected the work:
+  "no. demos push ... cards on search results 100x better ... a copilot in the bid, start
+  working, doing everything for you ... document memory". The agent stopped polishing the
+  film and built the product: rich search cards and bids that the copilot works on its own.
+
 ### Caught by the product itself
 - **Closing days (KP-11).** On its first live run, the copilot noticed that our
   eligibility rules said "closes today" for a tender closing tomorrow at 13:00, and said
@@ -150,6 +155,19 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
   mixed case, digits, no dictionary words and real entropy, with tests for both sides.
 - **Two decisions shared a number.** D12 and D13 were each used twice after a merge. The
   file is renumbered D1–D22 and the references updated.
+
+### Caught by the real run (KP-36)
+- **A title repeated as its own snippet.** On live data many GeBIZ descriptions are the
+  title again, so the "why it matched" line repeated the card's title. The mock's rich
+  descriptions hid this. The card now drops a snippet that adds nothing.
+- **Steps that echoed themselves.** With a real agent, each remember step showed its note
+  twice: once in the step's description and again in the tool's reply. The step now says
+  "Saved to the bid memory".
+- **What worked the first time, and is worth recording:** in a sandbox that had been
+  deleted, the second turn restored its drafts, read the uploaded excerpt and the person's
+  note, and caught a conflict between them (the ITT wants the Tenderer itself to hold S6).
+  It then rewrote three documents. It also said the excerpt was labelled synthetic and
+  should be checked against the real ITT.
 
 ### Mistakes in the agents' own reports
 - **"A reviewer on every task" (KP-15).** The README and this journal first said an

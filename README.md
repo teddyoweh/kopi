@@ -2,14 +2,16 @@
 
 Kopi reads every open opportunity on GeBIZ, Singapore's procurement portal, and tells a
 supplier's bid team what fits, whether they can bid, what licences they need, and what
-similar tenders were actually awarded for. Its copilot then drafts the working documents of
-the bid: clarification questions, a compliance matrix, a submission checklist.
+similar tenders were actually awarded for. Start a bid and its copilot works the bid for
+you. It qualifies the tender and writes a bid plan with a timeline back from closing. It
+drafts clarification questions, a compliance matrix, a submission checklist and a proposal
+outline, and keeps what it learns in a bid memory that it reads on every later turn.
 
 **Live:** https://kopi.unv.run (the access code is in the submission email)
 
 **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
 
-![The copilot drafting clarification questions](docs/images/copilot.png)
+![A bid Kopi is working: stage, activity, documents, memory and checklist](docs/images/bid.png)
 
 Built in a day for the Pragnition Labs AI-Native Builder assessment, with coding agents
 doing the work and me directing it. How that went, mistakes included, is in
@@ -28,7 +30,7 @@ cd web && npm ci && npm run dev        # http://localhost:3000, mock mode by def
 **Backend and tests.** The tests are offline: fixtures, fakes, and NeedleDB's embedded engine.
 
 ```bash
-cd backend && uv sync && uv run pytest -q           # 277 tests
+cd backend && uv sync && uv run pytest -q           # 326 tests
 make dev-api                                        # FastAPI over the fixtures at :8000
 NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8000 npm run dev   # (in web/) the UI against it
 ```
@@ -43,10 +45,12 @@ cd backend && MODAL_PROFILE=<workspace> uv run --extra deploy modal deploy modal
 
 | Part | What you get | How |
 |---|---|---|
-| **Overview** | All ~730 open GeBIZ opportunities, searchable by meaning. Per tender: an AI brief with a BID / MAYBE / NO BID call | Qwen3 embeddings in NeedleDB, with a light BM25 boost. Claude Opus 5.5 structured output, **every quote checked against the notice by code** |
+| **Overview** | All ~730 open GeBIZ opportunities, searchable by meaning. Results are cards: eligibility for your company (blockers named), why it matched, what similar work sold for, closing, method; Start bid in one click; a preview pane and j/k keys. Per tender: an AI brief with a BID / MAYBE / NO BID call | Qwen3 embeddings in NeedleDB, with a light BM25 boost. Card insights load after the hits (25 in about 1–2 s, cached). Claude Opus 5.5 structured output, **every quote checked against the notice by code** |
 | **Permits & licences** | Can we bid? Met / not met / unknown for the closing date, GRA supply head and grade, BCA workhead and grade, and named or implied licences, each with a reason and a source. Plus 324 licences searchable by activity | Deterministic rules over the GRA and BCA tables and the GoBusiness catalogue. Live register lookups by company registration number (UEN) |
 | **Drafting** | A copilot that searches, checks eligibility, reads notices and writes drafts you can download | Claude Agent SDK with Kopi's own MCP tools, in a locked-down Modal Sandbox |
-| **Submissions** | Tenders you're pursuing, a checklist per tender built from the notice, deadlines in Singapore time, drafts linked | Rules (`kopi/checklist.py`), shared by the API and the copilot |
+| **Bids** (submissions) | Start a bid and Kopi works it. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. Upload the tender documents and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission checklist and deadline in Singapore time | A bid playbook for the same agent, with `remember` and `set_bid_stage` tools. The memory, drafts and uploads live outside the sandbox and are restored into a fresh one, so a bid survives the copilot restarting |
+
+![Search results as cards, with the selected tender in the preview pane](docs/images/search.png)
 
 ![A tender with its AI overview; the unverified quote is flagged and the call is capped](docs/images/tender-overview.png)
 
@@ -70,7 +74,7 @@ GoBusiness licences (324) ──────────────────
 ```
 
 The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
-behind it (D1–D26) are in [planning/02-decisions.md](planning/02-decisions.md).
+behind it (D1–D28) are in [planning/02-decisions.md](planning/02-decisions.md).
 
 ## Numbers
 
@@ -94,6 +98,18 @@ behind it (D1–D26) are in [planning/02-decisions.md](planning/02-decisions.md)
 - **Copilot turn:** $0.18 for "find IT tenders closing this month we're eligible for,
   then draft clarification questions". It ran 7 eligibility checks and wrote a
   14-question draft.
+- **A bid, worked end to end** (live data, real Opus, WSG000ETT26000004):
+  - The kickoff took 98 s. It wrote the five documents and saved seven facts. Two of them
+    the rules can't produce: the likely predecessor contract (S$501,025 in 2024) and the
+    likely incumbent. It moved the bid to *clarify* with a dated next step.
+  - For the second turn I added an ITT excerpt and a note ("we'd bid with a partner who
+    holds GRA S6"), then deleted the sandbox. The new sandbox read the upload and its
+    restored drafts. It caught that the ITT requires the Tenderer itself to hold S6, moved
+    the clarification deadline to the ITT's 5 Oct, and rewrote the plan, questions and
+    matrix. That turn took 87 s and cost US$0.36.
+- **Search cards:** 25 cards' eligibility, snippet and price band in about 2 s cold on the
+  deployed API (11.5 s before bands came from each notice's stored vector), and
+  milliseconds when cached.
 
 ## Trade-offs I made
 
@@ -141,8 +157,9 @@ behind it (D1–D26) are in [planning/02-decisions.md](planning/02-decisions.md)
 1. **The hosted copilot is waiting on a credential.** Every piece is deployed and proven:
    the sandbox, egress, tokens, streaming and the drafts store. The live copilot needs the
    `kopi-claude` Modal secret (a Claude OAuth token from `claude setup-token`); until
-   then it answers with a clear 503 and overviews use an extractive fallback. The same
-   agent ran end to end locally against the live API.
+   then the copilot and bids answer with a clear "being connected" state, and overviews use an
+   extractive fallback. The same agent, bid playbook included, ran end to end locally
+   against the live API.
 2. **Quotes are checked for existence, not relevance.** Code can prove Claude's quote is
    in the notice, not that it supports the point. Two of 47 live reasons quoted real but
    irrelevant words. **Next:** a cheap second-pass judge, and showing quotes as "evidence
@@ -153,9 +170,15 @@ behind it (D1–D26) are in [planning/02-decisions.md](planning/02-decisions.md)
    embedding, and add a retrieval test for it.
 4. **Latency.** A new query spends about 0.6 s embedding on CPU. **Next:** ONNX or int8 on
    x86, or a small always-warm GPU if usage justified it.
-5. **The notice, not the documents.** The real requirements live in PDFs behind the GeBIZ
-   login. **Next:** a supplier-side upload of the tender pack, parsed into the same checks.
-6. **Next features:** daily email or Slack digests of new matches, a per-agency incumbent
+5. **The documents are read, not yet checked by rules.** A bid now takes the tender
+   documents the person downloads from GeBIZ, and the copilot reads them, including PDFs.
+   Eligibility rules still run on the notice only. **Next:** extract the ITT's own
+   requirements (registrations, experience, SLAs, clarification deadline) into the same
+   rule checks.
+6. **Bid storage is the demo's.** Bid memory, drafts and uploads sit in a Modal Dict, which
+   drops entries after 7 days untouched, and which bid is whose lives in the browser. **Next:**
+   a Volume or object store for files, and accounts, once there is more than one team.
+7. **Next features:** daily email or Slack digests of new matches, a per-agency incumbent
    view, shared team profiles.
 
 ## How AI built this
@@ -166,13 +189,16 @@ behind it (D1–D26) are in [planning/02-decisions.md](planning/02-decisions.md)
   - parallel task agents in git worktrees, and an independent reviewer agent on each of the
     five milestone-1 tasks (it found four real bugs the authors' checks had passed); later
     tasks were proven by their tests, the retrieval eval and live runs on the deployed API;
-  - subagents with fresh context for the web pages and the overview.
+  - subagents with fresh context for the web pages and the overview;
+  - for search cards and bids: one contract task first (models, routes, client, mocks),
+    then two background agents built the backend halves in their own worktrees while the
+    main agent built the UI. The main agent reviewed each diff before merging.
 - **Planning:** [`planning/`](planning/) holds the brief, the discovery research (every
-  source probed with real requests), the decisions D1–D26, the superseded v1 plan, and one
+  source probed with real requests), the decisions D1–D28, the superseded v1 plan, and one
   handoff per task.
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the
   fakes had hidden it), screenshots, and once the copilot itself.
-- **Session logs:** [`logs/`](logs/) holds all 12 sessions (the main agent, two crew agents,
-  five reviewers, four subagents), redacted by [`scripts/export_logs.py`](scripts/export_logs.py).
+- **Session logs:** [`logs/`](logs/) holds all 15 sessions (the main agent, two crew agents,
+  five reviewers, seven subagents), redacted by [`scripts/export_logs.py`](scripts/export_logs.py).
   [`logs/INDEX.md`](logs/INDEX.md) lists them and says what was removed.

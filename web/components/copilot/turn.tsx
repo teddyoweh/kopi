@@ -216,7 +216,7 @@ function ProblemCard({ problem, actions }: { problem: Problem; actions: ProblemA
       body: (
         <>
           Kopi&apos;s assistant isn&apos;t switched on for this deployment yet, so it can&apos;t answer this one. Your question is kept here.
-          Everything else works: search tenders, check eligibility, look up licences and track submissions.
+          Everything else works: search tenders, check eligibility, look up licences and keep your bids and checklists.
         </>
       ),
       buttons: (
