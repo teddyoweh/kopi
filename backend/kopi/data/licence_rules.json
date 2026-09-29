@@ -1,0 +1,382 @@
+{
+ "fetched": "2026-09-29",
+ "gobusiness_base": "https://licensing.gobusiness.gov.sg/licence-directory/",
+ "note": "Which licences a tender implies, by GRA supply head, procurement category or words in the notice. 'required' means the law or the GSR guideline requires it for this kind of work; 'check' means it depends on how the work is done and the person should confirm. Fees and processing times come from the GoBusiness licence directory at runtime.",
+ "rules": [
+  {
+   "id": "nea-cleaning",
+   "licence": "Cleaning Business Licence",
+   "agency": "National Environment Agency (NEA)",
+   "gobusiness": "nea/cleaning-business-licence",
+   "certainty": "required",
+   "aliases": [
+    "cleaning business licence",
+    "cleaning licence",
+    "nea cleaning"
+   ],
+   "triggers": {
+    "gra_heads": [
+     "EPU/SER/46"
+    ],
+    "categories": [
+     "cleaning services"
+    ],
+    "text": [
+     "\\b(general|office|toilet|school|campus|park) cleaning\\b",
+     "\\bcleaning (services|business|contractor)\\b",
+     "\\bhousekeeping services\\b"
+    ]
+   },
+   "register": {
+    "name": "NEA list of licensed cleaning businesses",
+    "url": "https://go.gov.sg/nea-list-of-lcbs"
+   },
+   "why": "The Environmental Public Health Act makes it an offence to run a cleaning business without an NEA licence."
+  },
+  {
+   "id": "spf-security-agency",
+   "licence": "Security Agency Licence",
+   "agency": "Singapore Police Force (SPF)",
+   "gobusiness": "spf/security-agency-licence",
+   "certainty": "required",
+   "aliases": [
+    "security agency licence",
+    "plrd",
+    "security agency"
+   ],
+   "triggers": {
+    "gra_heads": [
+     "EPU/SER/43"
+    ],
+    "categories": [
+     "guard services",
+     "security services"
+    ],
+    "text": [
+     "\\bsecurity (officers?|guards?|guarding|screening)\\b",
+     "\\bguard(ing)? services\\b"
+    ]
+   },
+   "register": {
+    "name": "SPF Security Agencies Competency Evaluation results",
+    "url": "https://www.police.gov.sg/Business-E-Services/Apply-for-Security-Agency-Licence/Information-on-Security-Agencies-Competency-Evaluation"
+   },
+   "why": "Supplying security officers needs an SPF security agency licence; the GSR guideline flags EPU/SER/43 as licence-dependent."
+  },
+  {
+   "id": "csro-pentest",
+   "licence": "Penetration Testing Service Licence",
+   "agency": "Cybersecurity Services Regulation Office (CSRO)",
+   "gobusiness": "csro/penetration-testing-service-licence",
+   "certainty": "required",
+   "aliases": [
+    "penetration testing service licence",
+    "penetration testing licence",
+    "pentest licence"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [],
+    "text": [
+     "\\bpenetration test(ing|s)?\\b",
+     "\\bpen[- ]?test(ing)?\\b"
+    ]
+   },
+   "register": {
+    "name": "CSRO licensed service providers",
+    "url": "https://www.csro.gov.sg/resources/licensed-service-providers/"
+   },
+   "why": "The Cybersecurity Act licenses businesses that offer penetration testing to others."
+  },
+  {
+   "id": "csro-soc",
+   "licence": "Managed Security Operations Centre (SOC) Monitoring Service Licence",
+   "agency": "Cybersecurity Services Regulation Office (CSRO)",
+   "gobusiness": "csro/managed-security-operations-centre-soc-monitoring-service-licence",
+   "certainty": "required",
+   "aliases": [
+    "managed soc monitoring service licence",
+    "soc monitoring licence",
+    "soc licence"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [],
+    "text": [
+     "\\bsecurity operations? cent(re|er)\\b",
+     "\\bmanaged soc\\b",
+     "\\bsoc monitoring\\b"
+    ]
+   },
+   "register": {
+    "name": "CSRO licensed service providers",
+    "url": "https://www.csro.gov.sg/resources/licensed-service-providers/"
+   },
+   "why": "The Cybersecurity Act licenses businesses that offer managed SOC monitoring to others."
+  },
+  {
+   "id": "nea-vector-control",
+   "licence": "Vector Control Operator Certificate",
+   "agency": "National Environment Agency (NEA)",
+   "gobusiness": "nea/vector-control-operator-certificate",
+   "certainty": "required",
+   "aliases": [
+    "vector control operator",
+    "vector control"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [
+     "pest control"
+    ],
+    "text": [
+     "\\bpest control\\b",
+     "\\bvector control\\b",
+     "\\btermite (treatment|control)\\b",
+     "\\bfogging\\b"
+    ]
+   },
+   "register": null,
+   "why": "Pest and vector control work must be carried out by an NEA-certified vector control operator."
+  },
+  {
+   "id": "sfa-food-shop",
+   "licence": "Food Shop Licence",
+   "agency": "Singapore Food Agency (SFA)",
+   "gobusiness": "sfa/food-shop-licence",
+   "certainty": "check",
+   "aliases": [
+    "food shop licence",
+    "sfa licence",
+    "caterer licence"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [
+     "catering"
+    ],
+    "text": [
+     "\\bcater(ing|er)\\b",
+     "\\bcooked food\\b",
+     "\\bcanteen\\b",
+     "\\bpacked meals?\\b"
+    ]
+   },
+   "register": {
+    "name": "SFA track records",
+    "url": "https://www.sfa.gov.sg/tools-and-resources/track-records"
+   },
+   "why": "Caterers and food establishments preparing food for sale need an SFA licence for their premises."
+  },
+  {
+   "id": "mom-employment-agency",
+   "licence": "Employment Agency Licence",
+   "agency": "Ministry of Manpower (MOM)",
+   "gobusiness": "mom/employment-agency-licence",
+   "certainty": "check",
+   "aliases": [
+    "employment agency licence",
+    "ea licence"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [
+     "supply of manpower"
+    ],
+    "text": [
+     "\\bsupply of manpower\\b",
+     "\\bmanpower services\\b",
+     "\\bplacement of (staff|workers)\\b"
+    ]
+   },
+   "register": null,
+   "why": "Needed if the supplier places workers with the agency as their employer; not needed if the supplier employs the staff it deploys."
+  },
+  {
+   "id": "lta-bus-service",
+   "licence": "Class 2 Bus Service Licence",
+   "agency": "Land Transport Authority (LTA)",
+   "gobusiness": "lta/class-2-bus-service-licence",
+   "certainty": "check",
+   "aliases": [
+    "bus service licence",
+    "class 2 bus"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [
+     "bus hire"
+    ],
+    "text": [
+     "\\bbus (hire|service|services)\\b",
+     "\\bchartered bus\\b"
+    ]
+   },
+   "register": null,
+   "why": "Check whether the bus service described falls under LTA's bus service licensing; drivers also need a Bus Driver's Vocational Licence."
+  },
+  {
+   "id": "nea-general-waste",
+   "licence": "General Waste Collector Licence",
+   "agency": "National Environment Agency (NEA)",
+   "gobusiness": "nea/general-waste-collector-licence",
+   "certainty": "required",
+   "aliases": [
+    "general waste collector licence",
+    "waste collector licence"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [
+     "waste"
+    ],
+    "text": [
+     "\\b(general|refuse|waste) (collection|disposal)\\b",
+     "\\bcollection of (general )?waste\\b"
+    ]
+   },
+   "register": null,
+   "why": "Collecting general waste for others needs an NEA general waste collector licence."
+  },
+  {
+   "id": "nea-toxic-waste",
+   "licence": "Toxic Industrial Waste (TIW) Collector's Licence",
+   "agency": "National Environment Agency (NEA)",
+   "gobusiness": "nea/toxic-industrial-waste-tiw-collectors-licence",
+   "certainty": "required",
+   "aliases": [
+    "toxic industrial waste collector",
+    "tiw collector"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [],
+    "text": [
+     "\\btoxic (industrial )?waste\\b",
+     "\\bhazardous waste\\b",
+     "\\bchemical waste\\b"
+    ]
+   },
+   "register": null,
+   "why": "Collecting toxic industrial waste needs an NEA TIW collector's licence."
+  },
+  {
+   "id": "nea-hazardous-substances",
+   "licence": "Hazardous Substances (HS) Licence",
+   "agency": "National Environment Agency (NEA)",
+   "gobusiness": "nea/hazardous-substances-hs-licence",
+   "certainty": "required",
+   "aliases": [
+    "hazardous substances licence",
+    "hs licence"
+   ],
+   "triggers": {
+    "gra_heads": [
+     "EPU/LCR/34"
+    ],
+    "categories": [],
+    "text": []
+   },
+   "register": null,
+   "why": "The GSR guideline requires a Hazardous Substance Licence for EPU/LCR/34 (laboratory chemicals and reagents)."
+  },
+  {
+   "id": "hsa-poison",
+   "licence": "Poison Licence",
+   "agency": "Health Sciences Authority (HSA)",
+   "gobusiness": null,
+   "url": "https://www.gebiz.gov.sg/docs/Appln_Guidelines_for_Gov_Supp_Reg.pdf",
+   "certainty": "required",
+   "aliases": [
+    "poison licence",
+    "poisons licence"
+   ],
+   "triggers": {
+    "gra_heads": [
+     "EPU/DAP/32"
+    ],
+    "categories": [],
+    "text": []
+   },
+   "register": {
+    "name": "HSA poison licence holders (data.gov.sg)",
+    "url": "https://data.gov.sg/datasets/d_b1d236af9430bbe874b4dd97aa97a684/view"
+   },
+   "why": "The GSR guideline requires a Poison Licence for EPU/DAP/32 (drugs and pharmaceuticals)."
+  },
+  {
+   "id": "fire-equipment",
+   "licence": "Licence for fire-fighting equipment work",
+   "agency": "Singapore Civil Defence Force (SCDF)",
+   "gobusiness": null,
+   "url": "https://www.gebiz.gov.sg/docs/Appln_Guidelines_for_Gov_Supp_Reg.pdf",
+   "certainty": "check",
+   "aliases": [
+    "fire safety licence",
+    "scdf licence"
+   ],
+   "triggers": {
+    "gra_heads": [
+     "EPU/FFG/10"
+    ],
+    "categories": [],
+    "text": []
+   },
+   "register": null,
+   "why": "The GSR guideline says suppliers under EPU/FFG/10 must hold the relevant valid licence for the work; the tender documents name it."
+  },
+  {
+   "id": "imda-telecom-wiring",
+   "licence": "Telecommunication Wiring Contractor Class Licence",
+   "agency": "Infocomm Media Development Authority (IMDA)",
+   "gobusiness": "imda/telecommunication-wiring-contractor-class-licence",
+   "certainty": "check",
+   "aliases": [
+    "telecommunication wiring contractor",
+    "telecom wiring licence"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [],
+    "text": [
+     "\\b(structured|network|telecom\\w*) cabling\\b",
+     "\\bcable (installation|laying)\\b",
+     "\\btelecommunication wiring\\b"
+    ]
+   },
+   "register": null,
+   "why": "Telecommunication wiring work in buildings is done by IMDA-licensed wiring contractors."
+  },
+  {
+   "id": "bca-builder",
+   "licence": "Builder's Licence (General or Specialist)",
+   "agency": "Building and Construction Authority (BCA)",
+   "gobusiness": null,
+   "url": "https://www1.bca.gov.sg/safety-and-standards/applications-and-licenses/builders-licensing-scheme-bls/",
+   "certainty": "check",
+   "aliases": [
+    "general builder",
+    "builder's licence",
+    "builders licence",
+    "gb1",
+    "gb2"
+   ],
+   "triggers": {
+    "gra_heads": [],
+    "categories": [
+     "construction"
+    ],
+    "text": [
+     "\\baddition and alteration\\b",
+     "\\bbuilding works\\b",
+     "\\bstructural works\\b"
+    ]
+   },
+   "register": {
+    "name": "BCA licensed builders (data.gov.sg)",
+    "url": "https://data.gov.sg/datasets/d_19573c579879be15623f2e1e3854926d/view"
+   },
+   "why": "Building works that need BCA approval must be carried out by a licensed builder."
+  }
+ ]
+}

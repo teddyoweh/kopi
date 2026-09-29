@@ -82,3 +82,15 @@ the model or the logs.
 The company profile and the submissions tracker live in the browser (localStorage).
 Accounts and a user database are out of scope for two days and would add a store of
 personal data for no gain in the demo.
+
+## D12 — Registration facts are committed; registers are looked up
+*(KP-4)* The repo carries only reference facts, each with its source and date: GRA supply
+heads and grades, BCA workheads and tendering limits, SSIC titles, and the licence rules.
+Who holds what comes from live lookups by UEN: the GeBIZ Supplier Directory, the BCA
+e-Directory, the bizSAFE export and ACRA open data. **Rejected:** mirroring those registers
+into the repo, which most of their terms forbid and which would go stale.
+
+## D13 — "Unknown" is never "no"
+*(KP-4)* A profile that is silent, or a register that cannot be reached, gives `unknown`.
+Only a register that answered, or a profile that states the fact, can give `unmet`.
+Failed HTTP calls raise instead of parsing an error page as "holds nothing".

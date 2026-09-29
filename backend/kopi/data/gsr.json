@@ -1,0 +1,298 @@
+{
+ "source": "https://www.gebiz.gov.sg/docs/Appln_Guidelines_for_Gov_Supp_Reg.pdf",
+ "source_dated": "2025-10-28",
+ "fetched": "2026-09-29",
+ "note": "Codes, titles and grade thresholds re-keyed from GeBIZ's public GSR application guidelines. Registration is by the Government Registration Authority; whether a head is critical for a tender is stated in that tender's documents.",
+ "supply_heads": [
+  {
+   "code": "EPU/AVP/10",
+   "title": "Audio Visual, Photographic & Optical Products and Audio Visual Production Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/CAA/10",
+   "title": "Textiles, Clothing and Accoutrements",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/CMP/10",
+   "title": "Computer Hardware and software Products, Software Development and Maintenance of System, Equipment & Computers",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/CNE/10",
+   "title": "Communication and Navigation Systems",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/ECS/10",
+   "title": "Electrical & Electronic Components",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/FBV/10",
+   "title": "Food & Beverages",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/FFG/10",
+   "title": "Fire Fighting, Safety & Rescue Equipment",
+   "licence_note": "Fire-fighting equipment work needs the relevant valid licence (GSR guideline, Appendix A note *)."
+  },
+  {
+   "code": "EPU/FUR/10",
+   "title": "Furniture, Racking, Upholstery, Painting",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/HEQ/10",
+   "title": "Domestic Equipment & Supplies",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/HWT/10",
+   "title": "Hardware & Tools",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/LTE/10",
+   "title": "Laboratory Testing And Survey Equipment and Laboratory Testing Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/MAR/10",
+   "title": "Shipbuilding, Repair and Marine Supplies and Marine Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/OFE/10",
+   "title": "Office Equipment and Supplies, Computer Supplies",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SCD/10",
+   "title": "Scrap Dealers",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SPE/10",
+   "title": "Sports, Recreational Equipment and Supplies",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/STA/10",
+   "title": "Stationery and Printing and Photocopying Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/11",
+   "title": "Transportation, Towing Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/12",
+   "title": "Laundry Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/15",
+   "title": "Microfilming Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/16",
+   "title": "Publishing and Bookbinding Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/17",
+   "title": "Exhibition / Event Management Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/18",
+   "title": "Advertising, Graphics Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/19",
+   "title": "Data Entry, Supply of Manpower Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/28",
+   "title": "Courier, Distribution of Publications Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/29",
+   "title": "Maintenance of Musical Instruments",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/30",
+   "title": "Management Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/32",
+   "title": "Public Relations, Counselling Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/33",
+   "title": "Survey Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/34",
+   "title": "Consultancy Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/35",
+   "title": "Training of Personnel Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/36",
+   "title": "Disposal & Treatment of Waste Chemicals, etc Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/37",
+   "title": "Undertaker Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/38",
+   "title": "Rental of Premises and Hiring of Miscellaneous items",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/41",
+   "title": "Childcare / Social Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/42",
+   "title": "Storage Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/43",
+   "title": "Security Services",
+   "licence_note": "Security services need a valid security licence from SPF (GSR guideline, Appendix A note *)."
+  },
+  {
+   "code": "EPU/SER/44",
+   "title": "Grooming Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SER/46",
+   "title": "Cleaning Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/SGI/27",
+   "title": "Surgical Consumables and Instruments",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/MLS/28",
+   "title": "Medical Laboratory Services",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/LAB/30",
+   "title": "Laboratory Equipment and accessories",
+   "licence_note": "Servicing supplied laboratory equipment needs certified technicians (GSR guideline, Appendix A §2 note **)."
+  },
+  {
+   "code": "EPU/DAP/32",
+   "title": "Drugs and Pharmaceuticals",
+   "licence_note": "Drugs and pharmaceuticals need an HSA Poison Licence (GSR guideline, Appendix A §2 note **)."
+  },
+  {
+   "code": "EPU/LCR/34",
+   "title": "Laboratory Chemicals and Reagents",
+   "licence_note": "Laboratory chemicals and reagents need an NEA Hazardous Substances Licence (GSR guideline, Appendix A §2 note **)."
+  },
+  {
+   "code": "EPU/MTM/36",
+   "title": "Medical Training Materials",
+   "licence_note": null
+  },
+  {
+   "code": "EPU/HNS/37",
+   "title": "Health Supplements / Nonscheduled Poisons",
+   "licence_note": null
+  }
+ ],
+ "financial_grades": [
+  {
+   "grade": "S2",
+   "tendering_capacity_sgd": 100000,
+   "min_nta_sgd": 5000,
+   "min_turnover_sgd": 100000,
+   "note": null
+  },
+  {
+   "grade": "S3",
+   "tendering_capacity_sgd": 250000,
+   "min_nta_sgd": 12500,
+   "min_turnover_sgd": 250000,
+   "note": null
+  },
+  {
+   "grade": "S4",
+   "tendering_capacity_sgd": 500000,
+   "min_nta_sgd": 25000,
+   "min_turnover_sgd": 500000,
+   "note": null
+  },
+  {
+   "grade": "S5",
+   "tendering_capacity_sgd": 1000000,
+   "min_nta_sgd": 50000,
+   "min_turnover_sgd": 1000000,
+   "note": null
+  },
+  {
+   "grade": "S6",
+   "tendering_capacity_sgd": 3000000,
+   "min_nta_sgd": 150000,
+   "min_turnover_sgd": 3000000,
+   "note": null
+  },
+  {
+   "grade": "S7",
+   "tendering_capacity_sgd": 5000000,
+   "min_nta_sgd": 250000,
+   "min_turnover_sgd": 5000000,
+   "note": null
+  },
+  {
+   "grade": "S8",
+   "tendering_capacity_sgd": 10000000,
+   "min_nta_sgd": 500000,
+   "min_turnover_sgd": 10000000,
+   "note": null
+  },
+  {
+   "grade": "S9",
+   "tendering_capacity_sgd": 30000000,
+   "min_nta_sgd": 1500000,
+   "min_turnover_sgd": 10000000,
+   "note": "Paid-up capital of at least S$1.5m"
+  },
+  {
+   "grade": "S10",
+   "tendering_capacity_sgd": null,
+   "min_nta_sgd": 4500000,
+   "min_turnover_sgd": 15000000,
+   "note": "Paid-up capital of at least S$2m; tendering capacity above S$30,000,000"
+  }
+ ]
+}
