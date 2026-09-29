@@ -133,3 +133,11 @@ read-only Kopi MCP tool that calls the API with the session's token, and anythin
 pre-approved is denied (`dontAsk`).
 **Why:** the agent reads untrusted notice text. The worst a hostile notice can make it
 do is read other public tenders and write a markdown file in its own drafts folder.
+
+## D17 — The overview's evidence is checked by code, not trusted (KP-10)
+**Picked:** the overview is a one-shot Claude call with no tools that returns structured
+output. Code then checks every quote word for word, after normalising, against the
+notice as the model saw it and the profile. Any miss caps BID at MAYBE and says so.
+**Why:** the brief drives a bid or no-bid decision, so its evidence must be real. Over
+10 live overviews, every verified quote was in the notice. Code can check that the words
+exist, but not that they prove the point, so the UI calls a quote evidence, not proof.
