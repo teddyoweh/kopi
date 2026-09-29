@@ -13,10 +13,13 @@ export type Profile = Schemas["Profile"];
 export type ChatRequest = Schemas["ChatRequest"];
 export type SessionFile = Schemas["SessionFile"];
 export type AuthResponse = Schemas["AuthResponse"];
+export type ChecklistItem = Schemas["ChecklistItem"];
 
 /**
  * One event of a copilot turn (kopi.models.ChatEvent). The /chat route streams these as
  * SSE, so FastAPI's OpenAPI spec does not carry the schema; it is mirrored here by hand.
+ * `text` is a delta to append; a `tool_result` carries no tool name and answers the oldest
+ * unanswered `tool_call`; an `error` carries its message in `text`.
  */
 export type ChatEvent = {
   type: "text" | "tool_call" | "tool_result" | "file" | "done" | "error";
@@ -48,6 +51,7 @@ export interface KopiApi {
   tender(doc: string, profile?: Profile): Promise<TenderDetail>;
   overview(doc: string, profile: Profile): Promise<Overview>;
   eligibility(doc: string, profile: Profile): Promise<EligibilityCheck[]>;
+  checklist(doc: string, profile: Profile): Promise<ChecklistItem[]>;
   similarAwards(q: string, agency?: string, k?: number): Promise<MarketContext>;
   licences(limit?: number, offset?: number): Promise<Licence[]>;
   searchLicences(q: string, limit?: number): Promise<Licence[]>;
@@ -106,10 +110,7 @@ class LiveApi implements KopiApi {
 
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const response = await fetch(`${this.base}${path}`, init);
-    if (!response.ok) {
-      const body = await response.json().catch(() => ({}));
-      throw new ApiError(response.status, typeof body.detail === "string" ? body.detail : response.statusText);
-    }
+    if (!response.ok) throw await errorOf(response);
     return response.json() as Promise<T>;
   }
 
@@ -150,6 +151,10 @@ class LiveApi implements KopiApi {
     return this.post<EligibilityCheck[]>("/eligibility", { doc_no: doc, profile });
   }
 
+  checklist(doc: string, profile: Profile) {
+    return this.post<ChecklistItem[]>(`/tenders/${encodeURIComponent(doc)}/checklist`, { profile });
+  }
+
   similarAwards(q: string, agency?: string, k = 25) {
     return this.get<MarketContext>(`/awards/similar${query({ q: clipQuery(q), agency, k })}`);
   }
@@ -169,7 +174,8 @@ class LiveApi implements KopiApi {
       body: JSON.stringify(request),
       signal,
     });
-    if (!response.ok || !response.body) throw new ApiError(response.status, response.statusText);
+    if (!response.ok) throw await errorOf(response);
+    if (!response.body) throw new ApiError(response.status, "the copilot sent no stream");
     await readEventStream(response.body, onEvent);
   }
 
@@ -180,9 +186,15 @@ class LiveApi implements KopiApi {
   async sessionFile(sessionId: string, name: string) {
     const path = `/sessions/${encodeURIComponent(sessionId)}/files/${encodeURIComponent(name)}`;
     const response = await fetch(`${this.base}${path}`, { headers: this.headers() });
-    if (!response.ok) throw new ApiError(response.status, response.statusText);
+    if (!response.ok) throw await errorOf(response);
     return response.text();
   }
+}
+
+/** An ApiError carrying the API's own `detail` when it sent one (the 503 and 429 reasons live there). */
+async function errorOf(response: Response): Promise<ApiError> {
+  const body = await response.json().catch(() => ({}));
+  return new ApiError(response.status, typeof body?.detail === "string" ? body.detail : response.statusText);
 }
 
 /** Parse a text/event-stream body into ChatEvents (one JSON object per `data:` line). */
@@ -190,23 +202,33 @@ export async function readEventStream(body: ReadableStream<Uint8Array>, onEvent:
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  const emit = (message: string) => {
+    const data = message
+      .split("\n")
+      .filter((line) => line.startsWith("data:"))
+      .map((line) => line.slice(5).trimStart())
+      .join("\n");
+    if (!data) return;
+    let event: ChatEvent;
+    try {
+      event = JSON.parse(data) as ChatEvent;
+    } catch {
+      return; // a malformed message is skipped, not fatal to the turn
+    }
+    onEvent(event);
+  };
   for (;;) {
     const { value, done } = await reader.read();
     if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+    buffer += decoder.decode(value, { stream: true }).replace(/\r\n?/g, "\n");
     let boundary = buffer.indexOf("\n\n");
     while (boundary !== -1) {
-      const message = buffer.slice(0, boundary);
+      emit(buffer.slice(0, boundary));
       buffer = buffer.slice(boundary + 2);
-      const data = message
-        .split("\n")
-        .filter((line) => line.startsWith("data:"))
-        .map((line) => line.slice(5).trimStart())
-        .join("\n");
-      if (data) onEvent(JSON.parse(data) as ChatEvent);
       boundary = buffer.indexOf("\n\n");
     }
   }
+  emit(buffer + decoder.decode());
 }
 
 let client: Promise<KopiApi> | null = null;

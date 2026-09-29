@@ -1,7 +1,8 @@
 /**
  * The API served from the backend's synthetic fixtures, in the browser, for local
  * development without Python. It mirrors kopi.store.FixtureStore: word-overlap search,
- * a closing/GRA eligibility check, and a scripted copilot turn.
+ * a closing/GRA eligibility check, the rule-built checklist, a model-style overview and a
+ * scripted copilot turn (lib/mock-copilot.ts).
  */
 import awardsJson from "./fixtures/awards.json";
 import licencesJson from "./fixtures/licences.json";
@@ -9,6 +10,7 @@ import noticesJson from "./fixtures/notices.json";
 import type {
   ChatEvent,
   ChatRequest,
+  ChecklistItem,
   EligibilityCheck,
   KopiApi,
   Licence,
@@ -23,7 +25,9 @@ import type {
   TenderFilters,
 } from "./api";
 import { ApiError } from "./api";
+import { buildChecklist } from "./checklist";
 import { closingLabel, dateTime } from "./format";
+import { scriptTurn } from "./mock-copilot";
 
 type AwardRow = {
   tender_no: string;
@@ -90,11 +94,43 @@ function year(row: AwardRow): number | null {
   return part ? Number(part) : null;
 }
 
-const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const pause = (ms: number, signal?: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) return reject(new DOMException("The turn was stopped", "AbortError"));
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        reject(new DOMException("The turn was stopped", "AbortError"));
+      },
+      { once: true },
+    );
+  });
+
+/** Drafts the mock copilot wrote, kept across reloads so Submissions can still open them. */
+const MOCK_DRAFTS = "kopi.mockDrafts";
+type StoredDrafts = Record<string, Record<string, { body: string; modified: string }>>;
+
+function readDrafts(): StoredDrafts {
+  try {
+    return JSON.parse(localStorage.getItem(MOCK_DRAFTS) ?? "{}") as StoredDrafts;
+  } catch {
+    return {};
+  }
+}
+
+function saveDraft(session: string, name: string, body: string) {
+  const all = readDrafts();
+  all[session] = { ...all[session], [name]: { body, modified: new Date().toISOString() } };
+  localStorage.setItem(MOCK_DRAFTS, JSON.stringify(all));
+}
+
+/** A quote the fixtures never contain, so the overview always shows how an unverified quote reads. */
+const UNVERIFIED_QUOTE = "Vendors must have delivered at least three projects of a similar scale in the past five years";
 
 export class MockApi implements KopiApi {
   readonly mode = "mock" as const;
-  private files = new Map<string, Map<string, string>>();
 
   async health() {
     return { ok: true, auth: false };
@@ -192,32 +228,58 @@ export class MockApi implements KopiApi {
     return checks;
   }
 
+  /** Written as a model would: a recommendation, a score and quoted reasons, one of them deliberately unverified. */
   async overview(doc: string, profile: Profile): Promise<Overview> {
     const notice = find(doc);
-    await pause(400);
-    const first = (notice.description ?? "").split(". ")[0].replace(/\.$/, "");
+    await pause(900);
+    const checks = await this.eligibility(doc, profile);
+    const sentences = (notice.description ?? "").split(/(?<=\.)\s+/).filter(Boolean);
+    const first = sentences[0]?.replace(/\.$/, "") ?? notice.title;
+    const fit = overlap(tokens([...(profile.capabilities ?? []), profile.summary].join(" ")), `${notice.title} ${notice.description}`);
+    const blocked = checks.some((c) => c.status === "unmet");
+    const score = Math.max(5, Math.min(92, Math.round(20 + 260 * fit) - (blocked ? 30 : 0)));
+    const unknown = checks.filter((c) => c.status === "unknown");
+    const heads = (notice.gra_heads ?? []).map((h) => `${h.code}${h.grade ? ` at ${h.grade}` : ""}`);
     return {
       doc_no: doc,
       profile_id: profile.id,
-      summary: `${notice.agency} is buying: ${notice.title}.`,
+      summary: `${notice.agency} is tendering for "${notice.title}". ${
+        score >= 65 ? `It sits squarely in what ${profile.name} does` : score >= 40 ? `It overlaps with part of what ${profile.name} does` : `It is outside most of what ${profile.name} does`
+      }${unknown.length ? `, but ${unknown.length === 1 ? "one requirement" : `${unknown.length} requirements`} can't be checked until the profile says more` : ""}.`,
       buying: `${first}.`,
-      who_can_bid:
-        (notice.gra_heads ?? []).map((h) => `${h.code} ${h.grade ?? ""}`.trim()).join(", ") || "Any registered GeBIZ trading partner",
+      who_can_bid: heads.length ? `Suppliers registered under ${heads.join(", ")}.` : "Any GeBIZ trading partner; the notice names no registration.",
       fit: {
-        score: Math.min(
-          100,
-          Math.round(100 * overlap(tokens((profile.capabilities ?? []).join(" ")), `${notice.title} ${notice.description}`)),
-        ),
-        recommendation: "MAYBE",
-        reasons: [{ point: "What the notice asks for", quote: first, verified: true }],
+        score,
+        recommendation: score >= 65 ? "BID" : score >= 40 ? "MAYBE" : "NO_BID",
+        reasons: [
+          { point: "The work matches the company's capabilities", quote: first, verified: true },
+          ...(sentences[1] ? [{ point: "Delivery terms are clear enough to price", quote: sentences[1].replace(/\.$/, ""), verified: true }] : []),
+          { point: "A track record of similar projects is expected", quote: UNVERIFIED_QUOTE, verified: false },
+        ],
       },
-      key_dates: [{ label: "Closing", at: notice.closing }],
-      risks: [],
-      questions_for_agency: ["Is there an incumbent vendor, and when does their contract end?"],
-      unverified_quotes: 0,
-      model: "fixture",
+      key_dates: [
+        { label: "Published", at: notice.published },
+        { label: "Send clarifications by (suggested)", at: new Date(new Date(notice.closing).getTime() - 5 * 86400e3).toISOString() },
+        { label: "Closes", at: notice.closing },
+      ],
+      risks: [
+        ...unknown.map((c) => `${c.requirement}: ${c.reason.charAt(0).toLowerCase()}${c.reason.slice(1)}.`),
+        ...(notice.two_envelope ? ["Two envelopes: the price is opened only if the technical proposal passes, so a thin technical proposal loses the bid outright."] : []),
+        "The tender documents sit behind the GeBIZ login; they may add requirements this notice does not show.",
+      ],
+      questions_for_agency: [
+        ...(notice.items?.[0] ? [`What volumes or service levels should "${notice.items[0]}" be priced on?`] : []),
+        "Is there an incumbent supplier, and what handover will they provide?",
+      ],
+      unverified_quotes: 1,
+      model: "claude-opus-5-5 (demo)",
       generated_at: new Date().toISOString(),
     };
+  }
+
+  async checklist(doc: string, profile: Profile): Promise<ChecklistItem[]> {
+    await pause(250);
+    return buildChecklist(find(doc), await this.eligibility(doc, profile));
   }
 
   async similarAwards(q: string, agency?: string, k = 25): Promise<MarketContext> {
@@ -268,38 +330,44 @@ export class MockApi implements KopiApi {
       .slice(0, limit);
   }
 
-  async chat(request: ChatRequest, onEvent: (event: ChatEvent) => void) {
-    const session = request.session_id ?? `mock-${Date.now()}`;
-    const results = await this.search(request.message, {}, 3);
-    const titles = results.hits.map((h) => h.notice.title).join("; ") || "nothing matching";
-    const name = "clarification-questions.md";
-    const body = `# Clarification questions\n\n1. Is there an incumbent vendor for: ${titles}?\n`;
-    this.files.set(session, (this.files.get(session) ?? new Map()).set(name, body));
-    const script: ChatEvent[] = [
-      { type: "tool_call", tool: "search_tenders", input: { query: request.message }, session_id: session },
-      { type: "tool_result", tool: "search_tenders", summary: `${results.total} tenders found`, session_id: session },
-      { type: "text", text: `Closest open tenders: ${titles}.`, session_id: session },
-      { type: "file", file: name, session_id: session },
-      { type: "done", session_id: session, cost_usd: 0 },
-    ];
-    for (const event of script) {
-      await pause(250);
-      onEvent(event);
+  async chat(request: ChatRequest, onEvent: (event: ChatEvent) => void, signal?: AbortSignal) {
+    const session = request.session_id ?? `mock-${Date.now().toString(36)}`;
+    if (request.doc_no) find(request.doc_no);
+    const files = new Map<string, string>();
+    const beats = await scriptTurn(
+      request,
+      {
+        notice: find,
+        search: (q, limit) => this.search(q, {}, limit),
+        eligibility: (doc, profile) => this.eligibility(doc, profile),
+        checklist: (doc, profile) => this.checklist(doc, profile),
+        similarAwards: (q, agency) => this.similarAwards(q, agency),
+        searchLicences: (q, limit) => this.searchLicences(q, limit),
+      },
+      files,
+    );
+    await pause(500, signal);
+    for (const { event, pause: ms } of beats) {
+      if (event.type === "file" && event.file) saveDraft(session, event.file, files.get(event.file) ?? "");
+      onEvent({ ...event, session_id: session });
+      await pause(ms, signal);
     }
   }
 
   async sessionFiles(sessionId: string): Promise<SessionFile[]> {
-    return [...(this.files.get(sessionId) ?? new Map<string, string>())].map(([name, body]) => ({
-      name,
-      title: body.split("\n")[0].replace(/^#\s*/, ""),
-      size: body.length,
-      modified: new Date().toISOString(),
-    }));
+    return Object.entries(readDrafts()[sessionId] ?? {})
+      .map(([name, { body, modified }]) => ({
+        name,
+        title: body.split("\n")[0].replace(/^#\s*/, "") || name,
+        size: new TextEncoder().encode(body).length,
+        modified,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async sessionFile(sessionId: string, name: string) {
-    const body = this.files.get(sessionId)?.get(name);
-    if (body === undefined) throw new ApiError(404, `no file ${name}`);
-    return body;
+    const draft = readDrafts()[sessionId]?.[name];
+    if (draft === undefined) throw new ApiError(404, `no file ${name} in session ${sessionId}`);
+    return draft.body;
   }
 }
