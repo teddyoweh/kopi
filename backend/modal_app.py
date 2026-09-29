@@ -58,7 +58,7 @@ gpu_image = base.uv_pip_install("torch>=2.4", "transformers>=4.51", "sentence-tr
 )
 api_image = (
     base.uv_pip_install("torch>=2.4", index_url="https://download.pytorch.org/whl/cpu")
-    .uv_pip_install("transformers>=4.51", "sentence-transformers>=3.0")
+    .uv_pip_install("transformers>=4.51", "sentence-transformers>=3.0", "claude-agent-sdk>=0.2.161")
     # The model lives in the image, not on the Volume: memory-mapped weights on the Volume
     # are open files, and open files make `volume.reload()` fail, so the API would never
     # see a new ingest.
@@ -77,6 +77,16 @@ agent_image = (
 )
 PUBLIC_API = "https://kryptonairc-lc--kopi-api.modal.run"
 SANDBOX_EGRESS = ["api.anthropic.com", "claude.ai", "kryptonairc-lc--kopi-api.modal.run"]
+
+
+def optional_secret(name: str) -> list[modal.Secret]:
+    """A secret the app works without: attached when it exists, skipped (not a failed deploy) when not."""
+    secret = modal.Secret.from_name(name)
+    try:
+        secret.hydrate()
+    except modal.exception.NotFoundError:
+        return []
+    return [secret]
 
 
 # ---------------------------------------------------------------- NeedleDB
@@ -190,7 +200,7 @@ def embed_and_push() -> list[dict]:
 @app.function(
     image=api_image,
     volumes={VOL: volume},
-    secrets=[modal.Secret.from_name("kopi-app"), modal.Secret.from_name("kopi-needledb-read")],
+    secrets=[modal.Secret.from_name("kopi-app"), modal.Secret.from_name("kopi-needledb-read"), *optional_secret("kopi-claude")],
     min_containers=1,
     cpu=4.0,
     memory=6144,

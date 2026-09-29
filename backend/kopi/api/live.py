@@ -13,7 +13,9 @@ import threading
 import time
 from collections.abc import AsyncIterator, Callable
 from datetime import UTC, datetime
+from functools import partial
 from pathlib import Path
+from typing import Any
 
 import anyio
 import numpy as np
@@ -21,7 +23,6 @@ import numpy as np
 from kopi import eligibility, market
 from kopi.bundle import read_bundle
 from kopi.checklist import submission_checklist
-from kopi.sandbox import Copilot, CopilotUnavailable
 from kopi.config import DATA_DIR
 from kopi.index import AWARDS, LICENCES, NOTICES, notice_filter, query
 from kopi.models import (
@@ -44,7 +45,16 @@ from kopi.models import (
     SessionFile,
     TenderDetail,
 )
-from kopi.search import BM25, DENSE_DEPTH, as_doc_no, award_from, distinct_awards, rerank
+from kopi.overview import generate_overview
+from kopi.sandbox import Copilot, CopilotUnavailable
+from kopi.search import (
+    BM25,
+    DENSE_DEPTH,
+    as_doc_no,
+    award_from,
+    distinct_awards,
+    rerank,
+)
 from kopi.store import NotFound, SearchFilters, matches, summarise
 
 log = logging.getLogger(__name__)
@@ -64,6 +74,8 @@ class LiveStore:
         registry: eligibility.Registry | None = None,
         refresh_seconds: float = 300,
         copilot: Copilot | None = None,
+        claude: bool = False,
+        overview_cache: Path | None = None,
     ) -> None:
         self.db = db
         self.embed_query = embed_query
@@ -73,6 +85,8 @@ class LiveStore:
         self.registry = registry
         self.refresh_seconds = refresh_seconds
         self.copilot = copilot
+        self.claude = claude
+        self.overview_cache = overview_cache
         self._loaded_at = 0.0
         self.notices: dict[str, Notice] = {}
         self.catalogue: list[Licence] = []
@@ -169,19 +183,18 @@ class LiveStore:
         return submission_checklist(self._notice(doc_no), self.eligibility(doc_no, profile))
 
     def overview(self, doc_no: str, profile: Profile) -> Overview:
-        """Extractive overview: the notice's own words, no model. Replaced by Claude's in KP-10."""
+        """Claude's verified triage brief, or the notice's own words when Claude is unavailable."""
         notice = self._notice(doc_no)
-        first = notice.description.split(". ")[0].rstrip(".") or notice.title
-        return Overview(
-            doc_no=doc_no,
-            profile_id=profile.id,
-            summary=f"{notice.agency}: {notice.title}.",
-            buying=f"{first}.",
-            who_can_bid=", ".join(f"{h.code} {h.grade or ''}".strip() for h in notice.gra_heads) or "Any GeBIZ trading partner",
-            fit=Fit(score=0, recommendation=Recommendation.MAYBE, reasons=[Reason(point="What the notice asks for", quote=first, verified=True)]),
-            model="extractive",
-            generated_at=datetime.now(UTC),
-        )
+        if not self.claude:
+            return extractive_overview(notice, profile)
+        checks = self.eligibility(doc_no, profile)
+        market = self._market(self.embed_document(f"{notice.title}\n{notice.agency}\n{notice.description}"), notice.agency, 25)
+        brief = partial(generate_overview, notice, profile, checks, market, cache_dir=self.overview_cache)
+        try:
+            return run_async(brief)
+        except Exception as error:  # the page still gets the notice's own words, and the log says why
+            log.warning("overview for %s fell back to extractive: %s", doc_no, error)
+            return extractive_overview(notice, profile)
 
     # ------------------------------------------------------------ awards and licences
 
@@ -224,6 +237,29 @@ class LiveStore:
         if self.copilot is None:
             raise NotFound(f"no file {name} in session {session_id}")
         return self.copilot.file(session_id, name)
+
+
+def extractive_overview(notice: Notice, profile: Profile) -> Overview:
+    """The notice's own words, no model; shown when Claude is not configured or fails."""
+    first = notice.description.split(". ")[0].rstrip(".") or notice.title
+    return Overview(
+        doc_no=notice.doc_no,
+        profile_id=profile.id,
+        summary=f"{notice.agency}: {notice.title}.",
+        buying=f"{first}.",
+        who_can_bid=", ".join(f"{h.code} {h.grade or ''}".strip() for h in notice.gra_heads) or "Any GeBIZ trading partner",
+        fit=Fit(score=0, recommendation=Recommendation.MAYBE, reasons=[Reason(point="What the notice asks for", quote=first, verified=True)]),
+        model="extractive",
+        generated_at=datetime.now(UTC),
+    )
+
+
+def run_async(fn: Callable[[], Any]) -> Any:
+    """Run a coroutine function from sync code: via the event loop's portal inside a request, else a fresh loop."""
+    try:
+        return anyio.from_thread.run(fn)
+    except RuntimeError:  # not in an anyio worker thread (tests, scripts)
+        return anyio.run(fn)
 
 
 def needle_filter(filters: SearchFilters) -> dict | None:
@@ -273,4 +309,6 @@ def from_environment(reload: Callable[[], None] | None = None, copilot: Copilot 
         # Local disk, not the Volume: an open file on the Volume blocks `reload()`.
         registry=LiveRegistry(http, cache_dir=Path("/tmp/kopi-registers")),
         copilot=copilot,
+        claude=bool(os.environ.get("CLAUDE_CODE_OAUTH_TOKEN") or os.environ.get("ANTHROPIC_API_KEY")),
+        overview_cache=Path("/tmp/kopi-overviews"),
     )
