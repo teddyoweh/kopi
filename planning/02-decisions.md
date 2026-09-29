@@ -108,3 +108,20 @@ confirms D3 on our own data rather than MTEB alone.
 and he chose this one over the Spawn Labs workspaces. Kopi touches only its own `kopi*`
 app, Volume and secrets there, so its keys and data share nothing with anything else in
 the workspace.
+
+## D14 — Hybrid search, measured (KP-8)
+**Picked:** dense top 50 from NeedleDB, plus BM25 over titles at weight 0.05, plus a
+fast path for tender numbers.
+**Why:** on evals/, nDCG@10 goes 0.695 → 0.715 with P@10 unchanged; weights of 0.1–0.3
+were no better. Keyword matches break ties toward exact words without overriding meaning.
+
+## D15 — The Volume stores data; containers never hold files open on it (KP-8)
+**Picked:**
+- the embedding model baked into the API image;
+- registry caches in /tmp;
+- all notices as one bundle file on the Volume.
+
+**Why:** `volume.reload()` fails while any file on the Volume is open, and memory-mapped
+model weights count, so the API would never have seen a new ingest. Every file open on
+the Volume is also a network round trip: 732 single-file reads took 37.5 s, and one
+bundle takes 0.3 s.

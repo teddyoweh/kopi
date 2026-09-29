@@ -62,6 +62,12 @@ def pick_device() -> str:
     return "cpu"
 
 
+def _dimension(model: SentenceTransformer) -> int:
+    """sentence-transformers renamed this; support both spellings."""
+    getter = getattr(model, "get_embedding_dimension", None) or model.get_sentence_embedding_dimension
+    return getter()
+
+
 class Embedder:
     """Loads the model once; every vector it returns is float32 and L2-normalised."""
 
@@ -72,7 +78,7 @@ class Embedder:
         self.batch_size = batch_size or BATCH.get(self.device, 16)
         self.model: SentenceTransformer = SentenceTransformer(model, device=self.device)
         self.model.max_seq_length = MAX_TOKENS
-        dimension = self.model.get_sentence_embedding_dimension()
+        dimension = _dimension(self.model)
         if model == MODEL and dimension != DIMENSION:
             raise ValueError(f"{model} returned {dimension}-d vectors, expected {DIMENSION}")
 
@@ -82,7 +88,7 @@ class Embedder:
 
     def embed_documents(self, texts: list[str]) -> np.ndarray:
         if not texts:
-            return np.zeros((0, self.model.get_sentence_embedding_dimension()), dtype=np.float32)
+            return np.zeros((0, _dimension(self.model)), dtype=np.float32)
         return self._encode(texts)
 
     def embed_query(self, text: str, task: str = SEARCH_TASK) -> np.ndarray:

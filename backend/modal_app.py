@@ -59,7 +59,11 @@ gpu_image = base.uv_pip_install("torch>=2.4", "transformers>=4.51", "sentence-tr
 api_image = (
     base.uv_pip_install("torch>=2.4", index_url="https://download.pytorch.org/whl/cpu")
     .uv_pip_install("transformers>=4.51", "sentence-transformers>=3.0")
-    .env({"KOPI_STORE": "live"})
+    # The model lives in the image, not on the Volume: memory-mapped weights on the Volume
+    # are open files, and open files make `volume.reload()` fail, so the API would never
+    # see a new ingest.
+    .env({"HF_HOME": "/root/hf", "KOPI_STORE": "live", "KOPI_EMBED_DEVICE": "cpu", "KOPI_TORCH_THREADS": "4"})
+    .run_commands("python -c \"from sentence_transformers import SentenceTransformer; SentenceTransformer('Qwen/Qwen3-Embedding-0.6B')\"")
     .add_local_dir(BACKEND / "kopi", "/root/kopi")
 )
 
@@ -118,9 +122,11 @@ def refresh_sources(push: bool = True) -> dict:
     from kopi.sources import awards, gebiz, licences
 
     started = time.monotonic()
+    from kopi.bundle import write_bundle
+
     open_notices = gebiz.fetch_open(out_dir=Path(DATA) / "notices")
     (Path(DATA) / "notices" / "_open.json").write_text(json.dumps([n.doc_no for n in open_notices]))
-    summary: dict = {"open_notices": len(open_notices)}
+    summary: dict = {"open_notices": len(open_notices), "bundled": write_bundle(Path(DATA) / "notices", open_notices)}
     awards_cache = Path(DATA) / "cache" / "awards.json"
     if _stale(awards_cache):
         summary["award_rows"] = len(awards.load_awards(awards_cache, refresh=True))
@@ -175,14 +181,15 @@ def embed_and_push() -> list[dict]:
     volumes={VOL: volume},
     secrets=[modal.Secret.from_name("kopi-app"), modal.Secret.from_name("kopi-needledb-read")],
     min_containers=1,
-    cpu=2.0,
+    cpu=4.0,
     memory=6144,
     timeout=600,
 )
 @modal.concurrent(max_inputs=40)
 @modal.asgi_app(label="kopi-api")
 def api():
-    """The Kopi API. `create_app()` picks the live store when KOPI_STORE=live (set on this image)."""
+    """The Kopi API over live data; the store re-reads the Volume (after ingest commits) every 5 minutes."""
     from kopi.api.app import create_app
+    from kopi.api.live import from_environment
 
-    return create_app()
+    return create_app(from_environment(reload=volume.reload))
