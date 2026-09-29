@@ -4,7 +4,7 @@ import pytest
 
 from kopi.eligibility import bizsafe_label, check, facts_for, holds, implied_licences
 from kopi.models import BcaWorkhead, EligibilityStatus, GraHead, Licence, Notice, Profile, Registration
-from kopi.sources.licences import GSR_DIRECTORY, NOT_LISTED, BizSafe, Company
+from kopi.sources.licences import GSR_DIRECTORY, NOT_IN_ACRA, NOT_LISTED, BizSafe, Company
 
 NOW = datetime(2026, 9, 29, 12, 0, tzinfo=UTC)
 MET, UNMET, UNKNOWN = EligibilityStatus.MET, EligibilityStatus.UNMET, EligibilityStatus.UNKNOWN
@@ -278,7 +278,29 @@ def test_registry_that_cannot_answer_falls_back_to_the_profile():
 def test_not_on_bizsafe_register_is_unmet():
     checks = check(notice(**BIZSAFE_NOTICE), profile(uen="200000001A"), now=NOW, registry=FakeRegistry(safe=NOT_LISTED))
     safe = next(c for c in checks if "bizSAFE" in c.requirement)
-    assert (safe.status, safe.reason) == (UNMET, "No current bizSAFE certificate on the register")
+    assert (safe.status, safe.reason) == (UNMET, "Not on the bizSAFE register")
+
+
+@pytest.mark.parametrize(
+    ("record", "reason"),
+    [
+        (NOT_LISTED, "Not on the bizSAFE register"),
+        (BizSafe("Level 3", date(2026, 1, 31), "Approved"), "bizSAFE Level 3 expired on 31 Jan 2026"),
+        (BizSafe("Level 3", None, "Expired"), "bizSAFE register shows bizSAFE Level 3 as 'Expired'"),
+    ],
+)
+def test_register_answer_beats_a_profile_claim(record, reason):
+    claims = profile(uen="200000001A", bizsafe_level="Level 3")
+    checks = check(notice(**BIZSAFE_NOTICE), claims, now=NOW, registry=FakeRegistry(safe=record))
+    safe = next(c for c in checks if "bizSAFE" in c.requirement)
+    assert safe.status == UNMET and reason in safe.reason
+
+
+def test_unreachable_register_leaves_the_profile_claim():
+    claims = profile(uen="200000001A", bizsafe_level="Level 3")
+    checks = check(notice(**BIZSAFE_NOTICE), claims, now=NOW, registry=FakeRegistry(safe=None))
+    safe = next(c for c in checks if "bizSAFE" in c.requirement)
+    assert (safe.status, safe.reason) == (MET, "Holds bizSAFE Level 3")
 
 
 def test_no_uen_means_no_registry_calls():
@@ -294,7 +316,8 @@ def test_no_uen_means_no_registry_calls():
         (Company("200000001A", "EXAMPLE PTE. LTD.", "Live Company", [("62011", "Development of software")]), MET, "activity 62011 Development of software"),
         (Company("200000001A", "EXAMPLE PTE. LTD.", "Struck Off"), UNMET, "Struck Off"),
         (Company("200000001A", "EXAMPLE PTE. LTD.", "In Liquidation"), UNKNOWN, "status 'In Liquidation'"),
-        (None, UNKNOWN, "returned no entity"),
+        (Company("200000001A", "", NOT_IN_ACRA), UNKNOWN, "has no entity with this UEN"),
+        (None, UNKNOWN, "Could not reach ACRA"),
     ],
 )
 def test_company_check(company, status, reason_part):

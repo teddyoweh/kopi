@@ -414,6 +414,7 @@ class BizSafe:
 
 
 NOT_LISTED = BizSafe(level="", expires=None, status="Not listed")
+NOT_IN_ACRA = "Not in ACRA open data"
 
 
 class Registry(Protocol):
@@ -422,7 +423,7 @@ class Registry(Protocol):
     def gsr(self, uen: str) -> list[Registration] | None: ...
     def bca(self, uen: str) -> list[Registration] | None: ...
     def bizsafe(self, uen: str) -> BizSafe | None: ...  # NOT_LISTED when absent from the register
-    def company(self, uen: str) -> Company | None: ...
+    def company(self, uen: str) -> Company | None: ...  # status NOT_IN_ACRA when the UEN is unknown
 
 
 GSR_DIRECTORY = "https://www.gebiz.gov.sg/ptn/supplier/directory/index.xhtml"
@@ -617,7 +618,7 @@ class LiveRegistry:
                 registers = _reference("registers.json")
                 entity = self._datastore(registers["acra_entities"]["dataset"], uen)
                 if entity is None:
-                    return None
+                    return {"uen": uen, "name": "", "status": NOT_IN_ACRA, "activities": []}
                 name = entity["entity_name"]
                 letter = name[:1].upper() if name[:1].isalpha() else "Others"
                 detail = self._datastore(registers["acra_corporate_by_letter"]["datasets"][letter], uen) or {}

@@ -105,3 +105,21 @@
 - **JSON-spacing brittleness.** `licence_record` looked for `{"licence":{` exactly and
   missed payloads with a space after the colon, which the test builder produced.
   It's a regex now.
+
+## Review fix (by Main, after reviewer @7)
+- **Concern:** in `facts_for`, a bizSAFE register answer of NOT_LISTED or a non-approved
+  record fell back to the profile's own claim and was still credited to the register. A
+  company that *said* Level 3 would pass even when the register said otherwise.
+  **Fixed:** a register that answered now wins, even when the answer is "no".
+  `current_bizsafe()` covers not listed, a non-approved status and an expiry date that
+  has passed. Only a register that couldn't answer (`None`) leaves the claim standing.
+  `facts_for` now takes `today`, which `check()` passes from `now`.
+- **Test gap:** added cases for NOT_LISTED, an expired date and an 'Expired' status,
+  each against a profile claiming Level 3, plus the unreachable-register fallback.
+- **Minor:** `LiveRegistry.company` used to return None both for "no such UEN" and for a
+  network failure. An unknown UEN now returns a cacheable `Company` with status
+  `NOT_IN_ACRA`, so the two cases give different reasons:
+  - not found: "check the number";
+  - lookup failed: "could not reach ACRA's open data; try again".
+
+  Both stay `unknown`.

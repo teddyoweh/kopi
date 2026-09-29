@@ -17,6 +17,8 @@ from kopi.models import BcaWorkhead, EligibilityCheck, EligibilityStatus, GraHea
 from kopi.sources.licences import (
     BCA_COMPANY,
     GSR_DIRECTORY,
+    NOT_IN_ACRA,
+    NOT_LISTED,
     UNLIMITED,
     BizSafe,
     Company,
@@ -48,24 +50,47 @@ class Facts:
     gra_verified: bool = False
     bca_verified: bool = False
     bizsafe_verified: bool = False
+    bizsafe_note: str | None = None  # why the register shows no current certificate
 
 
-def facts_for(profile: Profile, registry: Registry | None) -> Facts:
+def facts_for(profile: Profile, registry: Registry | None, today: date | None = None) -> Facts:
+    """The profile's claims, with each live register's answer replacing the claim it covers.
+
+    A register that answered wins even when its answer is "no": a company that claims
+    bizSAFE Level 3 but is not on the register, or whose certificate expired, does not
+    hold it. Only a register that could not answer (None) leaves the claim standing.
+    """
     if registry is None or not profile.uen:
         return Facts(profile.gra_registrations, profile.bca_registrations, profile.licences_held, profile.bizsafe_level)
+    today = today or datetime.now(UTC).date()
     gra_live, bca_live = registry.gsr(profile.uen), registry.bca(profile.uen)
     safe: BizSafe | None = registry.bizsafe(profile.uen)
-    safe_level = safe.level if safe and safe.status.lower() == "approved" else None
+    if safe is None:
+        bizsafe_level, note = profile.bizsafe_level, None
+    else:
+        bizsafe_level, note = current_bizsafe(safe, today)
     return Facts(
         gra=gra_live if gra_live is not None else profile.gra_registrations,
         bca=bca_live if bca_live is not None else profile.bca_registrations,
         licences=profile.licences_held,
-        bizsafe_level=safe_level or profile.bizsafe_level,
+        bizsafe_level=bizsafe_level,
         company=registry.company(profile.uen),
         gra_verified=gra_live is not None,
         bca_verified=bca_live is not None,
         bizsafe_verified=safe is not None,
+        bizsafe_note=note,
     )
+
+
+def current_bizsafe(record: BizSafe, today: date) -> tuple[str | None, str | None]:
+    """(level, None) for a current certificate, else (None, why not)."""
+    if record is NOT_LISTED or not record.level:
+        return None, "Not on the bizSAFE register"
+    if record.status.lower() != "approved":
+        return None, f"The bizSAFE register shows {bizsafe_label(record.level)} as '{record.status}'"
+    if record.expires and record.expires < today:
+        return None, f"{bizsafe_label(record.level)} expired on {record.expires:%d %b %Y}"
+    return record.level, None
 
 
 def check(
@@ -78,7 +103,7 @@ def check(
 ) -> list[EligibilityCheck]:
     """Every eligibility check for `profile` on `notice`, closing date first."""
     now = now or datetime.now(UTC)
-    facts = facts_for(profile, registry)
+    facts = facts_for(profile, registry, now.date())
     by_id = {lic.id: lic for lic in catalogue}
     checks = [closing_check(notice, now)]
     checks += [gra_check(head, facts, now.date()) for head in notice.gra_heads]
@@ -276,7 +301,7 @@ def bizsafe_check(notice: Notice, facts: Facts) -> EligibilityCheck | None:
 
     held_rank, wanted_rank = bizsafe_rank(facts.bizsafe_level), bizsafe_rank(wanted)
     if facts.bizsafe_level is None:
-        reason = "No current bizSAFE certificate on the register" if facts.bizsafe_verified else "The profile does not state a bizSAFE level"
+        reason = (facts.bizsafe_note or "No current bizSAFE certificate") if facts.bizsafe_verified else "The profile does not state a bizSAFE level"
         return result(UNMET if facts.bizsafe_verified else UNKNOWN, reason)
     if held_rank is None:
         return result(UNKNOWN, f"bizSAFE '{facts.bizsafe_level}' is not a certification level")
@@ -298,7 +323,9 @@ def bizsafe_label(level: str) -> str:
 def company_check(uen: str, company: Company | None) -> EligibilityCheck:
     requirement = f"UEN {uen} is a live entity"
     if company is None:
-        return EligibilityCheck(kind="company", requirement=requirement, status=UNKNOWN, reason="ACRA's open data returned no entity for this UEN", source_url=ACRA_URL)
+        return EligibilityCheck(kind="company", requirement=requirement, status=UNKNOWN, reason="Could not reach ACRA's open data; try again later", source_url=ACRA_URL)
+    if company.status == NOT_IN_ACRA:
+        return EligibilityCheck(kind="company", requirement=requirement, status=UNKNOWN, reason="ACRA's open data has no entity with this UEN; check the number", source_url=ACRA_URL)
     activity = f"; activity {company.activities[0][0]} {company.activities[0][1]}" if company.activities else ""
     if company.live is True:
         return EligibilityCheck(kind="company", requirement=requirement, status=MET, reason=f"{company.name}: {company.status}{activity}", source_url=ACRA_URL)
