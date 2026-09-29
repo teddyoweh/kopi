@@ -26,7 +26,7 @@ cd web && npm ci && npm run dev        # http://localhost:3000, mock mode by def
 **Backend and tests.** The tests are offline: fixtures, fakes, and NeedleDB's embedded engine.
 
 ```bash
-cd backend && uv sync && uv run pytest -q           # 231 tests
+cd backend && uv sync && uv run pytest -q           # 272 tests
 make dev-api                                        # FastAPI over the fixtures at :8000
 NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8000 npm run dev   # (in web/) the UI against it
 ```
@@ -68,7 +68,7 @@ GoBusiness licences (324) ──────────────────
 ```
 
 The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
-behind it (D1–D18) are in [planning/02-decisions.md](planning/02-decisions.md).
+behind it (D1–D22) are in [planning/02-decisions.md](planning/02-decisions.md).
 
 ## Numbers
 
@@ -129,8 +129,10 @@ behind it (D1–D18) are in [planning/02-decisions.md](planning/02-decisions.md)
 - **Least-privilege data keys.** NeedleDB's admin key lives only in its own container.
   Ingest has a write key, the API a read key; the copilot has neither.
 - **No personal data.** Officials' names, emails and phone numbers are dropped when a
-  notice is scraped. Nothing scraped from GeBIZ is committed: fixtures are synthetic,
-  and the app sits behind an access code because notices carry a no-republication clause.
+  notice is scraped. No scraped dataset is committed: fixtures are synthetic, and the app
+  sits behind an access code because notices carry a no-republication clause. The session
+  logs quote short excerpts of notices where the agents inspected live data, with
+  contact details removed.
 
 ## Weakest parts, and what I'd do next
 
@@ -159,12 +161,16 @@ behind it (D1–D18) are in [planning/02-decisions.md](planning/02-decisions.md)
 - **The tools:**
   - Claude Code (Claude Opus 5.5) running inside **Universe**, my agent workspace, on its
     Software Factory board;
-  - parallel task agents in git worktrees, and an independent reviewer agent on every task;
+  - parallel task agents in git worktrees, and an independent reviewer agent on each of the
+    five milestone-1 tasks (it found four real bugs the authors' checks had passed); later
+    tasks were proven by their tests, the retrieval eval and live runs on the deployed API;
   - subagents with fresh context for the web pages and the overview.
 - **Planning:** [`planning/`](planning/) holds the brief, the discovery research (every
-  source probed with real requests), the decisions D1–D18, the superseded v1 plan, and one
+  source probed with real requests), the decisions D1–D22, the superseded v1 plan, and one
   handoff per task.
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the
   fakes had hidden it), screenshots, and once the copilot itself.
-- **Session logs:** [`logs/`](logs/) holds the exported session logs, redacted.
+- **Session logs:** [`logs/`](logs/) holds all 12 sessions (the main agent, two crew agents,
+  five reviewers, four subagents), redacted by [`scripts/export_logs.py`](scripts/export_logs.py).
+  [`logs/INDEX.md`](logs/INDEX.md) lists them and says what was removed.
