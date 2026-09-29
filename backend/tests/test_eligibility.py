@@ -49,7 +49,14 @@ def test_open_notice_counts_days_left():
 
 def test_closing_today_and_closed():
     assert check(notice(closing=NOW + timedelta(hours=3)), profile(), now=NOW)[0].reason == "Open; closes today"
-    assert check(notice(closing=NOW + timedelta(days=1, hours=1)), profile(), now=NOW)[0].reason == "Open; closes in 1 day"
+    assert check(notice(closing=NOW + timedelta(days=1, hours=1)), profile(), now=NOW)[0].reason == "Open; closes tomorrow"
+
+
+def test_closing_days_are_singapore_calendar_days():
+    # 19:37 SGT on 29 Sep; a tender closing 13:00 SGT on 30 Sep is 17 hours away but closes *tomorrow*.
+    evening = datetime(2026, 9, 29, 11, 37, tzinfo=UTC)
+    closes = datetime(2026, 9, 30, 5, 0, tzinfo=UTC)
+    assert check(notice(closing=closes), profile(), now=evening)[0].reason == "Open; closes tomorrow"
     closed = check(notice(closing=NOW - timedelta(minutes=1)), profile(), now=NOW)[0]
     assert closed.status == UNMET
 

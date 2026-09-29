@@ -125,3 +125,11 @@ were no better. Keyword matches break ties toward exact words without overriding
 model weights count, so the API would never have seen a new ingest. Every file open on
 the Volume is also a network round trip: 732 single-file reads took 37.5 s, and one
 bundle takes 0.3 s.
+
+## D16 — The copilot is locked down by construction (KP-11)
+**Picked:** the agent's only built-in tools are Read, Write, Edit and Glob, fenced by a
+PreToolUse hook to the workspace (writes to drafts/ only). Every other capability is a
+read-only Kopi MCP tool that calls the API with the session's token, and anything not
+pre-approved is denied (`dontAsk`).
+**Why:** the agent reads untrusted notice text. The worst a hostile notice can make it
+do is read other public tenders and write a markdown file in its own drafts folder.
