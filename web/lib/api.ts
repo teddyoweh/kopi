@@ -70,6 +70,18 @@ export const TOKEN_KEY = "kopi.token";
 /** NEXT_PUBLIC_KOPI_API is the API origin, or "mock" (also the default) for the in-browser fixtures. */
 export const API_BASE = process.env.NEXT_PUBLIC_KOPI_API ?? "mock";
 
+/** The API rejects a `q` longer than this with a 422 (search, similar awards, licence search). */
+export const MAX_QUERY = 300;
+
+/** A query cut to MAX_QUERY at a word boundary. A profile's summary plus capabilities runs past it. */
+export function clipQuery(q: string): string {
+  const text = q.replace(/\s+/g, " ").trim();
+  if (text.length <= MAX_QUERY) return text;
+  const cut = text.slice(0, MAX_QUERY + 1);
+  const space = cut.lastIndexOf(" ");
+  return (space > 0 ? cut.slice(0, space) : cut.slice(0, MAX_QUERY)).replace(/[\s,.;:]+$/, "");
+}
+
 function query(params: Record<string, string | number | null | undefined>): string {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -118,7 +130,7 @@ class LiveApi implements KopiApi {
   }
 
   search(q: string, filters: TenderFilters = {}, limit = 20) {
-    return this.get<SearchResponse>(`/search${query({ q, limit, ...filters })}`);
+    return this.get<SearchResponse>(`/search${query({ q: clipQuery(q), limit, ...filters })}`);
   }
 
   tenders(filters: TenderFilters = {}, limit = 50, offset = 0) {
@@ -139,7 +151,7 @@ class LiveApi implements KopiApi {
   }
 
   similarAwards(q: string, agency?: string, k = 25) {
-    return this.get<MarketContext>(`/awards/similar${query({ q, agency, k })}`);
+    return this.get<MarketContext>(`/awards/similar${query({ q: clipQuery(q), agency, k })}`);
   }
 
   licences(limit = 50, offset = 0) {
@@ -147,7 +159,7 @@ class LiveApi implements KopiApi {
   }
 
   searchLicences(q: string, limit = 10) {
-    return this.get<Licence[]>(`/licences/search${query({ q, limit })}`);
+    return this.get<Licence[]>(`/licences/search${query({ q: clipQuery(q), limit })}`);
   }
 
   async chat(request: ChatRequest, onEvent: (event: ChatEvent) => void, signal?: AbortSignal) {
