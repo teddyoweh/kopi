@@ -354,10 +354,15 @@ export function CopilotView() {
   const newConversation = useCallback(() => {
     controller.current?.abort();
     controller.current = null;
-    dispatch({ type: "reset", doc: null });
-    setFiles({ session: null, list: [] });
-    updateUrl({ doc: null, ask: null });
+    dispatch({ type: "reset", doc: null }); // the drafts list follows the session, so it empties too
+    updateUrl({ doc: null, ask: null, new: null });
   }, [updateUrl]);
+
+  // The sidebar's "new chat" links to `/copilot?new=1`: start fresh wherever the tab was.
+  const fresh = params.get("new");
+  useEffect(() => {
+    if (fresh) newConversation();
+  }, [fresh, newConversation]);
 
   const clearDoc = useCallback(() => {
     dispatch({ type: "doc", doc: null });

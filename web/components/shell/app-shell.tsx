@@ -64,7 +64,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <IconLink href="/search" label="Search" onNavigate={onNavigate}>
           <Search className="size-4" aria-hidden />
         </IconLink>
-        <IconLink href="/copilot" label="New chat with Kopi" round onNavigate={onNavigate}>
+        <IconLink href="/copilot/?new=1" label="New chat with Kopi" round onNavigate={onNavigate}>
           <SquarePen className="size-3.5" aria-hidden />
         </IconLink>
       </div>
