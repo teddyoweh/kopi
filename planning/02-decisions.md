@@ -94,3 +94,10 @@ into the repo, which most of their terms forbid and which would go stale.
 *(KP-4)* A profile that is silent, or a register that cannot be reached, gives `unknown`.
 Only a register that answered, or a profile that states the fact, can give `unmet`.
 Failed HTTP calls raise instead of parsing an error page as "holds nothing".
+
+## D12 — Qwen3's generic query instruction, measured (KP-6)
+**Picked:** `SEARCH_TASK = "Given a web search query, retrieve relevant passages that answer the query"`.
+**Rejected:** a domain instruction written for Kopi, which scored nDCG@10 0.444 against 0.695.
+**Why:** measured on 30 supplier queries over 12,052 awarded tenders (evals/RESULTS.md).
+With the generic instruction, Qwen3-0.6B beats BGE-small (0.609) and BM25 (0.594), which
+confirms D3 on our own data rather than MTEB alone.

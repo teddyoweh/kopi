@@ -1,0 +1,122 @@
+[
+ {
+  "id": "q01",
+  "query": "AI chatbot for citizen services"
+ },
+ {
+  "id": "q02",
+  "query": "office cleaning for schools"
+ },
+ {
+  "id": "q03",
+  "query": "CCTV installation and maintenance"
+ },
+ {
+  "id": "q04",
+  "query": "data migration for an HR system"
+ },
+ {
+  "id": "q05",
+  "query": "cybersecurity penetration testing"
+ },
+ {
+  "id": "q06",
+  "query": "machine learning model for fraud detection"
+ },
+ {
+  "id": "q07",
+  "query": "website redesign and hosting"
+ },
+ {
+  "id": "q08",
+  "query": "security guard services for a building"
+ },
+ {
+  "id": "q09",
+  "query": "event management for a public festival"
+ },
+ {
+  "id": "q10",
+  "query": "translation of official documents"
+ },
+ {
+  "id": "q11",
+  "query": "pest control for clinics"
+ },
+ {
+  "id": "q12",
+  "query": "landscaping and grass cutting"
+ },
+ {
+  "id": "q13",
+  "query": "IT helpdesk support staff"
+ },
+ {
+  "id": "q14",
+  "query": "supply of laptops for students"
+ },
+ {
+  "id": "q15",
+  "query": "cloud migration of legacy applications"
+ },
+ {
+  "id": "q16",
+  "query": "training workshop on generative AI"
+ },
+ {
+  "id": "q17",
+  "query": "school bus transport"
+ },
+ {
+  "id": "q18",
+  "query": "survey and market research study"
+ },
+ {
+  "id": "q19",
+  "query": "lift replacement works"
+ },
+ {
+  "id": "q20",
+  "query": "drainage and road works"
+ },
+ {
+  "id": "q21",
+  "query": "data analytics dashboard for management"
+ },
+ {
+  "id": "q22",
+  "query": "document digitisation and scanning"
+ },
+ {
+  "id": "q23",
+  "query": "catering for staff events"
+ },
+ {
+  "id": "q24",
+  "query": "network switches and wifi upgrade"
+ },
+ {
+  "id": "q25",
+  "query": "video analytics for traffic"
+ },
+ {
+  "id": "q26",
+  "query": "mobile app development for residents"
+ },
+ {
+  "id": "q27",
+  "query": "legal advisory services panel"
+ },
+ {
+  "id": "q28",
+  "query": "air-conditioning maintenance"
+ },
+ {
+  "id": "q29",
+  "query": "printing of annual report"
+ },
+ {
+  "id": "q30",
+  "query": "customer service call centre outsourcing"
+ }
+]
