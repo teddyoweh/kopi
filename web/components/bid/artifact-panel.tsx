@@ -239,6 +239,18 @@ export function ArtifactPanel({
   const current = active?.kind === "doc" ? active.name : null;
   const text = current ? live[current] : undefined;
 
+  // While Kopi writes the open document, keep its newest lines in view, unless the reader scrolled up.
+  const pane = useRef<HTMLDivElement>(null);
+  const follow = useRef(true);
+  const following = current !== null && writing.has(current);
+  useEffect(() => {
+    follow.current = true;
+  }, [current]);
+  useEffect(() => {
+    const el = pane.current;
+    if (el && following && follow.current) el.scrollTop = el.scrollHeight;
+  }, [following, text]);
+
   async function add(files: FileList | null) {
     const list = [...(files ?? [])];
     setErrors(list.map(refusal).filter((p): p is string => p !== null));
@@ -325,7 +337,14 @@ export function ArtifactPanel({
           ))}
         </div>
       )}
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div
+        ref={pane}
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          follow.current = el.scrollTop + el.clientHeight >= el.scrollHeight - 80;
+        }}
+        className="min-h-0 flex-1 overflow-y-auto"
+      >
         {active?.kind === "doc" ? (
           <DocView sessionId={sessionId} name={active.name} version={versions[active.name] ?? 0} live={live[active.name]} writing={writing.has(active.name)} />
         ) : active?.kind === "upload" ? (

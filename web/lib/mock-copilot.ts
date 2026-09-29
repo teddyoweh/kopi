@@ -257,10 +257,13 @@ function call(tool: string, input: Record<string, unknown>, summary: string, ms 
   ];
 }
 
+/** A draft written the way the live runner streams one: the text arrives in pieces, then the Write call. */
 function write(name: string, body: string, files: Map<string, string>): Beat[] {
   files.set(name, body);
+  const pieces = body.match(/[\s\S]{1,48}/g) ?? [];
   return [
-    ...call("Write", { file_path: `${DRAFTS}/${name}`, content: body }, `File created successfully at: ${DRAFTS}/${name}`, 900),
+    ...pieces.map((text): Beat => ({ event: { type: "writing", file: name, text }, pause: 22 })),
+    ...call("Write", { file_path: `${DRAFTS}/${name}`, content: body }, `File created successfully at: ${DRAFTS}/${name}`, 500),
     { event: { type: "file", file: name }, pause: 150 },
   ];
 }

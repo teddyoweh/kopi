@@ -137,6 +137,8 @@ function Workspace({ doc }: { doc: string }) {
   const [versions, setVersions] = useState<Record<string, number>>({});
   const [active, setActive] = useState<Tab | null>(null);
   const picked = useRef(false);
+  /** Drafts whose text is arriving in pieces right now; the first piece of a new write replaces the old copy. */
+  const streaming = useRef(new Set<string>());
   const [view, setView] = useState<"chat" | "docs">("chat");
   const messages = useRef<HTMLDivElement>(null);
   const stick = useRef(true);
@@ -204,8 +206,18 @@ function Workspace({ doc }: { doc: string }) {
             }
             dispatch({ type: "event", turnId, event });
             if (event.type === "tool_call") lastTool = event.tool;
+            if (event.type === "writing" && event.file && event.text) {
+              const name = event.file;
+              const piece = event.text;
+              const fresh = !streaming.current.has(name);
+              streaming.current.add(name);
+              setLive((docs) => ({ ...docs, [name]: (fresh ? "" : (docs[name] ?? "")) + piece }));
+              setWriting((names) => (names.has(name) ? names : new Set(names).add(name)));
+              if (!picked.current) setActive((tab) => (tab?.kind === "doc" && tab.name === name ? tab : { kind: "doc", name }));
+            }
             const draft = draftOf(event);
             if (draft) {
+              streaming.current.delete(draft);
               const content = event.tool === "Write" && typeof event.input?.content === "string" ? event.input.content : undefined;
               setLive((docs) => {
                 const next = { ...docs };
@@ -239,6 +251,7 @@ function Workspace({ doc }: { doc: string }) {
       } finally {
         if (controller.current === abort) controller.current = null;
         setWriting(new Set());
+        streaming.current.clear();
         if (sid) {
           refreshMemory(sid);
           refreshFiles(sid);
