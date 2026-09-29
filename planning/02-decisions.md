@@ -144,3 +144,10 @@ secrets and network, and one stuck agent would stall search for everyone.
 anything but Claude and Kopi's read routes (all three blocked hosts were checked from
 inside a live sandbox), and its token can't chat, read drafts or spend Claude on
 overviews.
+## D18 — The overview's evidence is checked by code, not trusted (KP-10)
+**Picked:** the overview is a one-shot Claude call with no tools that returns structured
+output. Code then checks every quote word for word, after normalising, against the
+notice as the model saw it and the profile. Any miss caps BID at MAYBE and says so.
+**Why:** the brief drives a bid or no-bid decision, so its evidence must be real. Over
+10 live overviews, every verified quote was in the notice. Code can check that the words
+exist, but not that they prove the point, so the UI calls a quote evidence, not proof.
