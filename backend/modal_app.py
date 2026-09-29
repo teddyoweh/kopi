@@ -1,6 +1,6 @@
 """Kopi on Modal: the NeedleDB service, the ingest pipeline and the API.
 
-    MODAL_PROFILE=teddyoweh uv run --extra deploy modal deploy modal_app.py
+    MODAL_PROFILE=kryptonairc-lc uv run --extra deploy modal deploy modal_app.py
 
 One Volume (`kopi-data`) holds everything that must outlive a container: source caches
 (GeBIZ pages, awards, licences), the embeddings as one .npz per index, NeedleDB's key
@@ -8,10 +8,10 @@ store, and the Hugging Face model cache. NeedleDB itself runs on container-local
 and is rebuilt from the .npz files when its container starts, so no SQLite database
 ever sits on a network filesystem.
 
-Secrets (workspace teddyoweh):
+Secrets (workspace kryptonairc-lc, every name prefixed kopi-):
     kopi-needledb        NEEDLEDB_API_KEY  admin key, only the NeedleDB container has it
-    kopi-needledb-write  NEEDLEDB_API_KEY  write key scoped to Kopi's indexes, for ingest
-    kopi-needledb-read   NEEDLEDB_API_KEY  read key, for the API
+    kopi-needledb-write  NEEDLEDB_API_KEY, NEEDLEDB_URL  write key scoped to Kopi's indexes, for ingest
+    kopi-needledb-read   NEEDLEDB_API_KEY, NEEDLEDB_URL  read key, for the API
     kopi-app             KOPI_ACCESS_CODES, KOPI_SIGNING_KEY
 """
 
@@ -32,7 +32,6 @@ VECTORS = Path(VOL) / "vectors"
 NEEDLE_AUTH = Path(VOL) / "needledb" / "auth.sqlite"
 NEEDLE_LOCAL = Path("/needle")
 NEEDLEDB_LABEL = "kopi-needledb"
-NEEDLEDB_URL = "https://teddyoweh--kopi-needledb.modal.run"
 DAILY = 20 * 3600
 
 app = modal.App("kopi")
@@ -51,7 +50,7 @@ base = (
         "numpy>=2.0",
         "needledb @ git+https://github.com/teddyoweh/needledb@b88f8b7",
     )
-    .env({"KOPI_DATA_DIR": DATA, "HF_HOME": f"{VOL}/hf", "NEEDLEDB_URL": NEEDLEDB_URL})
+    .env({"KOPI_DATA_DIR": DATA, "HF_HOME": f"{VOL}/hf"})
 )
 needle_image = base.add_local_dir(BACKEND / "kopi", "/root/kopi")
 gpu_image = base.uv_pip_install("torch>=2.4", "transformers>=4.51", "sentence-transformers>=3.0").add_local_dir(
@@ -153,7 +152,7 @@ def embed_and_push() -> list[dict]:
 
     volume.reload()
     embedder = Embedder(device="cuda")
-    db = NeedleDB(NEEDLEDB_URL, api_key=os.environ["NEEDLEDB_API_KEY"], timeout=120)
+    db = NeedleDB(os.environ["NEEDLEDB_URL"], api_key=os.environ["NEEDLEDB_API_KEY"], timeout=120)
     notices_dir = Path(DATA) / "notices"
     open_ids = json.loads((notices_dir / "_open.json").read_text())
     notices = [Notice.model_validate_json((notices_dir / f"{doc}.json").read_text()) for doc in open_ids]

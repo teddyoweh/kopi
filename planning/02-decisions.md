@@ -101,3 +101,10 @@ Failed HTTP calls raise instead of parsing an error page as "holds nothing".
 **Why:** measured on 30 supplier queries over 12,052 awarded tenders (evals/RESULTS.md).
 With the generic instruction, Qwen3-0.6B beats BGE-small (0.609) and BM25 (0.594), which
 confirms D3 on our own data rather than MTEB alone.
+
+## D13 — Kopi runs in the kryptonairc-lc Modal workspace
+**Picked:** the kryptonairc-lc workspace, with every resource prefixed `kopi`.
+**Why:** Teddy's call on 29 Sep. The personal teddyoweh workspace is paused on billing,
+and he chose this one over the Spawn Labs workspaces. Kopi touches only its own `kopi*`
+app, Volume and secrets there, so its keys and data share nothing with anything else in
+the workspace.
