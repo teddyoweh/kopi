@@ -31,7 +31,11 @@ export function useTracked() {
   const track = useCallback(
     (notice: Notice | NoticeSummary) => {
       const { doc_no, title, agency, closing, url } = notice;
-      update((list) => [...list.filter((t) => t.doc_no !== doc_no), { doc_no, title, agency, closing, url, added: new Date().toISOString() }]);
+      // A bid (lib/bids.ts) shares this record; keep its session when the tender is tracked again.
+      update((list) => {
+        const existing = list.find((t) => t.doc_no === doc_no);
+        return [...list.filter((t) => t.doc_no !== doc_no), { ...existing, doc_no, title, agency, closing, url, added: existing?.added ?? new Date().toISOString() }];
+      });
     },
     [update],
   );

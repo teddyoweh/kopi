@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import PurePosixPath
 
 from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,16 +15,20 @@ from fastapi.responses import Response, StreamingResponse
 from kopi.api.auth import AppOnly, Authed, check_code, issue
 from kopi.api.limits import LIMITS, RateLimiter, limited
 from kopi.config import Settings
+from kopi.insights import insights as tender_insights
 from kopi.models import (
     AuthRequest,
     AuthResponse,
+    BidMemory,
     ChatEvent,
     ChatRequest,
     ChecklistItem,
     EligibilityCheck,
     EligibilityRequest,
+    InsightsRequest,
     Licence,
     MarketContext,
+    MemoryRequest,
     NoticeStatus,
     NoticeSummary,
     Overview,
@@ -30,6 +36,7 @@ from kopi.models import (
     SearchResponse,
     SessionFile,
     TenderDetail,
+    TenderInsight,
 )
 from kopi.sandbox import CopilotUnavailable, LimitReached
 from kopi.store import FixtureStore, NotFound, Store
@@ -43,6 +50,18 @@ class Filters:
     method: str | None = None
     closing_after: datetime | None = None
     closing_before: datetime | None = None
+
+
+UPLOAD_LIMIT = 8 * 1024 * 1024
+UPLOAD_TYPES = {".pdf": "application/pdf", ".md": "text/markdown; charset=utf-8", ".txt": "text/plain; charset=utf-8", ".csv": "text/csv; charset=utf-8"}
+UPLOAD_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._()-]{0,120}$")
+
+
+def upload_name(name: str) -> str:
+    """A bare file name with an allowed extension, or 400."""
+    if not UPLOAD_NAME.match(name) or ".." in name or PurePosixPath(name).suffix.lower() not in UPLOAD_TYPES:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "uploads are .pdf, .md, .txt or .csv files with a plain name")
+    return name
 
 
 def sse(event: ChatEvent) -> str:
@@ -82,6 +101,10 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
     async def not_found(_: Request, exc: NotFound) -> Response:
         return Response(json.dumps({"detail": str(exc)}), status.HTTP_404_NOT_FOUND, media_type="application/json")
 
+    @app.exception_handler(CopilotUnavailable)
+    async def unavailable(_: Request, exc: CopilotUnavailable) -> Response:
+        return Response(json.dumps({"detail": str(exc)}), status.HTTP_503_SERVICE_UNAVAILABLE, media_type="application/json")
+
     Read = limited("read")
 
     def db(request: Request) -> Store:
@@ -108,6 +131,10 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
                closing_after: datetime | None = None, closing_before: datetime | None = None) -> SearchResponse:
         f = Filters(status_, agency, category, method, closing_after, closing_before)
         return db(request).search(q, f, limit)
+
+    @app.post("/search/insights", response_model=list[TenderInsight], dependencies=[Authed, Read])
+    def insights(request: Request, body: InsightsRequest) -> list[TenderInsight]:
+        return tender_insights(db(request), body.doc_nos, body.profile, body.query)
 
     @app.get("/tenders", response_model=list[NoticeSummary], dependencies=[Authed, Read])
     def tenders(request: Request, limit: int = Query(50, le=200), offset: int = Query(0, ge=0),
@@ -182,7 +209,33 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
         if "/" in name or name.startswith("."):
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "bad file name")
         body = db(request).session_file(session_id, name)
-        return Response(body, media_type="text/markdown; charset=utf-8",
-                        headers={"Content-Disposition": f'attachment; filename="{name}"'})
+        media = UPLOAD_TYPES.get(PurePosixPath(name).suffix.lower(), "application/octet-stream")
+        return Response(body, media_type=media, headers={"Content-Disposition": f'attachment; filename="{name}"'})
+
+    @app.get("/sessions/{session_id}/memory", response_model=BidMemory, dependencies=[AppOnly])
+    def memory(request: Request, session_id: str) -> BidMemory:
+        return db(request).memory(session_id)
+
+    @app.post("/sessions/{session_id}/memory", response_model=BidMemory, dependencies=[AppOnly])
+    def remember(request: Request, session_id: str, body: MemoryRequest) -> BidMemory:
+        return db(request).remember(session_id, body.text.strip())
+
+    @app.post("/sessions/{session_id}/memory/{note_id}/forget", response_model=BidMemory, dependencies=[AppOnly])
+    def forget(request: Request, session_id: str, note_id: str) -> BidMemory:
+        return db(request).forget(session_id, note_id)
+
+    @app.post("/sessions/{session_id}/uploads", response_model=SessionFile, dependencies=[AppOnly],
+              openapi_extra={"requestBody": {"required": True, "content": {"application/octet-stream": {"schema": {"type": "string", "format": "binary"}}}}})
+    async def upload(request: Request, session_id: str, name: str = Query(min_length=1, max_length=124)) -> SessionFile:
+        name = upload_name(name)
+        declared = int(request.headers.get("content-length") or 0)
+        if declared > UPLOAD_LIMIT:
+            raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "uploads are limited to 8 MB")
+        body = await request.body()
+        if len(body) > UPLOAD_LIMIT:
+            raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "uploads are limited to 8 MB")
+        if not body:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "the upload is empty")
+        return db(request).upload(session_id, name, body)
 
     return app

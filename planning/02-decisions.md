@@ -218,3 +218,26 @@ are still no gradients, and the only shadow is a barely-there one on floating su
 ui". The loudest mess on screen was a fifth of the titles shouting in capitals next to
 nested bordered boxes, grey header strips and 600-weight text. The original title is still
 one click away on GeBIZ.
+
+## D27 — Bids, with a copilot that works them and a memory outside the sandbox (KP-31)
+**Picked:**
+- A tracked tender becomes a **bid**: a copilot session in bid mode on that tender, with a
+  document shelf (its drafts plus the person's uploads) and a **bid memory**. The memory
+  holds Kopi's notes and the person's, plus the bid's stage and next step. It is stored in
+  the session store, outside the sandbox, and written into each turn's workspace.
+- Search results get an insights call (`POST /search/insights`): eligibility summary,
+  "why it matched" sentence and price band, fetched after the hits so search stays fast.
+
+**Rejected:**
+- Relying on the Claude transcript for continuity: a sandbox dies after 15 idle minutes
+  and its transcript goes with it.
+- A server-side bid database: user accounts and a user database are out of scope. The
+  browser keeps which session belongs to which tender, as it already did for tracked
+  tenders, and the API keeps the session's memory and files.
+- Computing insights inside `/search`: it would make every search wait on N market
+  lookups.
+
+**Why:** Teddy, 29 Sep: "a copilot in the bid, start working, doing everything for you ...
+document memory stuff all of that", and search cards "100x better". A bid team's work is
+per tender and spans days. The memory is what lets the copilot pick a bid up again after
+the sandbox has gone.

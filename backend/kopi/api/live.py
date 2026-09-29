@@ -26,6 +26,7 @@ from kopi.checklist import submission_checklist
 from kopi.config import DATA_DIR
 from kopi.index import AWARDS, LICENCES, NOTICES, notice_filter, query
 from kopi.models import (
+    BidMemory,
     ChatEvent,
     ChatRequest,
     ChecklistItem,
@@ -237,6 +238,25 @@ class LiveStore:
         if self.copilot is None:
             raise NotFound(f"no file {name} in session {session_id}")
         return self.copilot.file(session_id, name)
+
+    # ------------------------------------------------------------ bid sessions (KP-33 implements the Copilot side)
+
+    def _bids(self) -> Copilot:
+        if self.copilot is None:
+            raise CopilotUnavailable("the copilot is not configured on this deployment")
+        return self.copilot
+
+    def memory(self, session_id: str) -> BidMemory:
+        return self._bids().memory(session_id)
+
+    def remember(self, session_id: str, text: str) -> BidMemory:
+        return self._bids().remember(session_id, text)
+
+    def forget(self, session_id: str, note_id: str) -> BidMemory:
+        return self._bids().forget(session_id, note_id)
+
+    def upload(self, session_id: str, name: str, body: bytes) -> SessionFile:
+        return self._bids().upload(session_id, name, body)
 
 
 def extractive_overview(notice: Notice, profile: Profile) -> Overview:
