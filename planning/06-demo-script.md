@@ -63,7 +63,8 @@ time.
 I built it in a day with Claude Code on Opus 5.5, inside Universe, my own agent workspace. The
 plan ran on a Software Factory board:
 - milestones;
-- tasks that declare the files they own, so agents work in parallel in separate git worktrees;
+- tasks that declare the files they own, so agents can work in parallel, each in its own copy of
+  the code (a git worktree);
 - a check command for every task;
 - a handoff note for the next agent.
 
