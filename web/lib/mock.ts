@@ -392,6 +392,10 @@ export class MockApi implements KopiApi {
     return body;
   }
 
+  async sessionBlob(sessionId: string, name: string) {
+    return new Blob([await this.sessionFile(sessionId, name)], { type: name.endsWith(".md") ? "text/markdown" : "text/plain" });
+  }
+
   /** Mirrors kopi.insights over the fixtures: the eligibility summary, the closest sentence and the price band. */
   async insights(docs: string[], profile: Profile, q?: string): Promise<TenderInsight[]> {
     await pause(350);

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { MovedToBids } from "@/components/bid/moved";
+import { BidsView } from "@/components/bid/bids-view";
 
 export const metadata: Metadata = { title: "Bids" };
 
 export default function Page() {
-  return <MovedToBids />;
+  return <BidsView />;
 }

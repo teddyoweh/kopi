@@ -1,11 +1,11 @@
 "use client";
 
-import { Building2, ChevronDown, ClipboardCheck, FileBadge, LayoutGrid, Search, Sparkles, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, FileBadge, LayoutGrid, Search, Sparkles, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { useTracked } from "@/lib/submissions";
+import { useBids } from "@/lib/bids";
 import { cn } from "@/lib/utils";
 
 type Item = { href: string; label: string; icon: LucideIcon };
@@ -17,7 +17,7 @@ export const NAV: { section: string | null; items: Item[] }[] = [
     items: [
       { href: "/", label: "Overview", icon: LayoutGrid },
       { href: "/copilot", label: "Copilot", icon: Sparkles },
-      { href: "/submissions", label: "Submissions", icon: ClipboardCheck },
+      { href: "/bids", label: "Bids", icon: Briefcase },
     ],
   },
   {
@@ -34,6 +34,7 @@ export const NAV: { section: string | null; items: Item[] }[] = [
 export function isActive(pathname: string, href: string): boolean {
   const path = pathname.replace(/\/$/, "") || "/";
   if (href === "/") return path === "/" || path === "/tender";
+  if (href === "/bids") return path === "/bids" || path === "/bid" || path === "/submissions";
   return path === href || path.startsWith(`${href}/`);
 }
 
@@ -58,7 +59,7 @@ function NavLink({ item, active, count, onNavigate }: { item: Item; active: bool
       <Icon className={cn("size-4 shrink-0", active ? "text-foreground/80" : "text-muted-foreground")} aria-hidden />
       <span className="min-w-0 flex-1 truncate">{item.label}</span>
       {count ? (
-        <span className="text-xs text-muted-foreground tabular-nums" aria-label={`${count} tracked`}>
+        <span className="text-xs text-muted-foreground tabular-nums" aria-label={`${count} bids`}>
           {count}
         </span>
       ) : null}
@@ -86,7 +87,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function Nav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-  const { tracked } = useTracked();
+  const { bids } = useBids();
   return (
     <nav aria-label="Main" className="flex flex-col gap-5">
       {NAV.map(({ section, items }) => {
@@ -95,7 +96,7 @@ export function Nav({ onNavigate }: { onNavigate?: () => void }) {
             key={item.href}
             item={item}
             active={isActive(pathname, item.href)}
-            count={item.href === "/submissions" ? tracked.length : undefined}
+            count={item.href === "/bids" ? bids.length : undefined}
             onNavigate={onNavigate}
           />
         ));

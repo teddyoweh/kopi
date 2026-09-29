@@ -68,7 +68,7 @@ const COLUMN = "mx-auto w-full max-w-[44rem]";
 // ---------------------------------------------------------------- pieces
 
 /** What the conversation is about, in the composer: the tender it was opened for, or every open tender. */
-function ContextChip({ doc, onClear }: { doc: string | null; onClear: () => void }) {
+function ContextChip({ doc, onClear }: { doc: string | null; onClear?: () => void }) {
   const api = useApi();
   const known = useKnownTitle(doc ?? "");
   const state = useAsync(async () => (api && doc && !known ? (await api.tender(doc)).notice.title : null), [api, doc, known]);
@@ -83,21 +83,23 @@ function ContextChip({ doc, onClear }: { doc: string | null; onClear: () => void
   }
   const title = known ?? state.data;
   return (
-    <span className={cn(chip, "pr-1 pl-3")}>
+    <span className={cn(chip, onClear ? "pr-1 pl-3" : "px-3")}>
       <FileText className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
       <Link href={`/tender/?doc=${doc}`} className="flex min-w-0 items-center gap-1.5 hover:underline" title={title ?? doc}>
         <span className="sr-only">About </span>
         <span className="shrink-0 font-book tabular-nums">{doc}</span>
         {title && <span className="hidden max-w-[16rem] min-w-0 truncate text-muted-foreground sm:inline">{displayTitle(title)}</span>}
       </Link>
-      <button
-        type="button"
-        onClick={onClear}
-        aria-label="Remove the tender from this conversation"
-        className="grid size-6 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-      >
-        <X className="size-3.5" aria-hidden />
-      </button>
+      {onClear && (
+        <button
+          type="button"
+          onClick={onClear}
+          aria-label="Remove the tender from this conversation"
+          className="grid size-6 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <X className="size-3.5" aria-hidden />
+        </button>
+      )}
     </span>
   );
 }
@@ -136,13 +138,14 @@ function Examples({ doc, onAsk }: { doc: string | null; onAsk: (text: string) =>
   );
 }
 
-function Composer({
+export function Composer({
   busy,
   doc,
   roomy,
   onSend,
   onStop,
   onClearDoc,
+  placeholder,
 }: {
   busy: boolean;
   doc: string | null;
@@ -150,7 +153,9 @@ function Composer({
   roomy: boolean;
   onSend: (text: string) => void;
   onStop: () => void;
-  onClearDoc: () => void;
+  /** Without it the tender chip is fixed: a bid's conversation is always about its tender. */
+  onClearDoc?: () => void;
+  placeholder?: string;
 }) {
   const [text, setText] = useState("");
   const box = useRef<HTMLTextAreaElement>(null);
@@ -201,7 +206,7 @@ function Composer({
             submit();
           }
         }}
-        placeholder={doc ? "Ask about this tender" : "Ask Kopi anything about a bid"}
+        placeholder={placeholder ?? (doc ? "Ask about this tender" : "Ask Kopi anything about a bid")}
         className={cn(
           "max-h-[220px] w-full resize-none bg-transparent px-5 pt-4 pb-1 text-[15px] leading-6 outline-none placeholder:text-muted-foreground/80",
           roomy ? "min-h-[3.5rem]" : "min-h-10",

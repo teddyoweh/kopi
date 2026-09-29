@@ -3,6 +3,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Brain,
   Building2,
   ChevronDown,
   ChevronRight,
@@ -11,6 +12,7 @@ import {
   FilePen,
   FileSearch,
   FileText,
+  Flag,
   FolderSearch,
   ListChecks,
   Loader2,
@@ -47,6 +49,8 @@ const TOOL_ICON: Record<string, LucideIcon> = {
   Edit: FilePen,
   Read: FileText,
   Glob: FolderSearch,
+  remember: Brain,
+  set_bid_stage: Flag,
 };
 
 /**
@@ -167,7 +171,7 @@ type ProblemActions = { onRetry: () => void; onNew: () => void; onSignIn: () => 
 const BROWSE = [
   { href: "/search", label: "Search tenders" },
   { href: "/licences", label: "Look up licences" },
-  { href: "/submissions", label: "Submissions" },
+  { href: "/bids", label: "Bids" },
 ];
 
 function Reason({ detail }: { detail: string }) {
