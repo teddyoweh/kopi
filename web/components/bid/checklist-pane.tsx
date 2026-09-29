@@ -45,41 +45,45 @@ function Row({ item, ticked, onToggle, now }: { item: ChecklistItem; ticked: boo
   );
 }
 
-export function ChecklistCard({ doc, now }: { doc: string; now: number }) {
-  const { state, items, ticked, toggle, done } = useChecklist(doc);
+export type Checklist = ReturnType<typeof useChecklist>;
+
+/** The checklist is fetched by the panel, which also shows its progress on the tab. */
+export function ChecklistPane({ checklist, now }: { checklist: Checklist; now: number }) {
+  const { state, items, ticked, toggle, done } = checklist;
   return (
-    <section aria-labelledby="bid-checklist" className="flex flex-col rounded-xl border bg-card">
-      <div className="flex items-center justify-between gap-2 px-4 pt-3.5 pb-2">
-        <h2 id="bid-checklist" className="flex items-center gap-2 text-[14px] font-medium tracking-[-0.01em]">
-          <ListChecks className="size-4 text-kopi" aria-hidden />
-          Submission checklist
+    <section aria-labelledby="bid-checklist" className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <h2 id="bid-checklist" className="flex items-center gap-2 text-[17px] font-medium tracking-[-0.015em]">
+          <ListChecks className="size-4.5 text-kopi" aria-hidden />
+          Tasks
+          {items.length > 0 && (
+            <span className="text-[13px] font-normal text-muted-foreground tabular-nums">
+              {done} of {items.length}
+            </span>
+          )}
         </h2>
-        {items.length > 0 && (
-          <span className="text-[12px] text-muted-foreground tabular-nums">
-            {done} of {items.length}
-          </span>
-        )}
+        <p className="text-[13px] leading-snug text-muted-foreground">
+          What to prepare and submit, built by rules from the notice and your profile. Tick them off as you go; the ticks stay in this browser.
+        </p>
       </div>
       {items.length > 0 && (
-        <div className="mx-4 mb-2 h-1 overflow-hidden rounded-full bg-foreground/[0.07]" role="meter" aria-valuenow={done} aria-valuemin={0} aria-valuemax={items.length} aria-label="Checklist progress">
+        <div className="h-1 overflow-hidden rounded-full bg-foreground/[0.07]" role="meter" aria-valuenow={done} aria-valuemin={0} aria-valuemax={items.length} aria-label="Checklist progress">
           <div className="h-full rounded-full bg-kopi transition-[width]" style={{ width: `${(100 * done) / items.length}%` }} />
         </div>
       )}
-      <div className="px-2 pb-2">
-        {state.status === "loading" && (
-          <div className="flex flex-col gap-2 px-2 py-1.5" aria-label="Loading">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-3.5 w-4/5 rounded-full" />
-            ))}
-          </div>
-        )}
-        {state.status === "error" && <ErrorState error={state.error} />}
-        <ul className="flex flex-col">
-          {items.map((item) => (
-            <Row key={item.id} item={item} ticked={ticked.has(item.id)} onToggle={() => toggle(item.id)} now={now} />
+      {state.status === "loading" && (
+        <div className="flex flex-col gap-2.5 py-1" aria-label="Loading">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-3.5 w-4/5 rounded-full" />
           ))}
-        </ul>
-      </div>
+        </div>
+      )}
+      {state.status === "error" && <ErrorState error={state.error} />}
+      <ul className="-mx-2 flex flex-col">
+        {items.map((item) => (
+          <Row key={item.id} item={item} ticked={ticked.has(item.id)} onToggle={() => toggle(item.id)} now={now} />
+        ))}
+      </ul>
     </section>
   );
 }

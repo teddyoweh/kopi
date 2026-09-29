@@ -21,12 +21,12 @@ function Note({ note, onForget }: { note: MemoryNote; onForget: () => Promise<vo
   const kopi = note.source === "kopi";
   const Icon = kopi ? Sparkles : User;
   return (
-    <li className="group/note flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/70">
+    <li className="group/note flex items-start gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-muted/70">
       <span className={cn("mt-0.5 grid size-5 shrink-0 place-items-center rounded-full", kopi ? "bg-kopi-soft text-kopi" : "bg-muted text-foreground/70")} aria-hidden>
         <Icon className="size-3" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-[13px] leading-snug break-words">{note.text}</span>
+        <span className="text-[13.5px] leading-snug break-words">{note.text}</span>
         <span className="text-[11.5px] text-muted-foreground">
           {kopi ? "Kopi" : "You"} · {ago(note.created)}
         </span>
@@ -51,7 +51,7 @@ function Note({ note, onForget }: { note: MemoryNote; onForget: () => Promise<vo
  * The bid memory: what Kopi keeps about this bid and what the person tells it. It lives on the
  * API, outside the sandbox, and every turn reads it, so it survives the copilot restarting.
  */
-export function MemoryCard({
+export function MemoryPane({
   memory,
   loading,
   disabled,
@@ -86,60 +86,60 @@ export function MemoryCard({
   }
 
   return (
-    <section aria-labelledby="bid-memory" className="flex flex-col rounded-xl border bg-card">
-      <div className="flex flex-col gap-0.5 px-4 pt-3.5 pb-2">
-        <h2 id="bid-memory" className="flex items-center gap-2 text-[14px] font-medium tracking-[-0.01em]">
-          <Brain className="size-4 text-kopi" aria-hidden />
+    <section aria-labelledby="bid-memory" className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <h2 id="bid-memory" className="flex items-center gap-2 text-[17px] font-medium tracking-[-0.015em]">
+          <Brain className="size-4.5 text-kopi" aria-hidden />
           Bid memory
-          {notes.length > 0 && <span className="text-[13px] font-normal text-muted-foreground tabular-nums">{notes.length}</span>}
         </h2>
-        <p className="text-[12.5px] leading-snug text-muted-foreground">What Kopi keeps about this bid, and what you tell it. Every turn reads it.</p>
+        <p className="text-[13px] leading-snug text-muted-foreground">
+          What Kopi keeps about this bid, and what you tell it. Every turn reads it, so the bid survives Kopi restarting. Your notes are
+          decisions Kopi follows; its own are findings.
+        </p>
       </div>
-      <div className="px-2 pb-2">
-        {loading && !memory ? (
-          <div className="flex flex-col gap-2 px-2 py-2" aria-label="Loading">
-            <Skeleton className="h-3.5 w-4/5 rounded-full" />
-            <Skeleton className="h-3.5 w-3/5 rounded-full" />
-          </div>
-        ) : notes.length ? (
-          <ul className="flex flex-col">
-            {notes.map((note) => (
-              <Note key={note.id} note={note} onForget={() => onForget(note.id)} />
-            ))}
-          </ul>
-        ) : (
-          <p className="px-2 py-1.5 text-[12.5px] text-muted-foreground">{disabled ? "Kopi starts the memory when the bid starts." : "Nothing yet."}</p>
-        )}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void add();
-          }}
-          className="mt-1.5 flex items-center gap-1.5 rounded-full border bg-card py-1 pr-1 pl-3.5 focus-within:border-kopi/40 focus-within:ring-3 focus-within:ring-kopi/10"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void add();
+        }}
+        className="flex items-center gap-1.5 rounded-full border bg-card py-1 pr-1 pl-4 focus-within:border-kopi/40 focus-within:ring-3 focus-within:ring-kopi/10"
+      >
+        <label htmlFor="memory-note" className="sr-only">
+          Add a note for Kopi
+        </label>
+        <input
+          id="memory-note"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          maxLength={1000}
+          disabled={disabled}
+          placeholder={disabled ? "Start the bid first" : "Tell Kopi something about this bid"}
+          className="min-w-0 flex-1 bg-transparent text-[13.5px] outline-none placeholder:text-muted-foreground/80 disabled:cursor-not-allowed"
+        />
+        <button
+          type="submit"
+          disabled={disabled || !text.trim() || saving}
+          aria-label="Save the note"
+          className="grid size-8 shrink-0 place-items-center rounded-full bg-kopi text-white transition-colors disabled:bg-muted disabled:text-muted-foreground/70"
         >
-          <label htmlFor="memory-note" className="sr-only">
-            Add a note for Kopi
-          </label>
-          <input
-            id="memory-note"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={1000}
-            disabled={disabled}
-            placeholder={disabled ? "Start the bid first" : "Tell Kopi something about this bid"}
-            className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-muted-foreground/80 disabled:cursor-not-allowed"
-          />
-          <button
-            type="submit"
-            disabled={disabled || !text.trim() || saving}
-            aria-label="Save the note"
-            className="grid size-7 shrink-0 place-items-center rounded-full bg-kopi text-white transition-colors disabled:bg-muted disabled:text-muted-foreground/70"
-          >
-            {saving ? <Loader2 className="size-3.5 animate-spin" aria-hidden /> : <ArrowUp className="size-3.5" strokeWidth={2.25} aria-hidden />}
-          </button>
-        </form>
-        {error && <p className="px-2 pt-1.5 text-[12px] text-unmet">{error}</p>}
-      </div>
+          {saving ? <Loader2 className="size-3.5 animate-spin" aria-hidden /> : <ArrowUp className="size-4" strokeWidth={2.25} aria-hidden />}
+        </button>
+      </form>
+      {error && <p className="text-[12px] text-unmet">{error}</p>}
+      {loading && !memory ? (
+        <div className="flex flex-col gap-2.5 py-1" aria-label="Loading">
+          <Skeleton className="h-3.5 w-4/5 rounded-full" />
+          <Skeleton className="h-3.5 w-3/5 rounded-full" />
+        </div>
+      ) : notes.length ? (
+        <ul className="-mx-2 flex flex-col">
+          {[...notes].reverse().map((note) => (
+            <Note key={note.id} note={note} onForget={() => onForget(note.id)} />
+          ))}
+        </ul>
+      ) : (
+        <p className="text-[13px] text-muted-foreground">{disabled ? "Kopi starts the memory when the bid starts." : "Nothing yet."}</p>
+      )}
     </section>
   );
 }

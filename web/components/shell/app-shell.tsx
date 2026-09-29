@@ -88,7 +88,11 @@ function SectionTitle() {
   );
 }
 
+/** Pages that lay out their own panes edge to edge (the bid workspace), instead of a centred column. */
+const BLEED = /^\/bid\/?$/;
+
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const bleed = BLEED.test(usePathname());
   const [menuOpen, setMenuOpen] = useState(false);
   const [title, setTitle] = useState<HTMLElement | null>(null);
   const [actions, setActions] = useState<HTMLElement | null>(null);
@@ -121,7 +125,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <div ref={setActions} className="ml-auto flex shrink-0 items-center gap-2" />
             </header>
             <PanelContext.Provider value={{ title, actions, scroller }}>
-              <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8">{children}</main>
+              <main className={bleed ? "flex min-h-0 w-full flex-1 flex-col" : "mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8"}>{children}</main>
             </PanelContext.Provider>
           </div>
         </div>
