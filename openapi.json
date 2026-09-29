@@ -1,0 +1,2015 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Kopi API",
+  "description": "A copilot for Singapore government tenders.",
+  "version": "0.1.0"
+ },
+ "paths": {
+  "/health": {
+   "get": {
+    "summary": "Health",
+    "operationId": "health_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "type": "object",
+         "title": "Response Health Health Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/auth": {
+   "post": {
+    "summary": "Auth",
+    "operationId": "auth_auth_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AuthRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AuthResponse"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/search": {
+   "get": {
+    "summary": "Search",
+    "operationId": "search_search_get",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 300,
+       "title": "Q"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 100,
+       "default": 20,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "$ref": "#/components/schemas/NoticeStatus"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "default": "open",
+       "title": "Status"
+      }
+     },
+     {
+      "name": "agency",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Agency"
+      }
+     },
+     {
+      "name": "category",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Category"
+      }
+     },
+     {
+      "name": "method",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Method"
+      }
+     },
+     {
+      "name": "closing_after",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "date-time"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Closing After"
+      }
+     },
+     {
+      "name": "closing_before",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "date-time"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Closing Before"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SearchResponse"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/tenders": {
+   "get": {
+    "summary": "Tenders",
+    "operationId": "tenders_tenders_get",
+    "parameters": [
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 200,
+       "default": 50,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "offset",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 0,
+       "default": 0,
+       "title": "Offset"
+      }
+     },
+     {
+      "name": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "$ref": "#/components/schemas/NoticeStatus"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "default": "open",
+       "title": "Status"
+      }
+     },
+     {
+      "name": "agency",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Agency"
+      }
+     },
+     {
+      "name": "category",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Category"
+      }
+     },
+     {
+      "name": "method",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Method"
+      }
+     },
+     {
+      "name": "closing_after",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "date-time"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Closing After"
+      }
+     },
+     {
+      "name": "closing_before",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "date-time"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Closing Before"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/NoticeSummary"
+         },
+         "title": "Response Tenders Tenders Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/tenders/{doc_no}": {
+   "get": {
+    "summary": "Tender",
+    "operationId": "tender_tenders__doc_no__get",
+    "parameters": [
+     {
+      "name": "doc_no",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Doc No"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TenderDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/tenders/{doc_no}/detail": {
+   "post": {
+    "summary": "Tender For Profile",
+    "operationId": "tender_for_profile_tenders__doc_no__detail_post",
+    "parameters": [
+     {
+      "name": "doc_no",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Doc No"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OverviewRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TenderDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/tenders/{doc_no}/overview": {
+   "post": {
+    "summary": "Overview",
+    "operationId": "overview_tenders__doc_no__overview_post",
+    "parameters": [
+     {
+      "name": "doc_no",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Doc No"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OverviewRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Overview"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/eligibility": {
+   "post": {
+    "summary": "Eligibility",
+    "operationId": "eligibility_eligibility_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EligibilityRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/EligibilityCheck"
+         },
+         "type": "array",
+         "title": "Response Eligibility Eligibility Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/awards/similar": {
+   "get": {
+    "summary": "Similar Awards",
+    "operationId": "similar_awards_awards_similar_get",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 300,
+       "title": "Q"
+      }
+     },
+     {
+      "name": "agency",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Agency"
+      }
+     },
+     {
+      "name": "k",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 100,
+       "default": 25,
+       "title": "K"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MarketContext"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/licences": {
+   "get": {
+    "summary": "Licences",
+    "operationId": "licences_licences_get",
+    "parameters": [
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 400,
+       "default": 50,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "offset",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 0,
+       "default": 0,
+       "title": "Offset"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Licence"
+         },
+         "title": "Response Licences Licences Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/licences/search": {
+   "get": {
+    "summary": "Search Licences",
+    "operationId": "search_licences_licences_search_get",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 300,
+       "title": "Q"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 50,
+       "default": 10,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Licence"
+         },
+         "title": "Response Search Licences Licences Search Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/chat": {
+   "post": {
+    "summary": "Chat",
+    "operationId": "chat_chat_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ChatRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "ChatEvent per SSE message",
+      "content": {
+       "text/event-stream": {}
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/sessions/{session_id}/files": {
+   "get": {
+    "summary": "Session Files",
+    "operationId": "session_files_sessions__session_id__files_get",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SessionFile"
+         },
+         "title": "Response Session Files Sessions  Session Id  Files Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/sessions/{session_id}/files/{name}": {
+   "get": {
+    "summary": "Session File",
+    "operationId": "session_file_sessions__session_id__files__name__get",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Session Id"
+      }
+     },
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Name"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "AuthRequest": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code"
+    ],
+    "title": "AuthRequest"
+   },
+   "AuthResponse": {
+    "properties": {
+     "token": {
+      "type": "string",
+      "title": "Token"
+     },
+     "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Expires At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "token",
+     "expires_at"
+    ],
+    "title": "AuthResponse"
+   },
+   "AwardExample": {
+    "properties": {
+     "tender_no": {
+      "type": "string",
+      "title": "Tender No"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "agency": {
+      "type": "string",
+      "title": "Agency"
+     },
+     "year": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Year"
+     },
+     "amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Amount"
+     },
+     "suppliers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Suppliers"
+     }
+    },
+    "type": "object",
+    "required": [
+     "tender_no",
+     "description",
+     "agency",
+     "year",
+     "amount",
+     "suppliers"
+    ],
+    "title": "AwardExample"
+   },
+   "BcaWorkhead": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code",
+      "examples": [
+       "CW01"
+      ]
+     },
+     "grade": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Grade",
+      "examples": [
+       "B2"
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "code"
+    ],
+    "title": "BcaWorkhead"
+   },
+   "ChatRequest": {
+    "properties": {
+     "message": {
+      "type": "string",
+      "title": "Message"
+     },
+     "session_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Session Id"
+     },
+     "profile": {
+      "$ref": "#/components/schemas/Profile"
+     },
+     "doc_no": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Doc No",
+      "description": "The tender the conversation is about, if any"
+     }
+    },
+    "type": "object",
+    "required": [
+     "message",
+     "profile"
+    ],
+    "title": "ChatRequest"
+   },
+   "EligibilityCheck": {
+    "properties": {
+     "kind": {
+      "type": "string",
+      "enum": [
+       "closing",
+       "gra",
+       "bca",
+       "licence",
+       "value",
+       "company"
+      ],
+      "title": "Kind"
+     },
+     "requirement": {
+      "type": "string",
+      "title": "Requirement"
+     },
+     "status": {
+      "$ref": "#/components/schemas/EligibilityStatus"
+     },
+     "reason": {
+      "type": "string",
+      "title": "Reason"
+     },
+     "source_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "kind",
+     "requirement",
+     "status",
+     "reason"
+    ],
+    "title": "EligibilityCheck"
+   },
+   "EligibilityRequest": {
+    "properties": {
+     "doc_no": {
+      "type": "string",
+      "title": "Doc No"
+     },
+     "profile": {
+      "$ref": "#/components/schemas/Profile"
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_no",
+     "profile"
+    ],
+    "title": "EligibilityRequest"
+   },
+   "EligibilityStatus": {
+    "type": "string",
+    "enum": [
+     "met",
+     "unmet",
+     "unknown"
+    ],
+    "title": "EligibilityStatus"
+   },
+   "Fit": {
+    "properties": {
+     "score": {
+      "type": "integer",
+      "maximum": 100.0,
+      "minimum": 0.0,
+      "title": "Score"
+     },
+     "recommendation": {
+      "$ref": "#/components/schemas/Recommendation"
+     },
+     "reasons": {
+      "items": {
+       "$ref": "#/components/schemas/Reason"
+      },
+      "type": "array",
+      "title": "Reasons"
+     }
+    },
+    "type": "object",
+    "required": [
+     "score",
+     "recommendation",
+     "reasons"
+    ],
+    "title": "Fit"
+   },
+   "GraHead": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code",
+      "examples": [
+       "EPU/CMP/10"
+      ]
+     },
+     "label": {
+      "type": "string",
+      "title": "Label",
+      "default": ""
+     },
+     "capacity_sgd": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Capacity Sgd",
+      "description": "Tendering capacity named on the notice, e.g. 250000"
+     },
+     "grade": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Grade",
+      "examples": [
+       "S3"
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "code"
+    ],
+    "title": "GraHead",
+    "description": "A GRA (EPU) supply head a notice requires, with the tendering capacity it names."
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "KeyDate": {
+    "properties": {
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "label",
+     "at"
+    ],
+    "title": "KeyDate"
+   },
+   "Licence": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "agency": {
+      "type": "string",
+      "title": "Agency"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description",
+      "default": ""
+     },
+     "who_needs_it": {
+      "type": "string",
+      "title": "Who Needs It",
+      "default": ""
+     },
+     "fee": {
+      "type": "string",
+      "title": "Fee",
+      "default": ""
+     },
+     "processing_time": {
+      "type": "string",
+      "title": "Processing Time",
+      "default": ""
+     },
+     "validity": {
+      "type": "string",
+      "title": "Validity",
+      "default": ""
+     },
+     "prerequisites": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Prerequisites",
+      "default": []
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "agency",
+     "url"
+    ],
+    "title": "Licence"
+   },
+   "MarketContext": {
+    "properties": {
+     "similar_count": {
+      "type": "integer",
+      "title": "Similar Count"
+     },
+     "median_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Median Amount"
+     },
+     "p25_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "P25 Amount"
+     },
+     "p75_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "P75 Amount"
+     },
+     "top_suppliers": {
+      "items": {
+       "$ref": "#/components/schemas/SupplierWins"
+      },
+      "type": "array",
+      "title": "Top Suppliers"
+     },
+     "agency_incumbents": {
+      "items": {
+       "$ref": "#/components/schemas/SupplierWins"
+      },
+      "type": "array",
+      "title": "Agency Incumbents"
+     },
+     "no_award_share": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "No Award Share"
+     },
+     "examples": {
+      "items": {
+       "$ref": "#/components/schemas/AwardExample"
+      },
+      "type": "array",
+      "title": "Examples"
+     }
+    },
+    "type": "object",
+    "required": [
+     "similar_count",
+     "median_amount",
+     "p25_amount",
+     "p75_amount",
+     "top_suppliers",
+     "agency_incumbents",
+     "no_award_share",
+     "examples"
+    ],
+    "title": "MarketContext"
+   },
+   "Notice": {
+    "properties": {
+     "doc_no": {
+      "type": "string",
+      "title": "Doc No"
+     },
+     "type": {
+      "type": "string",
+      "title": "Type",
+      "examples": [
+       "Quotation",
+       "Tender",
+       "Tender Lite"
+      ]
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description",
+      "default": ""
+     },
+     "agency": {
+      "type": "string",
+      "title": "Agency"
+     },
+     "published": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Published"
+     },
+     "closing": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Closing"
+     },
+     "status": {
+      "$ref": "#/components/schemas/NoticeStatus",
+      "default": "open"
+     },
+     "category": {
+      "type": "string",
+      "title": "Category",
+      "default": ""
+     },
+     "procurement_type": {
+      "type": "string",
+      "title": "Procurement Type",
+      "default": ""
+     },
+     "procurement_method": {
+      "type": "string",
+      "title": "Procurement Method",
+      "default": ""
+     },
+     "procurement_nature": {
+      "type": "string",
+      "title": "Procurement Nature",
+      "default": ""
+     },
+     "two_envelope": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Two Envelope"
+     },
+     "wto_gpa": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Wto Gpa"
+     },
+     "gra_heads": {
+      "items": {
+       "$ref": "#/components/schemas/GraHead"
+      },
+      "type": "array",
+      "title": "Gra Heads",
+      "default": []
+     },
+     "bca_workheads": {
+      "items": {
+       "$ref": "#/components/schemas/BcaWorkhead"
+      },
+      "type": "array",
+      "title": "Bca Workheads",
+      "default": []
+     },
+     "licences_mentioned": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Licences Mentioned",
+      "default": []
+     },
+     "items": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Items",
+      "default": []
+     },
+     "delivery_location": {
+      "type": "string",
+      "title": "Delivery Location",
+      "default": ""
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "source": {
+      "type": "string",
+      "enum": [
+       "live",
+       "fixture"
+      ],
+      "title": "Source",
+      "default": "live"
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_no",
+     "type",
+     "title",
+     "agency",
+     "published",
+     "closing",
+     "url"
+    ],
+    "title": "Notice",
+    "description": "One GeBIZ opportunity. Contact persons are never part of it."
+   },
+   "NoticeStatus": {
+    "type": "string",
+    "enum": [
+     "open",
+     "closed",
+     "awarded",
+     "cancelled"
+    ],
+    "title": "NoticeStatus"
+   },
+   "NoticeSummary": {
+    "properties": {
+     "doc_no": {
+      "type": "string",
+      "title": "Doc No"
+     },
+     "type": {
+      "type": "string",
+      "title": "Type"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "agency": {
+      "type": "string",
+      "title": "Agency"
+     },
+     "published": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Published"
+     },
+     "closing": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Closing"
+     },
+     "status": {
+      "$ref": "#/components/schemas/NoticeStatus"
+     },
+     "category": {
+      "type": "string",
+      "title": "Category"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_no",
+     "type",
+     "title",
+     "agency",
+     "published",
+     "closing",
+     "status",
+     "category",
+     "url"
+    ],
+    "title": "NoticeSummary",
+    "description": "The listing view of a notice."
+   },
+   "Overview": {
+    "properties": {
+     "doc_no": {
+      "type": "string",
+      "title": "Doc No"
+     },
+     "profile_id": {
+      "type": "string",
+      "title": "Profile Id"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     },
+     "buying": {
+      "type": "string",
+      "title": "Buying"
+     },
+     "who_can_bid": {
+      "type": "string",
+      "title": "Who Can Bid"
+     },
+     "fit": {
+      "$ref": "#/components/schemas/Fit"
+     },
+     "key_dates": {
+      "items": {
+       "$ref": "#/components/schemas/KeyDate"
+      },
+      "type": "array",
+      "title": "Key Dates",
+      "default": []
+     },
+     "risks": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Risks",
+      "default": []
+     },
+     "questions_for_agency": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Questions For Agency",
+      "default": []
+     },
+     "unverified_quotes": {
+      "type": "integer",
+      "title": "Unverified Quotes",
+      "default": 0
+     },
+     "model": {
+      "type": "string",
+      "title": "Model",
+      "default": ""
+     },
+     "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Generated At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_no",
+     "profile_id",
+     "summary",
+     "buying",
+     "who_can_bid",
+     "fit",
+     "generated_at"
+    ],
+    "title": "Overview"
+   },
+   "OverviewRequest": {
+    "properties": {
+     "profile": {
+      "$ref": "#/components/schemas/Profile"
+     }
+    },
+    "type": "object",
+    "required": [
+     "profile"
+    ],
+    "title": "OverviewRequest"
+   },
+   "Profile": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "uen": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Uen"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     },
+     "capabilities": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Capabilities",
+      "default": []
+     },
+     "past_work": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Past Work",
+      "default": []
+     },
+     "gra_registrations": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/Registration"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gra Registrations"
+     },
+     "bca_registrations": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/Registration"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Bca Registrations"
+     },
+     "licences_held": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Licences Held"
+     },
+     "bizsafe_level": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Bizsafe Level"
+     },
+     "value_band_sgd": {
+      "$ref": "#/components/schemas/ValueBand",
+      "default": {}
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "summary"
+    ],
+    "title": "Profile",
+    "description": "The company Kopi works for. `None` means \"we do not know\", never \"no\"."
+   },
+   "Reason": {
+    "properties": {
+     "point": {
+      "type": "string",
+      "title": "Point"
+     },
+     "quote": {
+      "type": "string",
+      "title": "Quote",
+      "description": "Verbatim text from the notice or profile"
+     },
+     "verified": {
+      "type": "boolean",
+      "title": "Verified",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "point",
+     "quote"
+    ],
+    "title": "Reason"
+   },
+   "Recommendation": {
+    "type": "string",
+    "enum": [
+     "BID",
+     "MAYBE",
+     "NO_BID"
+    ],
+    "title": "Recommendation"
+   },
+   "Registration": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "grade": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Grade"
+     },
+     "expires": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Expires"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code"
+    ],
+    "title": "Registration",
+    "description": "A registration the company holds: a GRA supply head or a BCA workhead, with grade."
+   },
+   "SearchHit": {
+    "properties": {
+     "notice": {
+      "$ref": "#/components/schemas/NoticeSummary"
+     },
+     "score": {
+      "type": "number",
+      "title": "Score",
+      "description": "0..1, higher is closer"
+     },
+     "highlights": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Highlights",
+      "default": []
+     }
+    },
+    "type": "object",
+    "required": [
+     "notice",
+     "score"
+    ],
+    "title": "SearchHit"
+   },
+   "SearchResponse": {
+    "properties": {
+     "query": {
+      "type": "string",
+      "title": "Query"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "hits": {
+      "items": {
+       "$ref": "#/components/schemas/SearchHit"
+      },
+      "type": "array",
+      "title": "Hits"
+     }
+    },
+    "type": "object",
+    "required": [
+     "query",
+     "total",
+     "hits"
+    ],
+    "title": "SearchResponse"
+   },
+   "SessionFile": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "size": {
+      "type": "integer",
+      "title": "Size"
+     },
+     "modified": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Modified"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "title",
+     "size",
+     "modified"
+    ],
+    "title": "SessionFile"
+   },
+   "SupplierWins": {
+    "properties": {
+     "supplier": {
+      "type": "string",
+      "title": "Supplier"
+     },
+     "wins": {
+      "type": "integer",
+      "title": "Wins"
+     }
+    },
+    "type": "object",
+    "required": [
+     "supplier",
+     "wins"
+    ],
+    "title": "SupplierWins"
+   },
+   "TenderDetail": {
+    "properties": {
+     "notice": {
+      "$ref": "#/components/schemas/Notice"
+     },
+     "eligibility": {
+      "items": {
+       "$ref": "#/components/schemas/EligibilityCheck"
+      },
+      "type": "array",
+      "title": "Eligibility"
+     },
+     "market": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/MarketContext"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "notice",
+     "eligibility",
+     "market"
+    ],
+    "title": "TenderDetail"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   },
+   "ValueBand": {
+    "properties": {
+     "min_sgd": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Min Sgd"
+     },
+     "max_sgd": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Max Sgd"
+     }
+    },
+    "type": "object",
+    "title": "ValueBand"
+   }
+  }
+ }
+}

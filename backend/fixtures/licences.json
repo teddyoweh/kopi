@@ -1,0 +1,193 @@
+[
+ {
+  "id": "nea-cleaning-business",
+  "name": "Cleaning Business Licence",
+  "agency": "National Environment Agency",
+  "description": "Required for any business providing general cleaning services in Singapore.",
+  "who_needs_it": "Businesses that provide cleaning services to other parties.",
+  "fee": "$200 for 3 years",
+  "processing_time": "Up to 2 weeks",
+  "validity": "3 years",
+  "prerequisites": [
+   "bizSAFE Level 3",
+   "Progressive Wage Model compliance"
+  ],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "plrd-security-agency",
+  "name": "Security Agency Licence",
+  "agency": "Police Licensing & Regulatory Department",
+  "description": "Licence to provide security guarding services.",
+  "who_needs_it": "Companies supplying security officers.",
+  "fee": "$1,500 per year",
+  "processing_time": "Up to 2 months",
+  "validity": "1 year",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "csro-pentest",
+  "name": "Penetration Testing Service Licence",
+  "agency": "Cyber Security Agency of Singapore",
+  "description": "Licence under the Cybersecurity Act for businesses offering penetration testing services.",
+  "who_needs_it": "Businesses offering penetration testing to third parties.",
+  "fee": "$500 for 2 years",
+  "processing_time": "Up to 1 month",
+  "validity": "2 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "csro-soc",
+  "name": "Managed Security Operations Centre Monitoring Service Licence",
+  "agency": "Cyber Security Agency of Singapore",
+  "description": "Licence for businesses providing managed SOC monitoring services.",
+  "who_needs_it": "Businesses offering managed SOC monitoring.",
+  "fee": "$500 for 2 years",
+  "processing_time": "Up to 1 month",
+  "validity": "2 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "nea-vector-control",
+  "name": "Vector Control Operator Licence",
+  "agency": "National Environment Agency",
+  "description": "Licence for businesses carrying out vector control work.",
+  "who_needs_it": "Pest control businesses.",
+  "fee": "$150 for 3 years",
+  "processing_time": "Up to 2 weeks",
+  "validity": "3 years",
+  "prerequisites": [
+   "Vector Control Technician registration"
+  ],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "bca-crs",
+  "name": "Contractors Registry (CRS) Registration",
+  "agency": "Building and Construction Authority",
+  "description": "Registration required to tender for public sector construction projects, by workhead and grade.",
+  "who_needs_it": "Contractors bidding for public construction.",
+  "fee": "From $300",
+  "processing_time": "Up to 1 month",
+  "validity": "3 years",
+  "prerequisites": [
+   "ACRA registration"
+  ],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "bca-builder",
+  "name": "General Builder Licence",
+  "agency": "Building and Construction Authority",
+  "description": "Licence to carry out general building works.",
+  "who_needs_it": "Builders undertaking building works above a threshold.",
+  "fee": "$300 for 3 years",
+  "processing_time": "Up to 1 month",
+  "validity": "3 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "gra-supplier",
+  "name": "Government Supplier Registration (EPU)",
+  "agency": "Government Registration Authority (MOF)",
+  "description": "Registration by supply head and financial grade to tender above certain values.",
+  "who_needs_it": "Suppliers tendering for government contracts.",
+  "fee": "$144.45 to $385.20",
+  "processing_time": "Up to 1 month",
+  "validity": "3 years",
+  "prerequisites": [
+   "GeBIZ Trading Partner account"
+  ],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "sfa-food-shop",
+  "name": "Food Shop Licence",
+  "agency": "Singapore Food Agency",
+  "description": "Licence to operate a food retail establishment.",
+  "who_needs_it": "Caterers and food outlets.",
+  "fee": "$195 per year",
+  "processing_time": "Up to 2 weeks",
+  "validity": "1 year",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "lta-bus-service",
+  "name": "Bus Service Operator Licence (Private Hire)",
+  "agency": "Land Transport Authority",
+  "description": "Licence to operate private bus services.",
+  "who_needs_it": "Bus hire companies.",
+  "fee": "$200",
+  "processing_time": "Up to 1 month",
+  "validity": "5 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "mom-employment-agency",
+  "name": "Employment Agency Licence",
+  "agency": "Ministry of Manpower",
+  "description": "Licence to place workers with employers.",
+  "who_needs_it": "Manpower supply businesses.",
+  "fee": "$1,800 for 3 years",
+  "processing_time": "Up to 3 weeks",
+  "validity": "3 years",
+  "prerequisites": [
+   "Certificate of Employment Agency Laws"
+  ],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "imda-telecom",
+  "name": "Services-Based Operator Licence",
+  "agency": "Infocomm Media Development Authority",
+  "description": "Licence to provide telecommunication services.",
+  "who_needs_it": "Telecom and network service providers.",
+  "fee": "$1,000 per year",
+  "processing_time": "Up to 1 month",
+  "validity": "5 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "nea-toxic",
+  "name": "Toxic Industrial Waste Collector Licence",
+  "agency": "National Environment Agency",
+  "description": "Licence to collect and transport toxic industrial waste.",
+  "who_needs_it": "Waste collectors.",
+  "fee": "$240 for 3 years",
+  "processing_time": "Up to 1 month",
+  "validity": "3 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "mom-bizsafe",
+  "name": "bizSAFE Certification",
+  "agency": "Workplace Safety and Health Council",
+  "description": "Workplace safety certification programme, Levels 1 to Star.",
+  "who_needs_it": "Contractors in cleaning, construction and FM.",
+  "fee": "From $0",
+  "processing_time": "Up to 2 months",
+  "validity": "3 years",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ },
+ {
+  "id": "scdf-fire",
+  "name": "Fire Safety Certificate Submission (Registered Inspector)",
+  "agency": "Singapore Civil Defence Force",
+  "description": "Fire safety approvals for building works.",
+  "who_needs_it": "Contractors doing A&A works.",
+  "fee": "Varies",
+  "processing_time": "Up to 1 month",
+  "validity": "One-off",
+  "prerequisites": [],
+  "url": "https://www.gobusiness.gov.sg/licences/"
+ }
+]
