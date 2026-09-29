@@ -1,29 +1,18 @@
 "use client";
 
-import {
-  ArrowUp,
-  ArrowUpRight,
-  ClipboardCheck,
-  FileBadge,
-  FilePen,
-  FileText,
-  LayoutGrid,
-  Plus,
-  Sparkles,
-  Square,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowUp, ClipboardCheck, FileBadge, FilePen, FileText, Layers, LayoutGrid, Plus, Square, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 import { AssistantTurn, UserMessage } from "@/components/copilot/turn";
 import { DownloadButton, DraftPreview, type DraftRefLike } from "@/components/draft-preview";
 import { useApi, useKopi } from "@/components/kopi-provider";
+import { PageHeader } from "@/components/page-header";
+import { usePanel } from "@/components/shell/app-shell";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import type { SessionFile } from "@/lib/api";
-import { EMPTY, problemOf, reducer, restored, starters, type Conversation } from "@/lib/copilot";
+import { EMPTY, examples, problemOf, reducer, restored, type Conversation, type Example } from "@/lib/copilot";
 import { fileSize } from "@/lib/format";
 import { draftTender, recordDraft, useKnownTitle } from "@/lib/submissions";
 import { useAsync } from "@/lib/use-async";
@@ -58,96 +47,107 @@ function initialConversation({ doc, ask }: { doc: string | null; ask: string | n
   return saved;
 }
 
-const PART_ICON: Record<string, LucideIcon> = {
+const PART_ICON: Record<Example["part"], LucideIcon> = {
   Overview: LayoutGrid,
   "Permits and licences": FileBadge,
   Drafting: FilePen,
   Submissions: ClipboardCheck,
 };
 
+/**
+ * The panel below its 52px top bar, less the page's top padding: the height the copilot fills so
+ * the composer rests on the panel's floor. The panel is full-bleed below lg, and inset (8px each
+ * side, a 1px border) from lg.
+ */
+const FILL = "min-h-[calc(100dvh-76px)] sm:min-h-[calc(100dvh-84px)] lg:min-h-[calc(100dvh-102px)]";
+
+/** The width of the conversation and its composer, as in Linear Agent. */
+const COLUMN = "mx-auto w-full max-w-[44rem]";
+
 // ---------------------------------------------------------------- pieces
 
-function TenderChip({ doc, onClear }: { doc: string; onClear: () => void }) {
+/** What the conversation is about, in the composer: the tender it was opened for, or every open tender. */
+function ContextChip({ doc, onClear }: { doc: string | null; onClear: () => void }) {
   const api = useApi();
-  const known = useKnownTitle(doc);
-  const state = useAsync(async () => (api && !known ? (await api.tender(doc)).notice.title : null), [api, doc, known]);
+  const known = useKnownTitle(doc ?? "");
+  const state = useAsync(async () => (api && doc && !known ? (await api.tender(doc)).notice.title : null), [api, doc, known]);
+  const chip = "flex h-7 max-w-full min-w-0 items-center gap-1.5 rounded-md border bg-card text-[13px]";
+  if (!doc) {
+    return (
+      <span className={cn(chip, "px-2 text-muted-foreground")} title="Kopi searches every open GeBIZ tender">
+        <Layers className="size-3.5 shrink-0" aria-hidden />
+        All open tenders
+      </span>
+    );
+  }
   const title = known ?? state.data;
   return (
-    <div className="flex max-w-full items-center gap-2 self-start rounded-lg bg-kopi-soft py-1.5 pr-1.5 pl-3 text-sm">
-      <span className="shrink-0 text-muted-foreground">About</span>
-      <Link href={`/tender/?doc=${doc}`} className="min-w-0 truncate font-medium hover:underline" title={title ?? doc}>
-        {title ? (
-          <>
-            <span className="font-mono text-[13px]">{doc}</span>
-            <span className="hidden sm:inline">, {title}</span>
-          </>
-        ) : (
-          <span className="font-mono text-[13px]">{doc}</span>
-        )}
+    <span className={cn(chip, "pr-0.5 pl-2")}>
+      <FileText className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
+      <Link href={`/tender/?doc=${doc}`} className="flex min-w-0 items-center gap-1.5 hover:underline" title={title ?? doc}>
+        <span className="sr-only">About </span>
+        <span className="shrink-0 font-medium tabular-nums">{doc}</span>
+        {title && <span className="hidden max-w-[16rem] min-w-0 truncate text-muted-foreground sm:inline">{title}</span>}
       </Link>
       <button
         type="button"
         onClick={onClear}
         aria-label="Remove the tender from this conversation"
-        className="grid size-6 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-background hover:text-foreground"
+        className="grid size-6 shrink-0 place-items-center rounded-[5px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       >
         <X className="size-3.5" aria-hidden />
       </button>
-    </div>
+    </span>
   );
 }
 
-function Starters({ doc, onAsk }: { doc: string | null; onAsk: (text: string) => void }) {
+function Examples({ doc, onAsk }: { doc: string | null; onAsk: (text: string) => void }) {
   const { profile } = useKopi();
   return (
-    <div className="flex flex-col gap-8 py-6 sm:py-10">
-      <div className="flex flex-col gap-3">
-        <span className="grid size-10 place-items-center rounded-xl bg-kopi-soft">
-          <Sparkles className="size-5 text-kopi" aria-hidden />
-        </span>
-        <h2 className="text-xl font-semibold tracking-tight">{doc ? `What would you like to know about ${doc}?` : `What can Kopi do for ${profile.name}?`}</h2>
-        <p className="max-w-xl text-[15px] text-muted-foreground">
-          Kopi searches GeBIZ, checks your registrations and licences, and drafts the paperwork of a bid. It reads only public notices, and you
-          review and submit everything yourself.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
-        {starters(profile, doc).map((group) => {
-          const Icon = PART_ICON[group.part] ?? Sparkles;
+    <section aria-labelledby="copilot-examples" className="flex flex-col gap-3 pt-7">
+      <h2 id="copilot-examples" className="px-1 text-[13px] text-muted-foreground">
+        Get started with some examples
+      </h2>
+      <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
+        {examples(profile, doc).map((example) => {
+          const Icon = PART_ICON[example.part];
           return (
-            <div key={group.part} className="flex flex-col gap-2">
-              <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Icon className="size-3.5" aria-hidden /> {group.part}
-              </p>
-              {group.asks.map((ask) => (
-                <button
-                  key={ask}
-                  type="button"
-                  onClick={() => onAsk(ask)}
-                  className="group flex items-start justify-between gap-3 rounded-lg bg-secondary px-3.5 py-3 text-left text-sm transition-colors hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)]"
-                >
-                  <span>{ask}</span>
-                  <ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-muted-foreground group-hover:text-kopi" aria-hidden />
-                </button>
-              ))}
-            </div>
+            <li key={example.ask} className="flex">
+              <button
+                type="button"
+                onClick={() => onAsk(example.ask)}
+                title={example.ask}
+                className="flex w-full items-start gap-3 rounded-lg border bg-card px-3.5 py-3 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:outline-none sm:flex-col sm:gap-9 sm:p-4"
+              >
+                <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground sm:mt-0" aria-hidden />
+                <span className="flex min-w-0 flex-col gap-1">
+                  <span className="text-[14px] font-medium">{example.title}</span>
+                  <span className="text-[13px] leading-snug text-muted-foreground">{example.description}</span>
+                </span>
+              </button>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
 
 function Composer({
   busy,
+  doc,
+  roomy,
   onSend,
   onStop,
-  seeded,
+  onClearDoc,
 }: {
   busy: boolean;
+  doc: string | null;
+  /** Two lines to start with on the empty page; one under a conversation. */
+  roomy: boolean;
   onSend: (text: string) => void;
   onStop: () => void;
-  seeded: boolean;
+  onClearDoc: () => void;
 }) {
   const [text, setText] = useState("");
   const box = useRef<HTMLTextAreaElement>(null);
@@ -166,50 +166,72 @@ function Composer({
     requestAnimationFrame(fit);
   }
 
+  const round = "grid size-8 shrink-0 place-items-center rounded-full transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/40";
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         submit();
       }}
-      className="sticky bottom-0 z-10 flex flex-col gap-2 bg-background pt-3 pb-4 sm:pb-6"
+      onClick={(e) => {
+        // The whole card is the field, as in Linear: a click on its padding puts the cursor in the box.
+        if (e.target === e.currentTarget) box.current?.focus();
+      }}
+      className="flex flex-col rounded-xl border bg-card shadow-float transition-colors focus-within:border-foreground/20"
     >
-      <div className="flex items-end gap-2 rounded-2xl bg-secondary p-2 transition-colors focus-within:bg-background focus-within:ring-2 focus-within:ring-kopi/40">
-        <label htmlFor="copilot-message" className="sr-only">
-          Message Kopi
-        </label>
-        <textarea
-          id="copilot-message"
-          ref={box}
-          rows={1}
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            fit();
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-              e.preventDefault();
-              submit();
-            }
-          }}
-          placeholder={seeded ? "Ask about this tender" : "Ask Kopi anything about a bid"}
-          className="max-h-[220px] min-h-10 flex-1 resize-none bg-transparent px-2.5 py-2 text-[15px] leading-6 outline-none placeholder:text-muted-foreground"
-        />
+      <label htmlFor="copilot-message" className="sr-only">
+        Message Kopi
+      </label>
+      <textarea
+        id="copilot-message"
+        ref={box}
+        rows={1}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          fit();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+            e.preventDefault();
+            submit();
+          }
+        }}
+        placeholder={doc ? "Ask about this tender" : "Ask Kopi anything about a bid"}
+        className={cn(
+          "max-h-[220px] w-full resize-none bg-transparent px-4 pt-3 pb-1 text-[15px] leading-6 outline-none placeholder:text-muted-foreground",
+          roomy ? "min-h-[3.5rem]" : "min-h-10",
+        )}
+      />
+      <div className="flex items-center gap-3 px-3 pt-1 pb-3">
+        <div className="flex min-w-0 flex-1">
+          <ContextChip doc={doc} onClear={onClearDoc} />
+        </div>
         {busy ? (
-          <Button type="button" variant="outline" size="icon-lg" onClick={onStop} aria-label="Stop the answer" className="shrink-0 rounded-xl">
-            <Square className="size-3.5 fill-current" />
-          </Button>
+          <button type="button" onClick={onStop} aria-label="Stop the answer" className={cn(round, "border bg-card text-foreground hover:bg-muted")}>
+            <Square className="size-3 fill-current" aria-hidden />
+          </button>
         ) : (
-          <Button type="submit" size="icon-lg" disabled={!text.trim()} aria-label="Send" className="shrink-0 rounded-xl">
-            <ArrowUp />
-          </Button>
+          <button
+            type="submit"
+            disabled={!text.trim()}
+            aria-label="Send"
+            className={cn(round, "bg-kopi text-white hover:bg-[color-mix(in_oklch,var(--kopi),black_8%)] disabled:bg-muted disabled:text-muted-foreground/70")}
+          >
+            <ArrowUp className="size-4" strokeWidth={2.25} aria-hidden />
+          </button>
         )}
       </div>
-      <p className="px-2 text-xs text-muted-foreground">
-        Kopi prepares; you submit on GeBIZ. <span className="hidden sm:inline">Enter sends, Shift+Enter adds a line.</span>
-      </p>
     </form>
+  );
+}
+
+function Footnote({ className }: { className?: string }) {
+  return (
+    <p className={cn("px-1 text-xs text-muted-foreground", className)}>
+      Kopi prepares; you submit on GeBIZ. <span className="hidden sm:inline">Enter sends, Shift+Enter adds a line.</span>
+    </p>
   );
 }
 
@@ -217,30 +239,31 @@ type DraftRow = { name: string; title?: string; size?: number; saving: boolean }
 
 function DraftsPanel({ rows, sessionId, onOpen }: { rows: DraftRow[]; sessionId: string | null; onOpen: (row: DraftRow) => void }) {
   return (
-    <section aria-labelledby="drafts" className="flex flex-col gap-4 rounded-xl bg-secondary p-5">
-      <div className="flex flex-col gap-1">
-        <h2 id="drafts" className="text-base font-semibold tracking-tight">
+    <section aria-labelledby="drafts" className="flex flex-col rounded-lg border bg-card">
+      <div className="flex flex-col gap-0.5 border-b px-3.5 py-3">
+        <h2 id="drafts" className="flex items-center gap-2 text-[13px] font-medium">
           Drafts
+          {rows.length > 0 && <span className="text-muted-foreground tabular-nums">{rows.length}</span>}
         </h2>
-        <p className="text-sm text-muted-foreground">Documents Kopi writes in this conversation, as markdown.</p>
+        <p className="text-xs leading-relaxed text-muted-foreground">Documents Kopi writes in this conversation, as markdown.</p>
       </div>
       {rows.length === 0 ? (
-        <p className="rounded-lg bg-background px-3.5 py-3 text-sm text-muted-foreground">
+        <p className="px-3.5 py-3 text-[13px] leading-relaxed text-muted-foreground">
           None yet. Ask for clarification questions, a compliance matrix or a submission checklist.
         </p>
       ) : (
-        <ul className="flex flex-col gap-1.5">
+        <ul className="flex flex-col p-1">
           {rows.map((row) => (
-            <li key={row.name} className="flex items-center gap-1 rounded-lg bg-background pr-1.5">
+            <li key={row.name} className="flex items-center gap-0.5 rounded-md pr-1 transition-colors hover:bg-muted/60">
               <button
                 type="button"
                 onClick={() => onOpen(row)}
                 disabled={row.saving || !sessionId}
-                className="flex min-w-0 flex-1 items-start gap-2.5 rounded-lg px-3 py-2.5 text-left disabled:cursor-default"
+                className="flex min-w-0 flex-1 items-start gap-2.5 rounded-md px-2.5 py-2 text-left disabled:cursor-default"
               >
-                <FileText className="mt-0.5 size-4 shrink-0 text-kopi" aria-hidden />
+                <FileText className="mt-0.5 size-3.5 shrink-0 text-kopi" aria-hidden />
                 <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="line-clamp-2 text-sm font-medium">{row.title || row.name}</span>
+                  <span className="line-clamp-2 text-[13px] font-medium">{row.title || row.name}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {row.saving ? "Saving when Kopi finishes" : [row.name, row.size !== undefined && fileSize(row.size)].filter(Boolean).join(" · ")}
                   </span>
@@ -260,6 +283,7 @@ function DraftsPanel({ rows, sessionId, onOpen }: { rows: DraftRow[]; sessionId:
 export function CopilotView() {
   const api = useApi();
   const { profile, signOut } = useKopi();
+  const { scroller } = usePanel();
   const [params, updateUrl] = useUrlParams();
   const urlDoc = params.get("doc");
   const urlAsk = params.get("ask");
@@ -380,17 +404,18 @@ export function CopilotView() {
     [],
   );
 
-  // Follow the answer as it streams, unless the reader has scrolled up to read.
+  // Follow the answer as it streams, unless the reader has scrolled up to read. The panel scrolls, not the window.
   useEffect(() => {
+    if (!scroller) return;
     const onScroll = () => {
-      stick.current = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 160;
+      stick.current = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 160;
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    return () => scroller.removeEventListener("scroll", onScroll);
+  }, [scroller]);
   useEffect(() => {
-    if (stick.current && state.turns.length) window.scrollTo({ top: document.documentElement.scrollHeight });
-  }, [state]);
+    if (scroller && stick.current && state.turns.length) scroller.scrollTo({ top: scroller.scrollHeight });
+  }, [state, scroller]);
 
   const sessionId = state.session_id;
   const listed = files.session === sessionId ? files.list : [];
@@ -410,58 +435,76 @@ export function CopilotView() {
     doc: state.doc,
   });
 
+  const talking = state.turns.length > 0;
+
   return (
-    <div className="-mb-16 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
-      <div className="flex min-h-[calc(100dvh-4.5rem)] min-w-0 flex-col sm:min-h-[calc(100dvh-5rem)]">
-        <div className="flex flex-col gap-4 pb-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col gap-1.5">
-              <h1 className="text-2xl font-semibold tracking-tight sm:text-[28px]">Copilot</h1>
-              <p className="max-w-2xl text-[15px] text-muted-foreground">
-                Ask Kopi to find tenders, check eligibility and draft the documents of a bid.
+    <>
+      <PageHeader
+        crumbs={[{ label: "Copilot" }]}
+        title={talking ? state.turns[0]!.ask : "New chat"}
+        actions={
+          <>
+            {rows.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => setDraftsOpen(true)} className="lg:hidden">
+                <FileText /> Drafts <span className="text-muted-foreground tabular-nums">{rows.length}</span>
+              </Button>
+            )}
+            {talking && (
+              <Button variant="outline" size="sm" onClick={newConversation} aria-label="New conversation">
+                <Plus /> <span className="hidden sm:inline">New conversation</span>
+              </Button>
+            )}
+          </>
+        }
+      />
+
+      <div className={cn("-mb-16 grid grid-cols-1 gap-8", talking && "lg:grid-cols-[minmax(0,1fr)_16rem] xl:grid-cols-[minmax(0,1fr)_18rem]")}>
+        <div className={cn("flex min-w-0 flex-col", FILL)}>
+          {talking ? (
+            <div className={cn(COLUMN, "flex flex-1 flex-col gap-8 pb-8")} aria-live="off">
+              {state.turns.map((turn) => (
+                <div key={turn.id} className="flex flex-col gap-5">
+                  <UserMessage text={turn.ask} />
+                  <AssistantTurn turn={turn} sessionId={sessionId} titles={titles} onOpenFile={open} actions={problemActions(turn.id, turn.ask)} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Linear Agent sits the composer just above the middle of the panel.
+            <div className="flex min-h-6 flex-[4] flex-col justify-end pb-5">
+              <p className={cn(COLUMN, "px-1 text-[13px] text-muted-foreground")}>
+                {state.doc
+                  ? "Kopi reads the notice and your profile, checks eligibility, and drafts the documents of this bid."
+                  : "Kopi finds tenders, checks eligibility and drafts the documents of a bid, from public GeBIZ notices."}
               </p>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              {rows.length > 0 && (
-                <Button variant="outline" onClick={() => setDraftsOpen(true)} className="lg:hidden">
-                  <FileText /> Drafts <span className="text-muted-foreground tabular-nums">{rows.length}</span>
-                </Button>
-              )}
-              {state.turns.length > 0 && (
-                <Button variant="outline" onClick={newConversation} aria-label="New conversation">
-                  <Plus /> <span className="hidden sm:inline">New conversation</span>
-                </Button>
-              )}
-            </div>
-          </div>
-          {state.doc && <TenderChip doc={state.doc} onClear={clearDoc} />}
-        </div>
+          )}
 
-        <div className="flex flex-1 flex-col gap-8 pb-6" aria-live="off">
-          {state.turns.length === 0 ? (
-            <Starters doc={state.doc} onAsk={(ask) => void send(ask)} />
-          ) : (
-            state.turns.map((turn) => (
-              <div key={turn.id} className="flex flex-col gap-5 pt-2">
-                <UserMessage text={turn.ask} />
-                <AssistantTurn turn={turn} sessionId={sessionId} titles={titles} onOpenFile={open} actions={problemActions(turn.id, turn.ask)} />
-              </div>
-            ))
+          {/* The same element in both layouts, so the text and focus survive the first send. */}
+          <div className={cn(COLUMN, talking && "sticky bottom-0 z-10 bg-background pt-2 pb-3 sm:pb-5")}>
+            <Composer busy={busy} doc={state.doc} roomy={!talking} onSend={(text) => void send(text)} onStop={stop} onClearDoc={clearDoc} />
+            {talking ? <Footnote className="pt-2" /> : <Examples doc={state.doc} onAsk={(ask) => void send(ask)} />}
+          </div>
+
+          {!talking && (
+            <div className="flex min-h-10 flex-[5] flex-col justify-end pb-5">
+              <Footnote className={cn(COLUMN, "text-center")} />
+            </div>
           )}
         </div>
 
-        <Composer busy={busy} onSend={(text) => void send(text)} onStop={stop} seeded={Boolean(state.doc)} />
+        {talking && (
+          <aside className="hidden flex-col gap-3 lg:sticky lg:top-[5.25rem] lg:flex lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto">
+            <DraftsPanel rows={rows} sessionId={sessionId} onOpen={(row) => open(row.name)} />
+            <p className="px-1 text-xs leading-relaxed text-muted-foreground">
+              Kopi reads public GeBIZ notices, past awards and the licence catalogue. The tender documents behind the GeBIZ login stay with you.
+            </p>
+          </aside>
+        )}
       </div>
 
-      <aside className="hidden flex-col gap-4 lg:sticky lg:top-20 lg:flex lg:self-start">
-        <DraftsPanel rows={rows} sessionId={sessionId} onOpen={(row) => open(row.name)} />
-        <p className="px-1 text-xs leading-relaxed text-muted-foreground">
-          Kopi reads public GeBIZ notices, past awards and the licence catalogue. The tender documents behind the GeBIZ login stay with you.
-        </p>
-      </aside>
-
       <Sheet open={draftsOpen} onOpenChange={setDraftsOpen}>
-        <SheetContent side="right" className={cn("w-full gap-0 border-none p-4 pt-12 data-[side=right]:w-full data-[side=right]:sm:max-w-sm")}>
+        <SheetContent side="right" className="w-full gap-3 border-l p-4 pt-12 data-[side=right]:w-full data-[side=right]:sm:max-w-sm">
           <SheetTitle className="sr-only">Drafts</SheetTitle>
           <DraftsPanel
             rows={rows}
@@ -471,10 +514,13 @@ export function CopilotView() {
               open(row.name);
             }}
           />
+          <p className="px-1 text-xs leading-relaxed text-muted-foreground">
+            Kopi reads public GeBIZ notices, past awards and the licence catalogue. The tender documents behind the GeBIZ login stay with you.
+          </p>
         </SheetContent>
       </Sheet>
 
       <DraftPreview draft={preview} onClose={() => setPreview(null)} />
-    </div>
+    </>
   );
 }

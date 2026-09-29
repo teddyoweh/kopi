@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, ChevronDown, ClipboardCheck, ExternalLink, FileText, Search, Sparkles, X } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, ClipboardCheck, ExternalLink, FileText, Search, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -50,18 +50,32 @@ function draftName(file: string, doc: string): string {
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : file;
 }
 
-function Countdown({ closing, now }: { closing: string; now: number }) {
+/** Time left, right-aligned: "5 days 19 hours left" (red under 48 hours), and the deadline itself in SGT. */
+function Countdown({ closing, now, className }: { closing: string; now: number; className?: string }) {
   const left = timeLeft(closing, now);
   const urgent = !left.closed && left.hours < 48;
   return (
-    <div className="flex items-baseline gap-2 sm:w-36 sm:shrink-0 sm:flex-col sm:items-start sm:gap-1">
-      <p className="hidden text-xs text-muted-foreground sm:block">{left.closed ? "Deadline" : "Time left"}</p>
-      <p className={cn("text-xl leading-tight font-semibold tracking-tight tabular-nums sm:text-2xl", left.closed ? "text-muted-foreground" : urgent && "text-unmet")}>
-        {left.lead}
+    <div className={cn("flex flex-col gap-0.5", className)}>
+      <p className={cn("text-[13px] font-medium tabular-nums", left.closed ? "text-muted-foreground" : urgent && "text-unmet")}>
+        {left.closed ? "Closed" : `${[left.lead, left.rest].filter(Boolean).join(" ")} left`}
       </p>
-      {left.rest && <p className="text-sm text-muted-foreground tabular-nums">{left.rest}</p>}
-      {!left.closed && <p className="text-sm text-muted-foreground sm:hidden">left</p>}
+      <p className="text-xs text-muted-foreground tabular-nums">
+        {left.closed ? "Closed" : "Closes"} {dateTime(closing)}
+      </p>
     </div>
+  );
+}
+
+/** Linear's progress pie: a ring with a wedge that fills in the accent as items are ticked. */
+function ProgressPie({ done, total }: { done: number; total: number }) {
+  const share = total ? done / total : 0;
+  const r = 2.75;
+  const c = 2 * Math.PI * r;
+  return (
+    <svg viewBox="0 0 16 16" className="size-3.5 shrink-0 -rotate-90" aria-hidden>
+      <circle cx="8" cy="8" r="6.5" fill="none" strokeWidth="1.5" className={share > 0 ? "stroke-kopi" : "stroke-muted-foreground/40"} />
+      {share > 0 && <circle cx="8" cy="8" r={r} fill="none" strokeWidth={2 * r} strokeDasharray={`${c * share} ${c}`} className="stroke-kopi" />}
+    </svg>
   );
 }
 
@@ -83,31 +97,32 @@ function ChecklistRow({
   // The submit item repeats the closing time in the API's own format; the due line below says it in SGT.
   const detail = item.source === "submission" ? item.detail.replace(/^Closes [^.]*SGT\.\s*/, "") : item.detail;
   return (
-    <li className="flex flex-col gap-2 rounded-lg bg-background px-4 py-3 sm:flex-row sm:items-start sm:gap-4">
-      <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3">
+    <li className="flex flex-col gap-1.5 px-3 py-2.5 transition-colors hover:bg-muted/30 sm:flex-row sm:items-start sm:gap-4">
+      <label className="flex min-w-0 flex-1 cursor-pointer flex-wrap items-start gap-x-3 sm:flex-nowrap">
         <input type="checkbox" checked={ticked} onChange={onToggle} className="peer sr-only" />
         <span
           aria-hidden
           className={cn(
-            "mt-0.5 grid size-[18px] shrink-0 place-items-center rounded-[5px] transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-kopi/50",
-            ticked ? "bg-kopi text-white" : "bg-background ring-1 ring-foreground/25 ring-inset",
+            "mt-0.5 grid size-4 shrink-0 place-items-center rounded-[4px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-kopi/40",
+            ticked ? "border-kopi bg-kopi text-white" : "border-foreground/25 bg-card",
           )}
         >
           {ticked && <Check className="size-3" strokeWidth={3} />}
         </span>
-        <span className="flex min-w-0 flex-col gap-1">
-          <span className={cn("text-sm font-medium break-words", ticked && "text-muted-foreground")}>{item.label}</span>
-          {detail && <span className="text-sm break-words text-muted-foreground">{detail}</span>}
-          <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-            <span>{SOURCE[item.source]}</span>
-            {item.due && <span className={cn(overdue && !ticked && "font-medium text-unmet")}>{dueLabel(item.due, now, item.source === "submission")}</span>}
-          </span>
+        <span className="flex min-w-0 flex-1 basis-[calc(100%-1.75rem)] flex-col gap-0.5 sm:basis-auto">
+          <span className={cn("text-[13px] font-medium break-words", ticked && "text-muted-foreground")}>{item.label}</span>
+          {detail && <span className="text-[13px] break-words text-muted-foreground">{detail}</span>}
+        </span>
+        {/* Where it comes from and when it is due: under the item on a phone, on its right otherwise. */}
+        <span className="flex flex-wrap gap-x-3 gap-y-0.5 pt-1 pl-7 text-xs text-muted-foreground sm:shrink-0 sm:flex-col sm:items-end sm:pt-0.5 sm:pl-0 sm:text-right">
+          <span>{SOURCE[item.source]}</span>
+          {item.due && <span className={cn(overdue && !ticked && "font-medium text-unmet")}>{dueLabel(item.due, now, item.source === "submission")}</span>}
         </span>
       </label>
       {item.source === "drafting" && !ticked && (
         <Link
           href={copilotHref(tender.doc_no, tenderAsks(tender.doc_no, tender.agency, profile).clarification)}
-          className="flex shrink-0 items-center gap-1 pl-[30px] text-sm font-medium text-kopi hover:underline sm:pt-0.5 sm:pl-0"
+          className="flex shrink-0 items-center gap-1 pl-7 text-[13px] font-medium text-kopi hover:underline sm:pl-0"
         >
           Draft with Kopi <ArrowRight className="size-3.5" aria-hidden />
         </Link>
@@ -118,9 +133,15 @@ function ChecklistRow({
 
 function ChecklistSkeleton() {
   return (
-    <div className="flex flex-col gap-1.5" aria-busy="true" aria-label="Loading the checklist">
+    <div className="flex flex-col divide-y rounded-lg border bg-card" aria-busy="true" aria-label="Loading the checklist">
       {Array.from({ length: 4 }, (_, i) => (
-        <Skeleton key={i} className="h-14 w-full rounded-lg bg-background" />
+        <div key={i} className="flex items-start gap-3 px-3 py-3">
+          <Skeleton className="size-4 rounded-[4px]" />
+          <div className="flex flex-1 flex-col gap-1.5">
+            <Skeleton className="h-3.5 w-2/5" />
+            <Skeleton className="h-3 w-3/5" />
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -129,27 +150,27 @@ function ChecklistSkeleton() {
 function TenderDrafts({ doc, onOpen }: { doc: string; onOpen: (draft: DraftRefLike) => void }) {
   const drafts = useTenderDrafts(doc);
   return (
-    <div className="flex flex-col gap-2.5">
-      <h3 className="text-sm font-semibold">Drafts for this tender</h3>
+    <div className="flex flex-col gap-2">
+      <h3 className="text-[13px] font-medium">Drafts for this tender</h3>
       {drafts.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-[13px] text-muted-foreground">
           None yet. Drafts the copilot writes for this tender are listed here.{" "}
           <Link href={copilotHref(doc)} className="font-medium text-kopi hover:underline">
             Ask Kopi
           </Link>
         </p>
       ) : (
-        <ul className="flex flex-col gap-1.5">
+        <ul className="flex flex-col divide-y rounded-lg border bg-card">
           {[...drafts].reverse().map((d) => (
-            <li key={`${d.session_id}/${d.file}`} className="flex items-center gap-1 rounded-lg bg-background pr-1.5">
+            <li key={`${d.session_id}/${d.file}`} className="flex items-center gap-1 pr-1.5 transition-colors hover:bg-muted/30">
               <button
                 type="button"
                 onClick={() => onOpen({ session_id: d.session_id, file: d.file, title: draftName(d.file, doc) })}
-                className="flex min-w-0 flex-1 items-center gap-3 rounded-lg px-4 py-2.5 text-left"
+                className="flex min-w-0 flex-1 items-center gap-2.5 px-3 py-2 text-left"
               >
-                <FileText className="size-4 shrink-0 text-kopi" aria-hidden />
+                <FileText className="size-3.5 shrink-0 text-kopi" aria-hidden />
                 <span className="flex min-w-0 flex-col">
-                  <span className="truncate text-sm font-medium">{draftName(d.file, doc)}</span>
+                  <span className="truncate text-[13px] font-medium">{draftName(d.file, doc)}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {d.file} · written {shortDate(d.at)}
                   </span>
@@ -164,7 +185,7 @@ function TenderDrafts({ doc, onOpen }: { doc: string; onOpen: (draft: DraftRefLi
   );
 }
 
-function TenderCard({
+function TenderRow({
   item,
   now,
   defaultOpen,
@@ -188,50 +209,54 @@ function TenderCard({
   // The checklist's submit item carries the notice's closing time as it is now; the stored one is from when it was tracked.
   const closing = items.find((i) => i.source === "submission" && i.due)?.due ?? item.closing;
   const panel = `tender-${item.doc_no}`;
+  const progress =
+    checklist.status === "ready" ? `${done} of ${items.length} done` : checklist.status === "error" ? "Checklist unavailable" : "Loading checklist";
 
   return (
-    <article className="flex flex-col rounded-xl bg-secondary">
-      <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:gap-8 sm:p-6">
-        <Countdown closing={closing} now={now} />
-        <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <Link href={`/tender/?doc=${item.doc_no}`} className="text-base leading-snug font-semibold tracking-tight break-words hover:underline">
-              {item.title}
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              {item.agency} · <span className="font-mono text-[13px]">{item.doc_no}</span>
-            </p>
-            <p className="text-sm">Closes {dateTime(closing)}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="h-1.5 w-full max-w-56 overflow-hidden rounded-full bg-background" aria-hidden>
-              <div className="h-full rounded-full bg-kopi transition-[width]" style={{ width: items.length ? `${(100 * done) / items.length}%` : "0%" }} />
-            </div>
-            <p className="shrink-0 text-sm text-muted-foreground tabular-nums">
-              {checklist.status === "ready" ? `${done} of ${items.length} done` : checklist.status === "error" ? "Checklist unavailable" : "Loading checklist"}
-            </p>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
+    <li className="flex flex-col">
+      <div className="relative flex items-start gap-2 px-2 py-3 transition-colors hover:bg-muted/40 sm:items-center sm:gap-3 sm:px-3">
+        {/* The whole row opens the checklist; the title still goes to the tender. */}
+        <button
+          type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls={panel}
-          className="-ml-2.5 w-fit hover:bg-background sm:ml-0"
+          aria-label={open ? "Hide checklist" : "Show checklist"}
+          className="grid size-6 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors outline-none after:absolute after:inset-0 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40"
         >
-          {open ? "Hide checklist" : "Show checklist"}
-          <ChevronDown className={cn("transition-transform", open && "rotate-180")} />
-        </Button>
+          <ChevronRight className={cn("size-4 transition-transform", open && "rotate-90")} aria-hidden />
+        </button>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <Link
+            href={`/tender/?doc=${item.doc_no}`}
+            className="relative z-10 line-clamp-2 w-fit text-[14px] leading-snug font-medium break-words hover:underline sm:line-clamp-1"
+          >
+            {item.title}
+          </Link>
+          <p className="truncate text-[13px] text-muted-foreground">
+            {item.agency} · <span className="tabular-nums">{item.doc_no}</span>
+          </p>
+          <div className="flex flex-col gap-1 pt-1.5 sm:hidden">
+            <Countdown closing={closing} now={now} />
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground tabular-nums">
+              <ProgressPie done={done} total={items.length} /> {progress}
+            </p>
+          </div>
+        </div>
+        <p className="hidden w-36 shrink-0 items-center gap-2 text-[13px] text-muted-foreground tabular-nums sm:flex">
+          <ProgressPie done={done} total={items.length} /> {progress}
+        </p>
+        <Countdown closing={closing} now={now} className="hidden w-52 shrink-0 items-end text-right sm:flex" />
       </div>
 
       {open && (
-        <div id={panel} className="flex flex-col gap-7 px-5 pb-5 sm:px-6 sm:pb-6 sm:pl-[12.5rem]">
-          <div className="flex flex-col gap-2.5">
-            <h3 className="text-sm font-semibold">Checklist for {profile.name}</h3>
+        <div id={panel} className="flex flex-col gap-6 border-t bg-background px-4 pt-4 pb-5 sm:pr-5 sm:pl-12">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-[13px] font-medium">Checklist for {profile.name}</h3>
             {checklist.status === "loading" && <ChecklistSkeleton />}
             {checklist.status === "error" && <ErrorState error={checklist.error} onRetry={() => setAttempt((n) => n + 1)} />}
             {checklist.status === "ready" && (
-              <ul className="flex flex-col gap-1.5">
+              <ul className="flex flex-col divide-y rounded-lg border bg-card">
                 {items.map((i) => (
                   <ChecklistRow key={i.id} item={i} ticked={ticked.has(i.id)} onToggle={() => toggle(i.id)} now={now} tender={item} />
                 ))}
@@ -242,19 +267,32 @@ function TenderCard({
           <TenderDrafts doc={item.doc_no} onOpen={onOpenDraft} />
 
           <div className="flex flex-wrap gap-2">
-            <Link href={copilotHref(item.doc_no)} className={buttonVariants({ variant: "outline", className: "bg-background" })}>
+            <Link href={copilotHref(item.doc_no)} className={cn(buttonVariants({ variant: "outline" }))}>
               <Sparkles className="text-kopi" /> Ask Kopi
             </Link>
-            <a href={item.url} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline", className: "bg-background" })}>
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ variant: "outline" }))}>
               Submit on GeBIZ <ExternalLink />
             </a>
-            <Button variant="ghost" onClick={onUntrack} className="text-muted-foreground hover:bg-background">
+            <Button variant="ghost" onClick={onUntrack} className="text-muted-foreground">
               <X /> Stop tracking
             </Button>
           </div>
         </div>
       )}
-    </article>
+    </li>
+  );
+}
+
+/** A group of rows under a Linear list header: its name and count. */
+function Group({ id, label, count, children }: { id: string; label: string; count: number; children: React.ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="overflow-hidden rounded-lg border bg-card">
+      <h2 id={id} className="flex h-9 items-center gap-2 border-b bg-muted/50 px-4 text-[13px] font-medium">
+        {label}
+        <span className="font-normal text-muted-foreground tabular-nums">{count}</span>
+      </h2>
+      <ul className="flex flex-col divide-y">{children}</ul>
+    </section>
   );
 }
 
@@ -272,6 +310,13 @@ export function SubmissionsView() {
       <PageHeader
         title="Submissions"
         description={`The tenders you're pursuing, what each still needs, and how long is left in Singapore time. Checklists are built for ${profile.name}; you submit on GeBIZ.`}
+        actions={
+          tracked.length > 0 && (
+            <Link href="/search" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+              <Search /> Find tenders
+            </Link>
+          )
+        }
       />
       {tracked.length === 0 ? (
         <EmptyState icon={ClipboardCheck} title="Nothing tracked yet">
@@ -280,29 +325,26 @@ export function SubmissionsView() {
               Find a tender, open it and choose <span className="font-medium text-foreground">Track this tender</span>. It lands here with its
               checklist, its deadline and the drafts Kopi writes for it.
             </p>
-            <Link href="/search" className={buttonVariants({ className: "h-9 px-3.5" })}>
+            <Link href="/search" className={cn(buttonVariants())}>
               <Search /> Find tenders
             </Link>
           </div>
         </EmptyState>
       ) : (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-6">
           {open.length > 0 && (
-            <section aria-label="Open" className="flex flex-col gap-3">
+            <Group id="open" label="Open" count={open.length}>
               {open.map((t, i) => (
-                <TenderCard key={t.doc_no} item={t} now={now} defaultOpen={i === 0 || open.length <= 3} onUntrack={() => untrack(t.doc_no)} onOpenDraft={setPreview} />
+                <TenderRow key={t.doc_no} item={t} now={now} defaultOpen={i === 0 || open.length <= 3} onUntrack={() => untrack(t.doc_no)} onOpenDraft={setPreview} />
               ))}
-            </section>
+            </Group>
           )}
           {closed.length > 0 && (
-            <section aria-labelledby="closed" className="flex flex-col gap-3">
-              <h2 id="closed" className="text-base font-semibold tracking-tight">
-                Closed
-              </h2>
+            <Group id="closed" label="Closed" count={closed.length}>
               {closed.map((t) => (
-                <TenderCard key={t.doc_no} item={t} now={now} defaultOpen={false} onUntrack={() => untrack(t.doc_no)} onOpenDraft={setPreview} />
+                <TenderRow key={t.doc_no} item={t} now={now} defaultOpen={false} onUntrack={() => untrack(t.doc_no)} onOpenDraft={setPreview} />
               ))}
-            </section>
+            </Group>
           )}
         </div>
       )}

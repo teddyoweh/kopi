@@ -1,11 +1,20 @@
 "use client";
 
-import { Check, Plus, RotateCcw, X } from "lucide-react";
+import { Check, ChevronDown, Plus, RotateCcw, X } from "lucide-react";
 import { useState } from "react";
 
 import { useKopi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import type { Profile } from "@/lib/api";
 import { SEEDED_PROFILES } from "@/lib/profiles";
@@ -47,7 +56,7 @@ function Segmented<T extends string | null>({
   onChange: (value: T) => void;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="flex w-fit max-w-full flex-wrap gap-1 rounded-lg bg-secondary p-1">
+    <div role="radiogroup" aria-label={label} className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-md border bg-muted/60 p-0.5">
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -58,8 +67,8 @@ function Segmented<T extends string | null>({
             aria-checked={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              "h-8 rounded-md px-3 text-sm transition-colors",
-              selected ? "bg-background font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
+              "h-7 rounded-[5px] px-2.5 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
+              selected ? "bg-card font-medium text-foreground ring-1 ring-border" : "text-muted-foreground hover:text-foreground",
             )}
           >
             {option.label}
@@ -75,24 +84,26 @@ function Field({ label, hint, htmlFor, children }: { label: string; hint?: React
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5">
         {htmlFor ? (
-          <label htmlFor={htmlFor} className="text-sm font-medium">
+          <label htmlFor={htmlFor} className="text-[13px] font-medium">
             {label}
           </label>
         ) : (
-          <p className="text-sm font-medium">{label}</p>
+          <p className="text-[13px] font-medium">{label}</p>
         )}
-        {hint && <p className="text-sm text-muted-foreground">{hint}</p>}
+        {hint && <p className="text-[13px] leading-relaxed text-muted-foreground">{hint}</p>}
       </div>
       {children}
     </div>
   );
 }
 
-const inputClass = "h-10 bg-background text-[15px] md:text-[15px]";
+/** The shared Input's look, for the textareas beside it. */
+const areaClass =
+  "w-full min-w-0 rounded-md border border-input bg-card px-2.5 text-base leading-5 transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/25 aria-invalid:border-destructive md:text-sm";
 
 function RemoveButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <Button type="button" variant="ghost" size="icon" className="size-10 shrink-0 text-muted-foreground" onClick={onClick} aria-label={label}>
+    <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground" onClick={onClick} aria-label={label}>
       <X />
     </Button>
   );
@@ -100,7 +111,7 @@ function RemoveButton({ label, onClick }: { label: string; onClick: () => void }
 
 function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <Button type="button" variant="ghost" onClick={onClick} className="w-fit px-2 text-kopi hover:text-kopi">
+    <Button type="button" variant="ghost" size="sm" onClick={onClick} className="-ml-1 w-fit px-1.5 text-muted-foreground">
       <Plus /> {label}
     </Button>
   );
@@ -117,7 +128,7 @@ function TextList({ values, onChange, placeholder, addLabel, noun }: { values: s
             aria-label={`${noun} ${i + 1}`}
             placeholder={placeholder}
             onChange={(e) => onChange(values.map((v, j) => (j === i ? e.target.value.replace(/\n/g, " ") : v)))}
-            className="min-h-10 w-full min-w-0 resize-none rounded-lg border border-input bg-background px-2.5 py-[7px] text-[15px] leading-6 outline-none [field-sizing:content] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className={cn(areaClass, "min-h-8 resize-none py-[5px] [field-sizing:content]")}
           />
           <RemoveButton label={`Remove ${noun.toLowerCase()} ${i + 1}`} onClick={() => onChange(values.filter((_, j) => j !== i))} />
         </div>
@@ -144,26 +155,26 @@ function RegistrationList({
   return (
     <div className="flex flex-col gap-2">
       {rows.length > 0 && (
-        <div className="hidden grid-cols-[minmax(0,1fr)_7rem_2.5rem] gap-1 px-0.5 text-xs text-muted-foreground sm:grid">
+        <div className="hidden grid-cols-[minmax(0,1fr)_7rem_2rem] gap-1 px-0.5 text-xs text-muted-foreground sm:grid">
           <span>Code</span>
           <span>Grade</span>
         </div>
       )}
       {rows.map((row, i) => (
-        <div key={i} className="grid grid-cols-[minmax(0,1fr)_5.5rem_2.5rem] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_7rem_2.5rem]">
+        <div key={i} className="grid grid-cols-[minmax(0,1fr)_5.5rem_2rem] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_7rem_2rem]">
           <Input
             value={row.code}
             aria-label={`${noun} ${i + 1} code`}
             placeholder={codePlaceholder}
             onChange={(e) => set(i, { code: e.target.value.toUpperCase() })}
-            className={cn(inputClass, "font-mono text-sm md:text-sm")}
+            className="tabular-nums"
           />
           <Input
             value={row.grade ?? ""}
             aria-label={`${noun} ${i + 1} grade`}
             placeholder={gradePlaceholder}
             onChange={(e) => set(i, { grade: e.target.value.toUpperCase() || null })}
-            className={cn(inputClass, "font-mono text-sm md:text-sm")}
+            className="tabular-nums"
           />
           <RemoveButton label={`Remove ${noun} ${i + 1}`} onClick={() => onChange(rows.filter((_, j) => j !== i))} />
         </div>
@@ -207,21 +218,21 @@ function Known({
           { value: "some", label: "We hold these" },
         ]}
       />
-      <p className="text-sm text-muted-foreground">{MODE_TEXT[mode](thing)}</p>
+      <p className="text-[13px] text-muted-foreground">{MODE_TEXT[mode](thing)}</p>
       {mode === "some" && children}
-      {mode === "some" && invalid && <p className="text-sm text-unmet">{invalid}</p>}
+      {mode === "some" && invalid && <p className="text-[13px] text-unmet">{invalid}</p>}
     </div>
   );
 }
 
 function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <section className="grid grid-cols-1 gap-5 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-12">
+    <section className="grid grid-cols-1 gap-5 rounded-lg border bg-card p-5 sm:p-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
       <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <h2 className="text-[14px] font-semibold tracking-[-0.01em]">{title}</h2>
+        <p className="text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       </div>
-      <div className="flex max-w-2xl min-w-0 flex-col gap-7">{children}</div>
+      <div className="flex min-w-0 flex-col gap-6">{children}</div>
     </section>
   );
 }
@@ -315,7 +326,7 @@ function ProfileForm({
         {label}
       </label>
       <div className="relative">
-        <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">S$</span>
+        <span className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-sm text-muted-foreground">S$</span>
         <Input
           id={`band-${key}`}
           inputMode="numeric"
@@ -325,7 +336,7 @@ function ProfileForm({
             const digits = e.target.value.replace(/[^\d]/g, "");
             setField("value_band_sgd", { ...band, [key]: digits ? Number(digits) : null });
           }}
-          className={cn(inputClass, "pl-9 tabular-nums")}
+          className="pl-8 tabular-nums"
         />
       </div>
     </div>
@@ -337,12 +348,12 @@ function ProfileForm({
         e.preventDefault();
         save();
       }}
-      className="flex flex-col gap-14"
+      className="flex flex-col gap-4"
     >
       <Section title="Company" description="Who is bidding. Kopi reads every tender against this.">
         <Field label="Name" htmlFor="name">
-          <Input id="name" value={draft.name} onChange={(e) => setField("name", e.target.value)} className={inputClass} aria-invalid={Boolean(problems.name)} />
-          {problems.name && <p className="text-sm text-unmet">{problems.name}</p>}
+          <Input id="name" value={draft.name} onChange={(e) => setField("name", e.target.value)} aria-invalid={Boolean(problems.name)} />
+          {problems.name && <p className="text-[13px] text-unmet">{problems.name}</p>}
         </Field>
         <Field
           label="UEN"
@@ -354,7 +365,7 @@ function ProfileForm({
             value={draft.uen ?? ""}
             placeholder="e.g. 201912345K"
             onChange={(e) => setField("uen", e.target.value.toUpperCase() || null)}
-            className={cn(inputClass, "max-w-xs font-mono text-sm placeholder:font-sans md:text-sm")}
+            className="max-w-xs tabular-nums"
           />
         </Field>
         <Field label="What the company does" htmlFor="summary" hint="Two or three sentences. Search and fit start from this.">
@@ -364,9 +375,9 @@ function ProfileForm({
             rows={4}
             onChange={(e) => setField("summary", e.target.value)}
             aria-invalid={Boolean(problems.summary)}
-            className="w-full resize-y rounded-lg border border-input bg-background px-3 py-2.5 text-[15px] leading-relaxed outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className={cn(areaClass, "resize-y py-2 leading-relaxed")}
           />
-          {problems.summary && <p className="text-sm text-unmet">{problems.summary}</p>}
+          {problems.summary && <p className="text-[13px] text-unmet">{problems.summary}</p>}
         </Field>
       </Section>
 
@@ -390,7 +401,7 @@ function ProfileForm({
           />
         </Field>
         <Field label="Contract values you bid for" hint="Optional. Kopi uses it to judge fit, not to hide tenders.">
-          <div className="grid max-w-md grid-cols-2 gap-3">
+          <div className="grid max-w-sm grid-cols-2 gap-3">
             {bandInput("min_sgd", "From")}
             {bandInput("max_sgd", "Up to")}
           </div>
@@ -441,12 +452,12 @@ function ProfileForm({
 
       <div
         className={cn(
-          "-mx-4 flex flex-col gap-3 bg-background px-4 py-4 sm:-mx-8 sm:flex-row sm:items-center sm:justify-between sm:px-8",
-          // It follows the page only while there is something to save.
-          (dirty || confirmReset) && "sticky bottom-0 z-10",
+          "flex flex-col gap-3 rounded-lg border bg-card px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between",
+          // It floats at the foot of the panel only while there is something to save.
+          (dirty || confirmReset) && "sticky bottom-4 z-10 shadow-float",
         )}
       >
-        <div className="flex min-h-9 items-center gap-2 text-sm text-muted-foreground" aria-live="polite">
+        <div className="flex min-h-8 items-center gap-2 text-[13px] text-muted-foreground" aria-live="polite">
           {dirty ? (
             <span className="font-medium text-foreground">Unsaved changes</span>
           ) : justSaved ? (
@@ -462,7 +473,7 @@ function ProfileForm({
         <div className="flex flex-wrap items-center gap-2">
           {confirmReset ? (
             <>
-              <span className="text-sm text-muted-foreground">Replace your edits with the seed?</span>
+              <span className="text-[13px] text-muted-foreground">Replace your edits with the seed?</span>
               <Button
                 type="button"
                 variant="destructive"
@@ -497,7 +508,7 @@ function ProfileForm({
                   Discard
                 </Button>
               )}
-              <Button type="submit" disabled={!dirty || !valid} className="h-9 px-4">
+              <Button type="submit" disabled={!dirty || !valid} className="px-3">
                 Save profile
               </Button>
             </>
@@ -508,34 +519,58 @@ function ProfileForm({
   );
 }
 
+/** The active profile, as a Linear-style picker in the top bar. */
+function BiddingAs() {
+  const { profiles, profile, setProfile } = useKopi();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={`Bidding as ${profile.name}. Change the active profile`}
+        className="inline-flex h-7 max-w-[13rem] items-center gap-1.5 rounded-md border bg-card px-2.5 text-[13px] transition-colors outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/30 sm:max-w-xs"
+      >
+        <span className="hidden shrink-0 text-muted-foreground sm:inline">Bidding as</span>
+        <span className="truncate font-medium">{profile.name}</span>
+        <ChevronDown className="size-3.5 shrink-0 opacity-60" aria-hidden />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-64 p-1">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Bidding as</DropdownMenuLabel>
+          <DropdownMenuRadioGroup value={profile.id} onValueChange={(id: string) => setProfile(id)}>
+            {profiles.map((p) => (
+              <DropdownMenuRadioItem key={p.id} value={p.id} className="py-1.5">
+                {p.name}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function ProfileView() {
-  const { profiles, profile, setProfile, saveProfile } = useKopi();
+  const { profile, saveProfile } = useKopi();
   const seed = SEEDED_PROFILES.find((p) => p.id === profile.id);
   // A reset replaces the saved profile from outside the form; the key starts the form afresh from it.
   const [resets, setResets] = useState(0);
   return (
-    <>
+    <div className="mx-auto w-full max-w-4xl">
       <PageHeader
         title="Company profile"
+        actions={<BiddingAs />}
         description="Kopi checks every tender against the active profile. Unknown and none are different answers: unknown leaves a check as Unknown, none marks it Not met."
       />
-      <div className="flex flex-col gap-12">
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-muted-foreground">Bidding as</p>
-          <Segmented<string> label="Active profile" value={profile.id} options={profiles.map((p) => ({ value: p.id, label: p.name }))} onChange={setProfile} />
-        </div>
-        <ProfileForm
-          key={`${profile.id}:${resets}`}
-          saved={profile}
-          seed={seed}
-          onSave={saveProfile}
-          onReset={() => {
-            if (!seed) return;
-            saveProfile(seed);
-            setResets((n) => n + 1);
-          }}
-        />
-      </div>
-    </>
+      <ProfileForm
+        key={`${profile.id}:${resets}`}
+        saved={profile}
+        seed={seed}
+        onSave={saveProfile}
+        onReset={() => {
+          if (!seed) return;
+          saveProfile(seed);
+          setResets((n) => n + 1);
+        }}
+      />
+    </div>
   );
 }
