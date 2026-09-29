@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/search/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Insights */
+        post: operations["insights_search_insights_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tenders": {
         parameters: {
             query?: never;
@@ -259,6 +276,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sessions/{session_id}/memory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Memory */
+        get: operations["memory_sessions__session_id__memory_get"];
+        put?: never;
+        /** Remember */
+        post: operations["remember_sessions__session_id__memory_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessions/{session_id}/memory/{note_id}/forget": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Forget */
+        post: operations["forget_sessions__session_id__memory__note_id__forget_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessions/{session_id}/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload */
+        post: operations["upload_sessions__session_id__uploads_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -306,6 +375,23 @@ export interface components {
              */
             grade?: string | null;
         };
+        /**
+         * BidMemory
+         * @description What a bid session remembers across turns and sandboxes: notes, and where the bid stands.
+         */
+        BidMemory: {
+            /**
+             * Notes
+             * @default []
+             */
+            notes: components["schemas"]["MemoryNote"][];
+            /** Stage */
+            stage?: ("qualify" | "clarify" | "draft" | "review" | "submit") | null;
+            /** Next Step */
+            next_step?: string | null;
+            /** Updated */
+            updated?: string | null;
+        };
         /** ChatRequest */
         ChatRequest: {
             /** Message */
@@ -318,6 +404,12 @@ export interface components {
              * @description The tender the conversation is about, if any
              */
             doc_no?: string | null;
+            /**
+             * Bid
+             * @description A bid session: the copilot works the bid on doc_no, with a bid memory
+             * @default false
+             */
+            bid: boolean;
         };
         /** ChecklistItem */
         ChecklistItem: {
@@ -364,6 +456,19 @@ export interface components {
          * @enum {string}
          */
         EligibilityStatus: "met" | "unmet" | "unknown";
+        /** EligibilitySummary */
+        EligibilitySummary: {
+            /** Met */
+            met: number;
+            /** Unmet */
+            unmet: number;
+            /** Unknown */
+            unknown: number;
+            /** @description The first unmet check */
+            blocker?: components["schemas"]["EligibilityCheck"] | null;
+            /** @description The first unknown check */
+            open_question?: components["schemas"]["EligibilityCheck"] | null;
+        };
         /** Fit */
         Fit: {
             /** Score */
@@ -402,6 +507,17 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** InsightsRequest */
+        InsightsRequest: {
+            /** Doc Nos */
+            doc_nos: string[];
+            profile: components["schemas"]["Profile"];
+            /**
+             * Query
+             * @description The search the cards came from, for the snippet
+             */
+            query?: string | null;
         };
         /** KeyDate */
         KeyDate: {
@@ -454,6 +570,17 @@ export interface components {
             /** Url */
             url: string;
         };
+        /** MarketBand */
+        MarketBand: {
+            /** Similar Count */
+            similar_count: number;
+            /** Median Amount */
+            median_amount: number | null;
+            /** P25 Amount */
+            p25_amount: number | null;
+            /** P75 Amount */
+            p75_amount: number | null;
+        };
         /** MarketContext */
         MarketContext: {
             /** Similar Count */
@@ -472,6 +599,28 @@ export interface components {
             no_award_share: number | null;
             /** Examples */
             examples: components["schemas"]["AwardExample"][];
+        };
+        /** MemoryNote */
+        MemoryNote: {
+            /** Id */
+            id: string;
+            /** Text */
+            text: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "kopi" | "you";
+            /**
+             * Created
+             * Format: date-time
+             */
+            created: string;
+        };
+        /** MemoryRequest */
+        MemoryRequest: {
+            /** Text */
+            text: string;
         };
         /**
          * Notice
@@ -755,6 +904,12 @@ export interface components {
              * Format: date-time
              */
             modified: string;
+            /**
+             * Kind
+             * @default draft
+             * @enum {string}
+             */
+            kind: "draft" | "upload";
         };
         /** SupplierWins */
         SupplierWins: {
@@ -769,6 +924,27 @@ export interface components {
             /** Eligibility */
             eligibility: components["schemas"]["EligibilityCheck"][];
             market: components["schemas"]["MarketContext"] | null;
+        };
+        /**
+         * TenderInsight
+         * @description What a search card shows beyond the summary, for one company profile.
+         */
+        TenderInsight: {
+            /** Doc No */
+            doc_no: string;
+            eligibility: components["schemas"]["EligibilitySummary"];
+            /**
+             * Snippet
+             * @description The description sentence closest to the query, at most 240 characters
+             */
+            snippet?: string | null;
+            /** Items */
+            items: number;
+            /** Two Envelope */
+            two_envelope?: boolean | null;
+            /** Procurement Method */
+            procurement_method?: string | null;
+            market?: components["schemas"]["MarketBand"] | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -879,6 +1055,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SearchResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    insights_search_insights_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InsightsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenderInsight"][];
                 };
             };
             /** @description Validation Error */
@@ -1278,6 +1487,141 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    memory_sessions__session_id__memory_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BidMemory"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remember_sessions__session_id__memory_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BidMemory"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    forget_sessions__session_id__memory__note_id__forget_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+                note_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BidMemory"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_sessions__session_id__uploads_post: {
+        parameters: {
+            query: {
+                name: string;
+            };
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/octet-stream": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionFile"];
+                };
             };
             /** @description Validation Error */
             422: {

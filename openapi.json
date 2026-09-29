@@ -215,6 +215,48 @@
     }
    }
   },
+  "/search/insights": {
+   "post": {
+    "summary": "Insights",
+    "operationId": "insights_search_insights_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/InsightsRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/TenderInsight"
+         },
+         "type": "array",
+         "title": "Response Insights Search Insights Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/tenders": {
    "get": {
     "summary": "Tenders",
@@ -899,6 +941,201 @@
      }
     }
    }
+  },
+  "/sessions/{session_id}/memory": {
+   "get": {
+    "summary": "Memory",
+    "operationId": "memory_sessions__session_id__memory_get",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/BidMemory"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Remember",
+    "operationId": "remember_sessions__session_id__memory_post",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MemoryRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/BidMemory"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/sessions/{session_id}/memory/{note_id}/forget": {
+   "post": {
+    "summary": "Forget",
+    "operationId": "forget_sessions__session_id__memory__note_id__forget_post",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Session Id"
+      }
+     },
+     {
+      "name": "note_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Note Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/BidMemory"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/sessions/{session_id}/uploads": {
+   "post": {
+    "summary": "Upload",
+    "operationId": "upload_sessions__session_id__uploads_post",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Session Id"
+      }
+     },
+     {
+      "name": "name",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 124,
+       "title": "Name"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionFile"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/octet-stream": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      }
+     }
+    }
+   }
   }
  },
  "components": {
@@ -1020,6 +1257,62 @@
     ],
     "title": "BcaWorkhead"
    },
+   "BidMemory": {
+    "properties": {
+     "notes": {
+      "items": {
+       "$ref": "#/components/schemas/MemoryNote"
+      },
+      "type": "array",
+      "title": "Notes",
+      "default": []
+     },
+     "stage": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "qualify",
+         "clarify",
+         "draft",
+         "review",
+         "submit"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stage"
+     },
+     "next_step": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Step"
+     },
+     "updated": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated"
+     }
+    },
+    "type": "object",
+    "title": "BidMemory",
+    "description": "What a bid session remembers across turns and sandboxes: notes, and where the bid stands."
+   },
    "ChatRequest": {
     "properties": {
      "message": {
@@ -1051,6 +1344,12 @@
       ],
       "title": "Doc No",
       "description": "The tender the conversation is about, if any"
+     },
+     "bid": {
+      "type": "boolean",
+      "title": "Bid",
+      "description": "A bid session: the copilot works the bid on doc_no, with a bid memory",
+      "default": false
      }
     },
     "type": "object",
@@ -1178,6 +1477,51 @@
     ],
     "title": "EligibilityStatus"
    },
+   "EligibilitySummary": {
+    "properties": {
+     "met": {
+      "type": "integer",
+      "title": "Met"
+     },
+     "unmet": {
+      "type": "integer",
+      "title": "Unmet"
+     },
+     "unknown": {
+      "type": "integer",
+      "title": "Unknown"
+     },
+     "blocker": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/EligibilityCheck"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "The first unmet check"
+     },
+     "open_question": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/EligibilityCheck"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "The first unknown check"
+     }
+    },
+    "type": "object",
+    "required": [
+     "met",
+     "unmet",
+     "unknown"
+    ],
+    "title": "EligibilitySummary"
+   },
    "Fit": {
     "properties": {
      "score": {
@@ -1266,6 +1610,41 @@
     "type": "object",
     "title": "HTTPValidationError"
    },
+   "InsightsRequest": {
+    "properties": {
+     "doc_nos": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "maxItems": 25,
+      "minItems": 1,
+      "title": "Doc Nos"
+     },
+     "profile": {
+      "$ref": "#/components/schemas/Profile"
+     },
+     "query": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 300
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Query",
+      "description": "The search the cards came from, for the snippet"
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_nos",
+     "profile"
+    ],
+    "title": "InsightsRequest"
+   },
    "KeyDate": {
     "properties": {
      "label": {
@@ -1345,6 +1724,55 @@
      "url"
     ],
     "title": "Licence"
+   },
+   "MarketBand": {
+    "properties": {
+     "similar_count": {
+      "type": "integer",
+      "title": "Similar Count"
+     },
+     "median_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Median Amount"
+     },
+     "p25_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "P25 Amount"
+     },
+     "p75_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "P75 Amount"
+     }
+    },
+    "type": "object",
+    "required": [
+     "similar_count",
+     "median_amount",
+     "p25_amount",
+     "p75_amount"
+    ],
+    "title": "MarketBand"
    },
    "MarketContext": {
     "properties": {
@@ -1430,6 +1858,54 @@
      "examples"
     ],
     "title": "MarketContext"
+   },
+   "MemoryNote": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "source": {
+      "type": "string",
+      "enum": [
+       "kopi",
+       "you"
+      ],
+      "title": "Source"
+     },
+     "created": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "text",
+     "source",
+     "created"
+    ],
+    "title": "MemoryNote"
+   },
+   "MemoryRequest": {
+    "properties": {
+     "text": {
+      "type": "string",
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Text"
+     }
+    },
+    "type": "object",
+    "required": [
+     "text"
+    ],
+    "title": "MemoryRequest"
    },
    "Notice": {
     "properties": {
@@ -1997,6 +2473,15 @@
       "type": "string",
       "format": "date-time",
       "title": "Modified"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "draft",
+       "upload"
+      ],
+      "title": "Kind",
+      "default": "draft"
      }
     },
     "type": "object",
@@ -2056,6 +2541,73 @@
      "market"
     ],
     "title": "TenderDetail"
+   },
+   "TenderInsight": {
+    "properties": {
+     "doc_no": {
+      "type": "string",
+      "title": "Doc No"
+     },
+     "eligibility": {
+      "$ref": "#/components/schemas/EligibilitySummary"
+     },
+     "snippet": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Snippet",
+      "description": "The description sentence closest to the query, at most 240 characters"
+     },
+     "items": {
+      "type": "integer",
+      "title": "Items"
+     },
+     "two_envelope": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Two Envelope"
+     },
+     "procurement_method": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Procurement Method"
+     },
+     "market": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/MarketBand"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_no",
+     "eligibility",
+     "items"
+    ],
+    "title": "TenderInsight",
+    "description": "What a search card shows beyond the summary, for one company profile."
    },
    "ValidationError": {
     "properties": {

@@ -16,7 +16,8 @@ export type MockTools = {
   searchLicences(q: string, limit: number): Promise<Licence[]>;
 };
 
-export type Beat = { event: Omit<ChatEvent, "session_id">; pause: number };
+/** One scripted event and the pause after it; `effect` runs as the event is played (a memory write, say). */
+export type Beat = { event: Omit<ChatEvent, "session_id">; pause: number; effect?: () => void };
 
 const DRAFTS = "/workspace/drafts";
 const cut = (text: string) => {

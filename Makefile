@@ -17,4 +17,4 @@ eval:
 	cd backend && uv run --extra search python ../evals/run_eval.py
 
 deploy:
-	cd backend && MODAL_PROFILE=teddyoweh uv run --extra search --extra agent --extra deploy modal deploy modal_app.py
+	cd backend && MODAL_PROFILE=kryptonairc-lc uv run --extra search --extra agent --extra deploy modal deploy modal_app.py

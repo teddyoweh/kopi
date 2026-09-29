@@ -290,6 +290,7 @@ class ChatRequest(BaseModel):
     session_id: str | None = None
     profile: Profile
     doc_no: str | None = Field(None, description="The tender the conversation is about, if any")
+    bid: bool = Field(False, description="A bid session: the copilot works the bid on doc_no, with a bid memory")
 
 
 class SessionFile(BaseModel):
@@ -297,3 +298,65 @@ class SessionFile(BaseModel):
     title: str
     size: int
     modified: datetime
+    kind: Literal["draft", "upload"] = "draft"
+
+
+# ---------------------------------------------------------------- search insights (KP-31)
+
+
+class InsightsRequest(BaseModel):
+    doc_nos: list[str] = Field(min_length=1, max_length=25)
+    profile: Profile
+    query: str | None = Field(None, max_length=300, description="The search the cards came from, for the snippet")
+
+
+class EligibilitySummary(BaseModel):
+    met: int
+    unmet: int
+    unknown: int
+    blocker: EligibilityCheck | None = Field(None, description="The first unmet check")
+    open_question: EligibilityCheck | None = Field(None, description="The first unknown check")
+
+
+class MarketBand(BaseModel):
+    similar_count: int
+    median_amount: float | None
+    p25_amount: float | None
+    p75_amount: float | None
+
+
+class TenderInsight(BaseModel):
+    """What a search card shows beyond the summary, for one company profile."""
+
+    doc_no: str
+    eligibility: EligibilitySummary
+    snippet: str | None = Field(None, description="The description sentence closest to the query, at most 240 characters")
+    items: int
+    two_envelope: bool | None = None
+    procurement_method: str | None = None
+    market: MarketBand | None = None
+
+
+# ---------------------------------------------------------------- bid sessions (KP-31)
+
+BidStage = Literal["qualify", "clarify", "draft", "review", "submit"]
+
+
+class MemoryNote(BaseModel):
+    id: str
+    text: str
+    source: Literal["kopi", "you"]
+    created: datetime
+
+
+class BidMemory(BaseModel):
+    """What a bid session remembers across turns and sandboxes: notes, and where the bid stands."""
+
+    notes: list[MemoryNote] = []
+    stage: BidStage | None = None
+    next_step: str | None = None
+    updated: datetime | None = None
+
+
+class MemoryRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=1000)

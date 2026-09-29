@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import uuid
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime
 from functools import cached_property
@@ -19,6 +20,7 @@ from kopi.config import FIXTURES_DIR
 from kopi.market import market_context
 from kopi.models import (
     Award,
+    BidMemory,
     ChatEvent,
     ChatEventType,
     ChatRequest,
@@ -28,6 +30,7 @@ from kopi.models import (
     Fit,
     Licence,
     MarketContext,
+    MemoryNote,
     Notice,
     NoticeStatus,
     NoticeSummary,
@@ -69,6 +72,10 @@ class Store(Protocol):
     def chat(self, request: ChatRequest, caller: str = "local") -> AsyncIterator[ChatEvent]: ...
     def session_files(self, session_id: str) -> list[SessionFile]: ...
     def session_file(self, session_id: str, name: str) -> bytes: ...
+    def memory(self, session_id: str) -> BidMemory: ...
+    def remember(self, session_id: str, text: str) -> BidMemory: ...
+    def forget(self, session_id: str, note_id: str) -> BidMemory: ...
+    def upload(self, session_id: str, name: str, body: bytes) -> SessionFile: ...
 
 
 def tokens(text: str) -> list[str]:
@@ -104,6 +111,8 @@ class FixtureStore:
     def __init__(self, fixtures_dir=FIXTURES_DIR) -> None:
         self.dir = fixtures_dir
         self._files: dict[str, dict[str, bytes]] = {}
+        self._uploads: dict[str, dict[str, bytes]] = {}
+        self._memory: dict[str, BidMemory] = {}
 
     @cached_property
     def notices(self) -> dict[str, Notice]:
@@ -223,18 +232,44 @@ class FixtureStore:
         yield ChatEvent(type=ChatEventType.DONE, session_id=session, cost_usd=0.0)
 
     def session_files(self, session_id: str) -> list[SessionFile]:
-        files = self._files.get(session_id, {})
         now = datetime.now(UTC)
-        return [
+        drafts = [
             SessionFile(name=name, title=body.decode().splitlines()[0].lstrip("# "), size=len(body), modified=now)
-            for name, body in files.items()
+            for name, body in self._files.get(session_id, {}).items()
         ]
+        uploads = [
+            SessionFile(name=name, title=name, size=len(body), modified=now, kind="upload")
+            for name, body in self._uploads.get(session_id, {}).items()
+        ]
+        return drafts + uploads
 
     def session_file(self, session_id: str, name: str) -> bytes:
-        try:
-            return self._files[session_id][name]
-        except KeyError:
-            raise NotFound(f"no file {name} in session {session_id}") from None
+        for shelf in (self._files, self._uploads):
+            if name in shelf.get(session_id, {}):
+                return shelf[session_id][name]
+        raise NotFound(f"no file {name} in session {session_id}")
+
+    def memory(self, session_id: str) -> BidMemory:
+        return self._memory.get(session_id, BidMemory())
+
+    def remember(self, session_id: str, text: str) -> BidMemory:
+        now = datetime.now(UTC)
+        note = MemoryNote(id=uuid.uuid4().hex[:12], text=text, source="you", created=now)
+        memory = self.memory(session_id)
+        self._memory[session_id] = memory.model_copy(update={"notes": [*memory.notes, note], "updated": now})
+        return self._memory[session_id]
+
+    def forget(self, session_id: str, note_id: str) -> BidMemory:
+        memory = self.memory(session_id)
+        kept = [n for n in memory.notes if n.id != note_id]
+        if len(kept) == len(memory.notes):
+            raise NotFound(f"no note {note_id} in session {session_id}")
+        self._memory[session_id] = memory.model_copy(update={"notes": kept, "updated": datetime.now(UTC)})
+        return self._memory[session_id]
+
+    def upload(self, session_id: str, name: str, body: bytes) -> SessionFile:
+        self._uploads.setdefault(session_id, {})[name] = body
+        return SessionFile(name=name, title=name, size=len(body), modified=datetime.now(UTC), kind="upload")
 
 
 class _NoFilters:

@@ -8,6 +8,7 @@ import awardsJson from "./fixtures/awards.json";
 import licencesJson from "./fixtures/licences.json";
 import noticesJson from "./fixtures/notices.json";
 import type {
+  BidMemory,
   ChatEvent,
   ChatRequest,
   ChecklistItem,
@@ -23,11 +24,13 @@ import type {
   SessionFile,
   TenderDetail,
   TenderFilters,
+  TenderInsight,
 } from "./api";
 import { ApiError } from "./api";
 import { buildChecklist } from "./checklist";
 import { closingLabel, dateTime } from "./format";
 import { scriptTurn } from "./mock-copilot";
+import { addNote, dropNote, keepUpload, listUploads, readMemory, uploadBody } from "./mock-memory";
 
 type AwardRow = {
   tender_no: string;
@@ -350,7 +353,7 @@ export class MockApi implements KopiApi {
     if (request.doc_no) find(request.doc_no);
     const files = new Map<string, string>();
     const beats = await scriptTurn(
-      request,
+      { ...request, session_id: session },
       {
         notice: find,
         search: (q, limit) => this.search(q, {}, limit),
@@ -362,27 +365,87 @@ export class MockApi implements KopiApi {
       files,
     );
     await pause(500, signal);
-    for (const { event, pause: ms } of beats) {
+    for (const { event, pause: ms, effect } of beats) {
       if (event.type === "file" && event.file) saveDraft(session, event.file, files.get(event.file) ?? "");
+      effect?.();
       onEvent({ ...event, session_id: session });
       await pause(ms, signal);
     }
   }
 
   async sessionFiles(sessionId: string): Promise<SessionFile[]> {
-    return Object.entries(readDrafts()[sessionId] ?? {})
-      .map(([name, { body, modified }]) => ({
+    const drafts = Object.entries(readDrafts()[sessionId] ?? {})
+      .map(([name, { body, modified }]): SessionFile => ({
         name,
         title: body.split("\n")[0].replace(/^#\s*/, "") || name,
         size: new TextEncoder().encode(body).length,
         modified,
+        kind: "draft",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
+    return [...drafts, ...listUploads(sessionId)];
   }
 
   async sessionFile(sessionId: string, name: string) {
-    const draft = readDrafts()[sessionId]?.[name];
-    if (draft === undefined) throw new ApiError(404, `no file ${name} in session ${sessionId}`);
-    return draft.body;
+    const body = readDrafts()[sessionId]?.[name]?.body ?? uploadBody(sessionId, name);
+    if (body === undefined) throw new ApiError(404, `no file ${name} in session ${sessionId}`);
+    return body;
+  }
+
+  /** Mirrors kopi.insights over the fixtures: the eligibility summary, the closest sentence and the price band. */
+  async insights(docs: string[], profile: Profile, q?: string): Promise<TenderInsight[]> {
+    await pause(350);
+    const wanted = new Set(tokens(q ?? ""));
+    const found: TenderInsight[] = [];
+    for (const doc of [...new Set(docs)].slice(0, 25)) {
+      const notice = notices.find((n) => n.doc_no === doc);
+      if (!notice) continue;
+      const checks = await this.eligibility(doc, profile);
+      const market = await this.similarAwards(notice.title, notice.agency);
+      const sentences = (notice.description ?? "")
+        .split(/(?<=[.!?;])\s+|\n+/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 3);
+      const best = wanted.size
+        ? sentences.reduce((a, b) => (tokens(b).filter((t) => wanted.has(t)).length > tokens(a).filter((t) => wanted.has(t)).length ? b : a), sentences[0] ?? "")
+        : sentences[0];
+      found.push({
+        doc_no: doc,
+        eligibility: {
+          met: checks.filter((c) => c.status === "met").length,
+          unmet: checks.filter((c) => c.status === "unmet").length,
+          unknown: checks.filter((c) => c.status === "unknown").length,
+          blocker: checks.find((c) => c.status === "unmet") ?? null,
+          open_question: checks.find((c) => c.status === "unknown") ?? null,
+        },
+        snippet: best ? (best.length > 240 ? `${best.slice(0, 239).replace(/\s+\S*$/, "")}…` : best) : null,
+        items: notice.items?.length ?? 0,
+        two_envelope: notice.two_envelope ?? null,
+        procurement_method: notice.procurement_method || null,
+        market: market.similar_count
+          ? { similar_count: market.similar_count, median_amount: market.median_amount, p25_amount: market.p25_amount, p75_amount: market.p75_amount }
+          : null,
+      });
+    }
+    return found;
+  }
+
+  async memory(sessionId: string): Promise<BidMemory> {
+    return readMemory(sessionId);
+  }
+
+  async remember(sessionId: string, text: string): Promise<BidMemory> {
+    return addNote(sessionId, text.trim(), "you");
+  }
+
+  async forget(sessionId: string, noteId: string): Promise<BidMemory> {
+    const after = dropNote(sessionId, noteId);
+    if (!after) throw new ApiError(404, `no note ${noteId} in session ${sessionId}`);
+    return after;
+  }
+
+  async upload(sessionId: string, file: File): Promise<SessionFile> {
+    await pause(400);
+    return keepUpload(sessionId, file);
   }
 }

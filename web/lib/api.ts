@@ -10,10 +10,21 @@ export type EligibilityCheck = Schemas["EligibilityCheck"];
 export type MarketContext = Schemas["MarketContext"];
 export type Licence = Schemas["Licence"];
 export type Profile = Schemas["Profile"];
-export type ChatRequest = Schemas["ChatRequest"];
+/** `bid` has a server default (false); openapi-typescript marks defaulted fields required, so it is optional here. */
+export type ChatRequest = Omit<Schemas["ChatRequest"], "bid"> & { bid?: boolean };
 export type SessionFile = Schemas["SessionFile"];
 export type AuthResponse = Schemas["AuthResponse"];
 export type ChecklistItem = Schemas["ChecklistItem"];
+export type TenderInsight = Schemas["TenderInsight"];
+export type EligibilitySummary = Schemas["EligibilitySummary"];
+export type MarketBand = Schemas["MarketBand"];
+export type BidMemory = Schemas["BidMemory"];
+export type MemoryNote = Schemas["MemoryNote"];
+export type BidStage = NonNullable<BidMemory["stage"]>;
+
+/** The file types a bid accepts as uploads, and the API's size cap. */
+export const UPLOAD_TYPES = [".pdf", ".md", ".txt", ".csv"] as const;
+export const UPLOAD_LIMIT = 8 * 1024 * 1024;
 
 /**
  * One event of a copilot turn (kopi.models.ChatEvent). The /chat route streams these as
@@ -58,6 +69,12 @@ export interface KopiApi {
   chat(request: ChatRequest, onEvent: (event: ChatEvent) => void, signal?: AbortSignal): Promise<void>;
   sessionFiles(sessionId: string): Promise<SessionFile[]>;
   sessionFile(sessionId: string, name: string): Promise<string>;
+  /** Eligibility, snippet and price band for up to 25 tenders, for one profile. */
+  insights(docs: string[], profile: Profile, q?: string): Promise<TenderInsight[]>;
+  memory(sessionId: string): Promise<BidMemory>;
+  remember(sessionId: string, text: string): Promise<BidMemory>;
+  forget(sessionId: string, noteId: string): Promise<BidMemory>;
+  upload(sessionId: string, file: File): Promise<SessionFile>;
 }
 
 export class ApiError extends Error {
@@ -188,6 +205,28 @@ class LiveApi implements KopiApi {
     const response = await fetch(`${this.base}${path}`, { headers: this.headers() });
     if (!response.ok) throw await errorOf(response);
     return response.text();
+  }
+
+  insights(docs: string[], profile: Profile, q?: string) {
+    return this.post<TenderInsight[]>("/search/insights", { doc_nos: docs.slice(0, 25), profile, query: q ? clipQuery(q) : null });
+  }
+
+  memory(sessionId: string) {
+    return this.get<BidMemory>(`/sessions/${encodeURIComponent(sessionId)}/memory`);
+  }
+
+  remember(sessionId: string, text: string) {
+    return this.post<BidMemory>(`/sessions/${encodeURIComponent(sessionId)}/memory`, { text });
+  }
+
+  forget(sessionId: string, noteId: string) {
+    return this.post<BidMemory>(`/sessions/${encodeURIComponent(sessionId)}/memory/${encodeURIComponent(noteId)}/forget`, {});
+  }
+
+  upload(sessionId: string, file: File) {
+    const path = `/sessions/${encodeURIComponent(sessionId)}/uploads${query({ name: file.name })}`;
+    const headers = { ...this.headers(), "Content-Type": file.type || "application/octet-stream" };
+    return this.request<SessionFile>(path, { method: "POST", headers, body: file });
   }
 }
 
