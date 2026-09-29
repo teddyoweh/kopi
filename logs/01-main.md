@@ -1,6 +1,6 @@
 # Main agent (lead): planning, research, orchestration and most build tasks
 
-`01-main` · model claude-opus-5-5 · 282 assistant messages · 1063 tool calls · 29 Sep 07:20 UTC → 29 Sep 17:16 UTC
+`01-main` · model claude-opus-5-5 · 289 assistant messages · 1086 tool calls · 29 Sep 07:20 UTC → 29 Sep 17:21 UTC
 
 Redacted export: thinking, images, system reminders and mailbox results are removed; secrets, emails, phone numbers and home paths are masked; long tool output is cut.
 
@@ -25696,6 +25696,547 @@ The hosted film matches byte for byte. Updating the duration mentions (now 3:59)
 
   ```
   [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Commit and push the film, journal and logs
+  
+  ```
+  cd ~/Documents/codes/kopi && git add -A && git commit -q -m "KP-30: film re-shot on the rounder UI (3:59), journal entry on taste, logs through the UI pass
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git push -q origin main 2>&1 | tail -2; git log --oneline -3 && git status --short | wc -l
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  5a6e74f KP-30: film re-shot on the rounder UI (3:59), journal entry on taste, logs through the UI pass
+  acf86ca KP-30: README images on the rounder UI; test count and decision range current
+  bd899ae KP-29: Rounder, thinner, calmer UI on every page
+         0
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Everything is pushed. Recording it on the build board and shutting down the film services.
+
+- **mcp__build__build_task_done** `{"task": "KP-30", "check": "curl -sf https://kopi.unv.run >/dev/null && test -s docs/images/tender-overview.png — passed; live QA on kopi.unv.run v8/v9 at 1440 and 390 (only the expected /chat 503); hosted film byte-identical to the web copy", "passed": true, "commit": "bd899ae..5a6e74f",
+  [… 344 chars cut …]
+  "artifacts": ["artifacts/media/kopi-demo.mp4", "artifacts/media/kopi/published-tender-1440.png"]}`
+
+- **mcp__dev__dev_stop** `{"service": "film-api"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded for KP-30.
+  Every task in "Rounder, calmer UI" is done. Check the milestone goal as a whole ("Every page of kopi.unv.run reads as a clean, modern product: rounder corners (16px panels and cards, pill buttons, chips and badges), thinner type and lighter hairlines, no grey header strips or boxes nested in boxes, and GeBIZ's ALL-CAPS titles shown in sentence case. QA'd at 1440 and 390 on live data, published, README images and the film's product scenes match the live UI."), then call build_milestone_done.
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-api. Its exit shows up in dev_logs and in dev_services.
+  ```
+
+  </details>
+
+- **mcp__dev__dev_stop** `{"service": "film-web"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-web. Its exit shows up in dev_logs and in dev_services.
+  ```
+
+  </details>
+
+- **mcp__build__build_milestone_done** `{"milestone": "Rounder, calmer UI", "summary": "The whole of kopi.unv.run now reads rounder, thinner and calmer (D26):\n- controls have 10px corners, cards 16px, the panel 18px and the composer 24px; buttons, chips, badges and the search field are pills;\n- list titles are weight 450, headings 500,
+  [… 762 chars cut …]
+  "artifacts/media/kopi/round-overview-live-390.png"]}`
+
+  <details><summary>result</summary>
+
+  ```
+  Closed.
+  That was the last milestone.
+  ```
+
+  </details>
+
+I've redone the whole UI to be rounder, thinner and cleaner, and it's live at https://kopi.unv.run (version 9). The site is public but still behind the access code.
+
+**What changed on every page:**
+- **Rounder.** Cards have 16px corners, the main panel 18px and the chat box 24px. Buttons, filter chips, badges and the search bar are now pills, and the draft preview slides in as a rounded floating sheet.
+- **Thinner.** Titles in lists are a lighter weight, headings are medium and nothing is bold. Icons have thinner strokes and the divider lines are fainter. Big headings use Inter's display style, which is finer at large sizes.
+- **Cleaner.** The grey header bars are gone, and so are the boxes-inside-boxes. Inner panels (tender details, the verdict, market figures) are now plain soft-grey areas. The overview's three stats sit in one card, and list rows have faint dividers that disappear when you hover.
+- **No more all-caps titles.** 162 of the 727 open GeBIZ titles were in capitals, which was most of the sloppiness. They now show in title case, and acronyms, reference numbers and place names stay intact ("Pasir Ris", "CCA", "SPO-REQ-…"). I used title case rather than sentence case, because sentence case would have lowered names like "Valour Primary School". I ran it over all 727 real titles, and only the 162 all-caps ones change.
+
+I checked every page at desktop (1440) and phone (390) widths on live data: no layout overflow, and the only console error is the known one from the copilot not being connected yet. So the whole submission matches the new look, I also:
+- replaced the README screenshots;
+- re-recorded the film's app scenes and GitHub scenes on the new UI, with a real Opus overview and a real copilot run, and re-cut it with the same voice (now 3:59);
+- replaced the copy on the site, which matches the new cut exactly;
+- redacted and re-exported the logs and pushed everything to GitHub.
+
+Two things are still yours to do:
+1. **Copilot key:** run `claude setup-token`, then `MODAL_PROFILE=kryptonairc-lc modal secret create kopi-claude CLAUDE_CODE_OAUTH_TOKEN=<token>`. This lets the hosted copilot answer.
+2. **GitHub billing lock:** lift it at github.com/settings/billing so the automated tests can run on GitHub.
+
+The access code is still `[secret]`.
+
+---
+
+## Turn 31 · Universe (stop hook) · 29 Sep 17:16 UTC
+
+<details><summary>Universe stop hook</summary>
+
+```
+Stop hook feedback:
+Your turn is ending and you have not said what happens next.
+
+Nobody is typing in this session — you are the one prompting it. The work does
+not stop when a turn ends: say what the next turn does and it starts on its own.
+Keep pushing — check results, do the small research, try the next variant,
+chase a new idea when the obvious path runs out.
+
+Record ONE decision with a tool, then stop this turn:
+
+- chain_next — the single most valuable next step, concrete and imperative.
+  Prefer this. "Continue working" is not a step.
+- chain_wait — something is genuinely running or pending (workers, a job, an
+  email reply). Name it and how long. Do not invent work to fill a real wait.
+- chain_ask — a question only the user can answer. The work carries on with your
+  best assumption meanwhile, so say what you will assume.
+- chain_done — you believe it is done, in checkable terms. It does not end the
+  session: the next turn makes you prove it, then take it further.
+
+Facts from the process, not from memory:
+- You are 5 self-directed step(s) into this chain.
+- This chain has spent $178.72.
+
+Rules that outrank the push:
+- The user's most recent words rule. If they said stop, or redirected you, that
+  is the instruction.
+- Anything you declined on principle is settled. Route around it.
+- If the next step is heavy or splits into lanes, delegate it to background
+  workers and keep your own turns light.
+```
+
+</details>
+
+- **ToolSearch** `{"query": "select:mcp__chain__chain_next", "max_results": 1}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__chain__chain_next** `{"do": "Verify the re-cut film end to end. Run /tmp/kopi-film/vo/check_vo.py (whisper) against artifacts/media/kopi-demo.mp4 to confirm each voice line starts inside its slot. Extract full-resolution frames at the s04b and s05 piece boundaries and at the draft-sheet shot to check for blank frames
+  [… 129 chars cut …]
+  kopi-claude secret and GitHub billing.", "why": "The film was only checked on a contact sheet."}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. Finish this turn; the next one starts with that step.
+  ```
+
+  </details>
+
+The UI redesign is live at https://kopi.unv.run (still behind the access code, `[secret]`). The film now shows the new UI. It's 3:59, and the site serves the new cut.
+
+So far I've only checked the new film on a contact sheet, a grid of stills. Next I'll check it properly: transcribe the voiceover to confirm each line starts on its section, and look at full-size frames where the clips join. If anything is off, I'll re-cut it and put it back on the site.
+
+After that I'm waiting on your two steps:
+1. Create the `kopi-claude` Modal secret so the hosted copilot can answer. Run `claude setup-token`, then `MODAL_PROFILE=kryptonairc-lc modal secret create kopi-claude CLAUDE_CODE_OAUTH_TOKEN=<token>`.
+2. Lift the GitHub billing lock at github.com/settings/billing so the tests can run on GitHub.
+
+---
+
+## Turn 32 · Teddy · 29 Sep 17:17 UTC
+
+<details><summary>Universe build state</summary>
+
+```
+<software-factory build="artifacts/builds/kopi.json" key="KP">
+Kopi — 1 agent working
+Goal: A Singapore supplier's bid team reads every new GeBIZ opportunity, works out which ones it is eligible for, chases the registrations and licences each needs, and drafts a submission against a deadline. Kopi does that work alongside them. It indexes every open GeBIZ opportunity, 18,464 past awards and the permit and licence sources into NeedleDB (my own vector DB), embedded with Qwen3-Embedding-0.6B, which is free, Apache 2.0, and scores higher than OpenAI text-embedding-3-large on MTEB. On that index it offers four parts: overview (semantic search plus an AI overview per tender with verified quotes and market context), permits and licences (deterministic eligibility gates plus a licence explorer), document drafting (a Claude Agent SDK copilot with Kopi's own MCP tools, running in a Modal sandbox on a Claude OAuth token), and submissions (a checklist and tracker built from the notice itse…
+Stops for the person: Only at the end — run every milestone through without stopping; the person reviews at the end.
+Code lives
+[… 2,507 chars cut …]
+last check passed
+  - [t24] KP-24 done — Remove the unused Settings.model that contradicts D21 — owner: Main — check: cd backend && ! grep -n 'claude-sonnet' kopi/config.py && uv run pytest -q — last check passed
+Milestone [m5] Demo film — done, 2/2 done
+Milestone [m6] Linear-style UI — done, 4/4 done
+Milestone [m7] Rounder, calmer UI — done, 2/2 done
+</software-factory>
+```
+
+</details>
+
+> <self-directed step="6">
+> This is your own note, written at the end of your last turn — not a message
+> from the user. You decided the next step is:
+>
+>     Verify the re-cut film end to end. Run /tmp/kopi-film/vo/check_vo.py (whisper) against artifacts/media/kopi-demo.mp4 to confirm each voice line starts inside its slot. Extract full-resolution frames at the s04b and s05 piece boundaries and at the draft-sheet shot to check for blank frames or jumps. If anything is off, fix the PLAN in cut.py, re-render, re-copy the web copy and republish. Then chain_wait on Teddy's kopi-claude secret and GitHub billing.
+>
+> because: The film was only checked on a contact sheet.
+> </self-directed>
+>
+> Do it now.
+>
+> Before you start: call `work_review` and read what is actually on the disk
+> rather than what you remember making. If the mission has moved, write the
+> new aim with `chain_aim`; if a deliverable you believed existed does not,
+> that is the step.
+>
+> When this turn's work is done, say what happens next with chain_next, chain_ask,
+> chain_wait or chain_done before you stop.
+
+- **ToolSearch** `{"query": "select:mcp__work__work_review,mcp__chain__chain_wait,mcp__chain__chain_next", "max_results": 3}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__work__work_review** `{}`
+
+  <details><summary>result</summary>
+
+  ```
+  ## Files — 232 in 5 folder(s), 67 touched since 2h ago
+  
+  **apps/** (76)
+  - apps/kopi/404/index.html · 9K · 18m ago ← NEW
+  - apps/kopi/_not-found/__next._not-found.__PAGE__.txt · 5K · 18m ago ← NEW
+  - apps/kopi/_not-found/__next._full.txt · 6K · 18m ago ← NEW
+  - apps/kopi/_not-found/__next._tree.txt · 327B · 18m ago ← NEW
+  - apps/kopi/__next.__PAGE__.txt · 4K · 18m ago ← NEW
+  - apps/kopi/404.html · 9K · 18m ago ← NEW
+  - apps/kopi/__next._full.txt · 5K · 18m ago ← NEW
+  -
+  [… 2,379 chars cut …]
+  on
+  
+  ## Your last belief note
+  You have not written one yet. On your next checkpoint, write it — the loop reads it to judge whether this pursuit is still on its objective.
+  ```
+
+  </details>
+
+- **Bash** — Read the voice check script
+  
+  ```
+  ls /tmp/kopi-film/vo/ && sed -n 1,40p /tmp/kopi-film/vo/check_vo.py
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  batch1.js
+  batch2.js
+  check_vo.py
+  compare.py
+  eleven
+  eleven-will
+  kokoro-michael
+  kokoro_tts.py
+  segments-compact.txt
+  segments.json
+  import json, subprocess, tempfile
+  MODEL = "~/yapper-shots/userdata/models/ggml-large-v3-turbo-q5_0.bin"
+  total = 0
+  for seg in json.load(open("segments.json")):
+      path = f"eleven/{seg['id']}.mp3"
+      wav = tempfile.mktemp(suffix=".wav")
+      subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-ar", "16000", "-ac", "1", wav], check=True)
+      heard = subprocess.run(["whisper-cli",
+  [… 181 chars cut …]
+  "-of", "csv=p=0", path], capture_output=True, text=True).stdout)
+      total += dur
+      print(f"== {seg['id']} {dur:.1f}s\n   {heard}")
+  print("total", round(total, 1))
+  ```
+
+  </details>
+
+`check_vo.py` only transcribes the separate voice files, so I'm transcribing the finished film itself, with timestamps, and checking each line against its slot.
+
+- **Bash** — Transcribe the final film with timestamps
+  
+  ```
+  cd /tmp/kopi-film && /opt/homebrew/bin/ffmpeg -y -loglevel error -i ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 -ar 16000 -ac 1 /tmp/kopi-film/final16k.wav && PATH=/opt/homebrew/bin:$PATH whisper-cli -m ~/yapper-shots/userdata/models/ggml-large-v3-turbo-q5_0.bin -f /tmp/kopi-film/final16k.wav -np -ml 0 > /tmp/kopi-film/final-transcript.txt 2>/dev/null; wc -l /tmp/kopi-film/final-transcript.txt; head -60 /tmp/kopi-film/final-transcript.txt
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  74 /tmp/kopi-film/final-transcript.txt
+  
+  [00:00:00.000 --> 00:00:05.500]   This is Kopi, a co-pilot for Singapore government tenders.
+  [00:00:06.220 --> 00:00:09.280]   A supplier's bid team has to read every new opportunity on GeBiz,
+  [00:00:09.800 --> 00:00:11.800]   work out which ones they can actually bid for,
+  [00:00:12.280 --> 00:00:13.680]   chase the registrations and licenses,
+  [00:00:14.200 --> 00:00:15.860]   and write a submission before the deadline.
+  [00:00:16.760 --> 00:00:18.540]   Kopi does that work
+  [… 2,295 chars cut …]
+  a quote from our own profile
+  [00:03:19.500 --> 00:03:20.940]   as if it came from the notice.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Frames at every clip join in the tender and copilot sections
+  
+  ```
+  cd /tmp/kopi-film && python3 - <<'EOF'
+  import subprocess
+  from PIL import Image, ImageDraw, ImageFont
+  F='~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4'
+  ts=[60.9,62.7,62.9,64.0,75.1,77.4,77.5,84.1,84.3,88.5,88.7,101.5,101.7,103.5,104.9,105.1]
+  tiles=[]
+  for t in ts:
+      out=f'/tmp/kopi-film/b-{t}.png'
+      subprocess.run(['/opt/homebrew/bin/ffmpeg','-y','-loglevel','error','-ss',str(t),'-i',F,'-frames:v','1','-vf','scale=800:-1',out],check=True)
+      tiles.append((t,Image.open(out)))
+  w,h=tiles[0][1].size; cols=4; rows=(len(tiles)+3)//4
+  sheet=Image.new('RGB',(cols*w,rows*(h+30)),'white'); d=ImageDraw.Draw(sheet)
+  f=ImageFont.truetype('/System/Library/Fonts/Supplemental/Arial.ttf',24)
+  for k,(t,im) in enumerate(tiles):
+      x,y=(k%cols)*w,(k//cols)*(h+30); sheet.paste(im,(x,y+30)); d.text((x+6,y+2),f'{t}s',fill='red',font=f)
+  sheet.save('/tmp/kopi-film/boundaries.png'); print(sheet.size)
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (3200, 1920)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-film/boundaries.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Re-render with the answer at 1.25x
+  
+  ```
+  cd /tmp/kopi-film && sed -i '' 's/("05-copilot", 55, 68, 1), ("05-copilot", 83.5, 92, None)/("05-copilot", 55, 68, 1.25), ("05-copilot", 83.5, 92, None)/' cut.py && grep -n '55, 68' cut.py && python3 cut.py > /tmp/kopi-film/cut-kp30b.log 2>&1; echo "exit $?"; tail -2 /tmp/kopi-film/cut-kp30b.log; python3 -c "
+  import json
+  for r in json.load(open('/tmp/kopi-film/cut/timeline.json'))[3:6]: print(r['segment'], r['starts'], r['seconds'], [(c,round(v,2)) for c,v in r['speeds']])"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  29:                   ("05-copilot", 55, 68, 1.25), ("05-copilot", 83.5, 92, None)]),
+  exit 1
+      raise CalledProcessError(retcode, process.args,
+  subprocess.CalledProcessError: Command '['/opt/homebrew/bin/node', '/tmp/kopi-film/render_cards.mjs', '2.0', '2.1', '2.4', '2.5', '3.0', '8.0']' returned non-zero exit status 1.
+  s04b 60.8 14.2 [('04-tender', 2), ('04-tender', 2.35)]
+  s05 75.0 30.03 [('05-copilot', 3), ('05-copilot', 1.5), ('05-copilot', 8), ('05-copilot', 1), ('05-copilot', 2.5)]
+  s06 105.0 5.93 [('06-submissions', 1.27)]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The title-card step needs the local web server, which I stopped earlier. Restarting it and re-running.
+
+- **mcp__dev__dev_start** `{"service": "film-web"}`
+
+  <details><summary>result</summary>
+
+  ```
+  film-web — Kopi web (local build against the film API): running, no address printed (pid 3927)
+      in ., `python3 -m http.server 4790 --bind 127.0.0.1 --directory /tmp/kopi-film/web-local`
+  
+  Read its output with dev_logs({ service: "film-web" }).
+  ```
+
+  </details>
+
+- **Bash** — Re-render the film
+  
+  ```
+  cd /tmp/kopi-film && python3 cut.py > /tmp/kopi-film/cut-kp30b.log 2>&1; echo "exit $?"; tail -1 /tmp/kopi-film/cut-kp30b.log; python3 -c "
+  import json
+  for r in json.load(open('/tmp/kopi-film/cut/timeline.json')): print(r['segment'], r['starts'], r['seconds'], [(c,round(v,2)) for c,v in r['speeds']])"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  exit 0
+  total 236.3 s -> ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 (236.3 s)
+  s01 2.3 30.47 [('01-gate', 1), ('02-home', 1.04)]
+  s03 32.8 8.17 [('03-search', 2.05)]
+  s04a 40.9 19.83 [('04-tender', 1), ('04-tender', 1.08)]
+  s04b 60.8 14.2 [('04-tender', 2), ('04-tender', 2.35)]
+  s05 75.0 27.43 [('05-copilot', 3), ('05-copilot', 1.5), ('05-copilot', 8), ('05-copilot', 1.25), ('05-copilot', 2.5)]
+  s06 102.4 5.93 [('06-submissions', 1.27)]
+  s08 108.3 23.47 [('08-repo', 1),
+  [… 170 chars cut …]
+  1.27)]
+  s13 205.3 12.5 [('13-cuts', 1.03)]
+  s14 217.8 14.53 [('14-weakest', 1.0)]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now 3:56, and the silent tail after the copilot line is down to about 2.2 s. Re-checking sync around that section, then republishing.
+
+- **Bash** — Probe the new cut and transcribe the copilot section
+  
+  ```
+  cd /tmp/kopi-film && F=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 && /opt/homebrew/bin/ffprobe -v error -show_entries stream=codec_type,duration -of compact $F && /opt/homebrew/bin/ffmpeg -y -loglevel error -ss 70 -t 45 -i $F -ar 16000 -ac 1 /tmp/kopi-film/mid16k.wav && PATH=/opt/homebrew/bin:$PATH whisper-cli -m ~/yapper-shots/userdata/models/ggml-large-v3-turbo-q5_0.bin -f /tmp/kopi-film/mid16k.wav -np 2>/dev/null | awk '{print}' | head -20
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  stream|codec_type=video|duration=236.333333
+  stream|codec_type=audio|duration=236.333333
+  
+  [00:00:00.000 --> 00:00:01.280]   or from our own profile.
+  [00:00:02.080 --> 00:00:03.140]   A quote it can't find
+  [00:00:03.140 --> 00:00:04.280]   caps the call it may be.
+  [00:00:05.240 --> 00:00:07.440]   The co-pilot is the clawed agent SDK
+  [00:00:07.440 --> 00:00:09.800]   with Copi's own MCP tools.
+  [00:00:10.800 --> 00:00:12.400]   I ask for eligible AI tenders
+  [00:00:12.400 --> 00:00:13.600]   closing within two weeks
+  [… 563 chars cut …]
+  --> 00:00:28.820]   Hosted, it runs
+  [00:00:28.820 --> 00:00:29.780]   in a modal sandbox.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The copilot line lands at 75.24 s against 75.25 expected, and audio and video are both 236.333 s. Encoding the web copy and republishing.
+
+- **Bash** — Encode the web copy and place it in the site
+  
+  ```
+  F=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/media/kopi-demo.mp4 && /opt/homebrew/bin/ffmpeg -y -loglevel error -i $F -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart /tmp/kopi-film/web-23.mp4 && ls -la /tmp/kopi-film/web-23.mp4 && cp /tmp/kopi-film/web-23.mp4 ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi/demo/kopi-demo.mp4
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  -rw-r--r--@ 1 teddy  wheel  23869908 Sep 29 13:20 /tmp/kopi-film/web-23.mp4
+  ```
+
+  </details>
+
+- **mcp__sites__site_publish** `{"path": "artifacts/apps/kopi"}`
+
+  <details><summary>result</summary>
+
+  ```
+  {
+    "url": "https://kopi.unv.run",
+    "label": "kopi",
+    "version": 10,
+    "framework": "static",
+    "filesUploaded": 1,
+    "visibility": "public",
+    "rolledBack": false
+  }
+  ```
+
+  </details>
+
+- **Bash** — Verify hosted film and update the length notes
+  
+  ```
+  curl -s -o /tmp/kopi-film/hosted.mp4 -w "%{http_code} %{size_download}\n" "https://kopi.unv.run/demo/kopi-demo.mp4?v=10" && cmp /tmp/kopi-film/hosted.mp4 /tmp/kopi-film/web-23.mp4 && echo identical; cp /tmp/kopi-film/cut.py ~/Documents/codes/kopi/data/film-rig/cut.py; cd ~/Documents/codes/kopi && sed -i '' 's/\*\*Demo (3:59):\*\*/**Demo (3:56):**/' README.md && python3 - <<'EOF'
+  p='planning/handoffs/KP-30.md'
+  s=open(p).read()
+  s=s.replace("  - Result: 3:58.9 at 1080p30, with audio and video exactly 238.933 s each.","  - Result: 3:56.3 at 1080p30, with audio and video exactly 236.333 s each.")
+  s=s.replace("    - the copilot's typing at 3×, its working steps at 8× and the draft at 2.5×.","""    - the copilot's typing at 3×, its working steps at 8× and the draft at 2.5×;
+      - the copilot's answer plays at 1.25×, below the label threshold, which cuts the silent
+        tail after its line from 5 s to 2.6 s.
+    - Sync was checked by transcribing the finished film with whisper large-v3-turbo. Every
+      line starts within about 0.3 s of its slot plus the 0.25 s lead-in (copilot 75.24 s
+      against 75.25 expected),
+  [… 67 chars cut …]
+  - The web copy is 23.9 MB (CRF 23, under the host's 25 MiB limit). It is published as\n    v9, and the hosted file is byte-identical to it.","  - The web copy is 23.9 MB (CRF 23, under the host's 25 MiB limit). It is published as\n    v10, and the hosted file is byte-identical to it.")
+  open(p,'w').write(s)
+  EOF
+  grep -n "3:56\|v10\|1.25" README.md planning/handoffs/KP-30.md
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  200 23869908
+  identical
+  planning/handoffs/KP-30.md:29:  - Result: 3:56.3 at 1080p30, with audio and video exactly 236.333 s each.
+  planning/handoffs/KP-30.md:35:    - the copilot's answer plays at 1.25×, below the label threshold, which cuts the silent
+  planning/handoffs/KP-30.md:41:    v10, and the hosted file is byte-identical to it.
+  README.md:10:**Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **mcp__dev__dev_stop** `{"service": "film-web"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Stopping film-web. Its exit shows up in dev_logs and in dev_services.
   ```
 
   </details>
