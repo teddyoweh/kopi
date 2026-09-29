@@ -7,6 +7,8 @@ the bid: clarification questions, a compliance matrix, a submission checklist.
 
 **Live:** https://kopi.unv.run (the access code is in the submission email)
 
+**Demo (3:59):** https://kopi.unv.run/demo/kopi-demo.mp4
+
 ![The copilot drafting clarification questions](docs/images/copilot.png)
 
 Built in a day for the Pragnition Labs AI-Native Builder assessment, with coding agents

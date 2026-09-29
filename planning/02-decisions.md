@@ -166,3 +166,18 @@ publish `web/out` as a plain static folder to kopi.unv.run.
 **Why:** the hosting tool's build step can't find Node on this machine. A static export
 needs no build on the host, is identical to what was QA'd, and can't carry a secret,
 because the only variable baked in is the public API origin.
+
+## D23 — The demo's voice is ElevenLabs, measured against an open model (KP-18)
+**Picked:** ElevenLabs `eleven_multilingual_v2` with the premade voice "Will", generated
+per line with the neighbouring lines as context, played at 1.07×.
+**Rejected:** Kokoro-82M (open source, runs locally), which was the runner-up. macOS
+`say` has no premium voices installed on this machine.
+**Why:** the agent can't listen, so the comparison was measured on the opening line.
+- Both takes transcribed cleanly through whisper large-v3-turbo.
+- ElevenLabs had more pitch movement (8.9 against 8.3 semitones, p10–p90), which usually
+  means a less flat read.
+- ElevenLabs spoke at a more natural pace (157 against 145 words a minute).
+
+Every line of the final voice was then transcribed back and checked against the script. That
+check caught "git worktrees" being heard as "guide work trees", and the line was reworded.
+
