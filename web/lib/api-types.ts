@@ -696,6 +696,11 @@ export interface components {
              * @default false
              */
             verified: boolean;
+            /**
+             * Found In
+             * @description Where code found the quote word for word; None when it wasn't found
+             */
+            found_in?: ("notice" | "profile") | null;
         };
         /**
          * Recommendation

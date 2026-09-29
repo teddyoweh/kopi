@@ -186,7 +186,7 @@ class FixtureStore:
             fit=Fit(
                 score=min(score, 100),
                 recommendation=Recommendation.MAYBE,
-                reasons=[Reason(point="What the notice asks for", quote=first_sentence, verified=True)],
+                reasons=[Reason(point="What the notice asks for", quote=first_sentence, verified=True, found_in="notice")],
             ),
             questions_for_agency=["Is there an incumbent vendor, and when does their contract end?"],
             model="fixture",

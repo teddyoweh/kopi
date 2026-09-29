@@ -102,7 +102,7 @@ def test_schema_is_closed_and_complete():
     for node in objects(SCHEMA):
         assert node["additionalProperties"] is False
         assert node["required"] == list(node["properties"])
-    code_only = {"verified", "unverified_quotes", "model", "generated_at", "doc_no", "profile_id"}
+    code_only = {"verified", "found_in", "unverified_quotes", "model", "generated_at", "doc_no", "profile_id"}
     assert not code_only & set(json.dumps(SCHEMA).replace('"', " ").split())
 
 
@@ -119,11 +119,12 @@ def test_round_trip_into_a_valid_overview(cleaning, brightclean):
 
 def test_fields_only_code_sets_are_never_taken_from_the_model(cleaning, brightclean):
     answer = draft(reasons=[("Made up", "a sentence that is nowhere at all")])
-    answer["fit"]["reasons"][0]["verified"] = True
+    answer["fit"]["reasons"][0].update(verified=True, found_in="notice")
     answer.update(doc_no="EVIL", profile_id="someone-else", unverified_quotes=0, model="gpt", generated_at="1999-01-01T00:00:00Z")
     result = run(cleaning, brightclean, answer)
     assert (result.doc_no, result.profile_id, result.model) == (cleaning.doc_no, "brightclean", "test-model")
     assert result.fit.reasons[0].verified is False
+    assert result.fit.reasons[0].found_in is None
     assert result.unverified_quotes == 1
     assert result.generated_at.year >= 2026
 
@@ -172,9 +173,26 @@ def test_curly_quotes_dashes_case_and_whitespace_are_normalised(cleaning, bright
     assert normalise("  “Hello — World”… ") == normalise('"hello - world"...') == "hello - world"
 
 
-def test_a_quote_from_the_profile_is_verified(cleaning, brightclean):
+def test_a_quote_from_the_profile_is_verified_and_says_so(cleaning, brightclean):
     result = run(cleaning, brightclean, draft(reasons=[("Schools are home ground", "Cleaning for 11 primary schools")]))
     assert result.fit.reasons[0].verified is True
+    assert result.fit.reasons[0].found_in == "profile"
+
+
+def test_a_quote_from_the_notice_says_so(cleaning, brightclean):
+    result = run(cleaning, brightclean, draft(reasons=[("point", cleaning.title)]))
+    assert (result.fit.reasons[0].verified, result.fit.reasons[0].found_in) == (True, "notice")
+
+
+def test_a_quote_in_both_is_credited_to_the_notice(cleaning, brightclean):
+    profile = brightclean.model_copy(update={"summary": f"{brightclean.summary} {cleaning.title}"})
+    result = run(cleaning, profile, draft(reasons=[("point", cleaning.title)]))
+    assert result.fit.reasons[0].found_in == "notice"
+
+
+def test_an_unverified_quote_is_found_nowhere(cleaning, brightclean):
+    result = run(cleaning, brightclean, draft(reasons=[("point", "words that appear in neither source")]))
+    assert (result.fit.reasons[0].verified, result.fit.reasons[0].found_in) == (False, None)
 
 
 def test_a_quote_of_a_notice_line_as_shown_is_verified(cleaning, brightclean):

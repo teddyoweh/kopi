@@ -206,6 +206,9 @@ class Reason(BaseModel):
     point: str
     quote: str = Field(description="Verbatim text from the notice or profile")
     verified: bool = False
+    found_in: Literal["notice", "profile"] | None = Field(
+        default=None, description="Where code found the quote word for word; None when it wasn't found"
+    )
 
 
 class Fit(BaseModel):
