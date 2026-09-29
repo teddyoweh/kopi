@@ -2,11 +2,14 @@
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useApi, useKopi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
+import { ResultCard } from "@/components/search/result-card";
+import { useInsights } from "@/components/search/use-insights";
 import { ErrorState, RowsSkeleton } from "@/components/states";
-import { ListCard, TenderRow } from "@/components/tender-row";
+import { ListCard, TenderRow, tenderHref } from "@/components/tender-row";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { KopiApi, NoticeSummary } from "@/lib/api";
 import { daysUntil, isToday, longToday } from "@/lib/format";
@@ -79,33 +82,51 @@ function Stats({ api }: { api: KopiApi }) {
 
 function BestMatches({ api }: { api: KopiApi }) {
   const { profile } = useKopi();
-  const state = useAsync(() => api.search(profileQuery(profile), { status: "open" }, 6), [api, profile]);
+  const router = useRouter();
+  const q = profileQuery(profile);
+  const state = useAsync(() => api.search(q, { status: "open" }, 6), [api, profile]);
+  const hits = state.data?.hits ?? [];
+  const insights = useInsights(api, hits.map((hit) => hit.notice.doc_no), profile, q);
   return (
-    <ListCard
-      id="best-matches"
-      title={`Best matches for ${profile.name}`}
-      action={
+    <section aria-labelledby="best-matches" className="flex flex-col gap-3">
+      <div className="flex h-7 items-center justify-between gap-2 px-1">
+        <h2 id="best-matches" className="truncate text-[14px] font-medium tracking-[-0.01em]">
+          Best matches for {profile.name}
+        </h2>
         <Link
           href="/search"
-          className="-mr-2 flex h-7 items-center gap-1 rounded-full px-2.5 text-[12.5px] font-book text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="-mr-2 flex h-7 shrink-0 items-center gap-1 rounded-full px-2.5 text-[12.5px] font-book text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           Search all <ArrowRight className="size-3.5" aria-hidden />
         </Link>
-      }
-    >
-      {state.status === "loading" && <RowsSkeleton rows={6} />}
-      {state.status === "error" && (
-        <div className="p-1">
-          <ErrorState error={state.error} />
+      </div>
+      {state.status === "loading" && (
+        <div className="flex flex-col gap-2.5" aria-busy="true" aria-label="Loading">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-40 w-full rounded-xl" />
+          ))}
         </div>
       )}
+      {state.status === "error" && <ErrorState error={state.error} />}
       {state.status === "ready" &&
-        (state.data.hits.length ? (
-          state.data.hits.map((hit) => <TenderRow key={hit.notice.doc_no} notice={hit.notice} />)
+        (hits.length ? (
+          <ol className="flex flex-col gap-2.5">
+            {hits.map((hit) => (
+              <li key={hit.notice.doc_no}>
+                <ResultCard
+                  notice={hit.notice}
+                  words={[]}
+                  insight={insights.get(hit.notice.doc_no)}
+                  selected={false}
+                  onSelect={() => router.push(tenderHref(hit.notice.doc_no))}
+                />
+              </li>
+            ))}
+          </ol>
         ) : (
-          <p className="px-3 py-3 text-[13px] text-muted-foreground">Nothing open matches this profile yet. Add capabilities on the Profile page.</p>
+          <p className="rounded-xl border bg-card px-4 py-3 text-[13px] text-muted-foreground">Nothing open matches this profile yet. Add capabilities on the Profile page.</p>
         ))}
-    </ListCard>
+    </section>
   );
 }
 
