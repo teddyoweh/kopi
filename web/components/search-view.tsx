@@ -7,9 +7,9 @@ import { FilterChip, type ChipOption } from "@/components/filter-chip";
 import { useApi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
 import { QueryInput } from "@/components/query-input";
+import { Results, type Row } from "@/components/search/results";
 import { EmptyState, ErrorState, RowsSkeleton } from "@/components/states";
-import { ListCard, TenderRow } from "@/components/tender-row";
-import type { NoticeSummary, TenderFilters } from "@/lib/api";
+import type { TenderFilters } from "@/lib/api";
 import { sgDayEnd } from "@/lib/format";
 import { useAsync } from "@/lib/use-async";
 import { useQueryText, useUrlParams } from "@/lib/use-url-query";
@@ -17,7 +17,6 @@ import { cn } from "@/lib/utils";
 
 /** The live API's search depth: it re-ranks the 50 nearest notices, so 50 is everything it has. */
 const LIMIT = 50;
-const FIRST_PAGE = 20;
 
 const CATEGORIES: ChipOption[] = [
   { value: "IT&Telecommunication", label: "IT & Telecommunication" },
@@ -49,7 +48,6 @@ const EXAMPLES = [
   "Training workshops for officers",
 ];
 
-type Row = { notice: NoticeSummary; score?: number; highlights?: string[] };
 /** `key` names the query and filters it answers, so per-result UI state resets with it. */
 type Result = { key: string; mode: "search" | "browse"; total: number; rows: Row[] };
 
@@ -109,27 +107,6 @@ function Examples({ onPick }: { onPick: (query: string) => void }) {
         ))}
       </div>
     </div>
-  );
-}
-
-function Results({ rows, summary }: { rows: Row[]; summary: string }) {
-  const [all, setAll] = useState(false);
-  const visible = all ? rows : rows.slice(0, FIRST_PAGE);
-  return (
-    <ListCard id="results" title={summary}>
-      {visible.map((row) => (
-        <TenderRow key={row.notice.doc_no} notice={row.notice} highlights={row.highlights} score={row.score} />
-      ))}
-      {visible.length < rows.length && (
-        <button
-          type="button"
-          onClick={() => setAll(true)}
-          className="mt-1 h-9 w-full rounded-lg text-center text-[13px] font-book text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          Show all {rows.length}
-        </button>
-      )}
-    </ListCard>
   );
 }
 
@@ -210,14 +187,9 @@ export function SearchView() {
         ) : !shown ? (
           <RowsSkeleton rows={6} />
         ) : (
-          <section aria-label="Results" aria-busy={loading} className={cn("flex flex-col gap-3 transition-opacity", loading && "opacity-60")}>
+          <div aria-busy={loading} className={cn("flex flex-col gap-3 transition-opacity", loading && "opacity-60")}>
             {shown.rows.length > 0 ? (
-              <>
-                <p className="sr-only" aria-live="polite">
-                  {summaryLine(shown, q)}
-                </p>
-                <Results key={shown.key} rows={shown.rows} summary={summaryLine(shown, q)} />
-              </>
+              <Results key={shown.key} rows={shown.rows} summary={summaryLine(shown, q)} q={q} />
             ) : (
               <EmptyState icon={SearchX} title={q ? `No open tenders match “${q}”` : "No open tenders fit these filters"}>
                 {filtered ? (
@@ -237,7 +209,7 @@ export function SearchView() {
                 )}
               </EmptyState>
             )}
-          </section>
+          </div>
         )}
       </div>
     </>
