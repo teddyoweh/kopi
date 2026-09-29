@@ -1,0 +1,25 @@
+{
+ "id": "pragnition",
+ "name": "Pragnition Labs",
+ "uen": null,
+ "summary": "Builds AI systems for Singapore government agencies and large enterprises. A small team that sits with the people doing the work, designs the system, builds it and sees it go live.",
+ "capabilities": [
+  "Generative AI assistants and copilots",
+  "Retrieval and knowledge systems",
+  "AI-assisted document analysis and summarisation",
+  "Workflow automation for government and enterprise",
+  "Model evaluation and AI governance",
+  "Custom software on cloud"
+ ],
+ "past_work": [
+  "AI systems deployed with Singapore government agencies and enterprises (public site, no project names)"
+ ],
+ "gra_registrations": null,
+ "bca_registrations": null,
+ "licences_held": null,
+ "bizsafe_level": null,
+ "value_band_sgd": {
+  "min_sgd": 50000,
+  "max_sgd": 3000000
+ }
+}

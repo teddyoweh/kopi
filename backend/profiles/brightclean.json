@@ -1,0 +1,32 @@
+{
+ "id": "brightclean",
+ "name": "BrightClean Services Pte. Ltd.",
+ "uen": null,
+ "summary": "A Singapore cleaning and facilities company with 140 staff serving schools, offices and clinics.",
+ "capabilities": [
+  "General and office cleaning",
+  "School and campus cleaning",
+  "Pest control coordination",
+  "Landscaping support"
+ ],
+ "past_work": [
+  "Cleaning for 11 primary schools",
+  "Office cleaning for two statutory boards"
+ ],
+ "gra_registrations": [
+  {
+   "code": "EPU/SER/03",
+   "grade": "S4"
+  }
+ ],
+ "bca_registrations": [],
+ "licences_held": [
+  "Cleaning Business Licence",
+  "bizSAFE Level 3"
+ ],
+ "bizsafe_level": "3",
+ "value_band_sgd": {
+  "min_sgd": 20000,
+  "max_sgd": 2000000
+ }
+}

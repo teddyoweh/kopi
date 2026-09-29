@@ -1,0 +1,38 @@
+[project]
+name = "kopi"
+version = "0.1.0"
+description = "A copilot for Singapore government tenders"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "httpx>=0.28",
+    "selectolax>=0.3",
+    "pydantic>=2.9",
+]
+
+[project.optional-dependencies]
+search = [
+    "needledb @ git+https://github.com/teddyoweh/needledb@b88f8b7",
+    "sentence-transformers>=3.0",
+    "transformers>=4.51",
+    "torch>=2.4",
+]
+agent = ["claude-agent-sdk>=0.2.161"]
+deploy = ["modal>=1.6"]
+
+[dependency-groups]
+dev = ["pytest>=8.3"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["kopi"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

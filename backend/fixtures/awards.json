@@ -1,0 +1,362 @@
+[
+ {
+  "tender_no": "MHA00003000020686",
+  "tender_description": "Provisioning of The Theory Testing System as a Service, Testing Kiosks and Administrative Stations Leasing, With 5-Year Comprehensive Maintenance and Support",
+  "agency": "Ministry of Home Affairs - Ministry Headquarter 1",
+  "award_date": "7/11/2025",
+  "tender_detail_status": "Award by interface record",
+  "supplier_name": "ST ENGINEERING TRAINING & SIMULATION SYSTEMS PTE. LTD.",
+  "awarded_amt": "21131336.4"
+ },
+ {
+  "tender_no": "LTA000ETT24000124",
+  "tender_description": "Comprehensive Maintenance of E&M Systems for Central Expressway (CTE) Tunnel, Fort Canning Tunnel (FCT), Woodsville Tunnel (WVT) and Sentosa Gateway Tunnel (SGT)",
+  "agency": "Land Transport Authority",
+  "award_date": "17/6/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "CPG FACILITIES MANAGEMENT PTE LTD",
+  "awarded_amt": "30749050"
+ },
+ {
+  "tender_no": "HSA000ETT25000063",
+  "tender_description": "SUPPLY AND DELIVERY OF UNIVERSAL TEST SYSTEM",
+  "agency": "Health Sciences Authority",
+  "award_date": "7/1/2026",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "ITW PTE. LTD.",
+  "awarded_amt": "232627"
+ },
+ {
+  "tender_no": "GVT000ETT25000001",
+  "tender_description": "For The Provision of Cybersecurity and Audit Services (CSAS) to Government Ministries, Departments, Organs of State, Statutory Boards and Participating Entities (PR25-01795 - GVT(T)25001)",
+  "agency": "Government Technology Agency  (GovTech)",
+  "award_date": "6/10/2025",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "PULSESECURE PTE. LTD.",
+  "awarded_amt": "1"
+ },
+ {
+  "tender_no": "MHA00003000021214",
+  "tender_description": "'Supply, Delivery, Installation, Testing and Commissioning of 27 units of the In-Vehicle Video Recording System (IVVRS)",
+  "agency": "Ministry of Home Affairs - Ministry Headquarter 1",
+  "award_date": "20/1/2025",
+  "tender_detail_status": "Award by interface record",
+  "supplier_name": "TSI TECH PTE. LTD.",
+  "awarded_amt": "793620"
+ },
+ {
+  "tender_no": "NST000ETT25000099",
+  "tender_description": "Provision of network, servers, hardware, cloud software, setup and installation for AiXL, including ethernet cabling to data room with 3 years of licenses and hardware warranty.",
+  "agency": "Agency for Science, Technology and Research",
+  "award_date": "31/10/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "KNOWLEDGE COMPUTERS PTE. LTD.",
+  "awarded_amt": "287921"
+ },
+ {
+  "tender_no": "SSC000ETT24000052",
+  "tender_description": "SUPPLY, DELIVERY AND INSTALL (1) STADIOMETERS AND WEIGHING SCALES, (2) ISOINERTIAL (FLYWHEEL) DEVICES, (3) SPRINT RESISTANCE TRAINING AND TESTING SYSTEMS, (4) ANTI-GRAVITY TREADMILL, AND (5) MULTI-MODAL DYNAMOMETER SYSTEM",
+  "agency": "Singapore Sports Council (Sport Singapore)",
+  "award_date": "7/1/2025",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "UNITED LIFESTYLE PTE LTD",
+  "awarded_amt": "27220"
+ },
+ {
+  "tender_no": "ITE000ETT25000018",
+  "tender_description": "E-ITEa25-00198_LGM_Design, supply, deliver, install, configure and commission the Warehouse Robotic Automation and Digital Twin Simulation Training System for Project A and Warehouse Robotic Automation and Video Analytic Warehouse Safety Monitoring System using AI for Project B.",
+  "agency": "Institute of Technical Education",
+  "award_date": "23/9/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "KONICA MINOLTA BUSINESS SOLUTIONS ASIA PTE. LTD.",
+  "awarded_amt": "487100"
+ },
+ {
+  "tender_no": "NST000ETT25000018",
+  "tender_description": "Lease and maintenance of TCOMS Parallel File System (PFS) for High-Performance Computing (HPC) Cluster and Network Attached Storage (NAS) for Corporate IT infrastructure for a Period of Five (5) Years.",
+  "agency": "Agency for Science, Technology and Research",
+  "award_date": "13/6/2025",
+  "tender_detail_status": "Awarded to No Suppliers",
+  "supplier_name": "Unknown",
+  "awarded_amt": "0"
+ },
+ {
+  "tender_no": "ITA000ETT25000027",
+  "tender_description": "Provision of Relocation Services of ICT Systems from Ministry of National Development (MND) to Punggol Digital District (PDD)",
+  "agency": "Ministry of Digital Development and Information",
+  "award_date": "29/12/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "SMART RELOCATORS PTE. LTD.",
+  "awarded_amt": "19445"
+ },
+ {
+  "tender_no": "MHA00003000020922",
+  "tender_description": "REPLACEMENT AND UPGRADING OF TANAH MERAH 1 (TM1) ELECTRICAL SYSTEM AT EXISTING TANAH MERAH PRISON FOR SINGAPORE PRISON SERVICE",
+  "agency": "Ministry of Home Affairs - Ministry Headquarter 1",
+  "award_date": "1/7/2025",
+  "tender_detail_status": "Award by interface record",
+  "supplier_name": "DAI-DAN CO., LTD.",
+  "awarded_amt": "12150000"
+ },
+ {
+  "tender_no": "URA000ETT25000030",
+  "tender_description": "Renewal of Red Hat JBOSS Enterprise Application Platform (EAP) and Extended Life Cycle Support (ELS), IBM Business Automation Manager Open Edition (BAMOE) Licenses for Development Application Exchange (DAX) System",
+  "agency": "Urban Redevelopment Authority",
+  "award_date": "30/10/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "TRANSCEND SOLUTIONS PTE. LTD.",
+  "awarded_amt": "239454"
+ },
+ {
+  "tender_no": "NST000ETT25000098",
+  "tender_description": "PROVISION OF AIR CONDITIONING AND MECHANICAL VENTILATION (ACMV) SYSTEM CLEANING, CALIBRATION, AND AIR BALANCING SERVICES FOR WET LABORATORIES LOCATED AT 10 BIOPOLIS ROAD, CHROMOS BUILDING (LEVELS 5 TO 8)",
+  "agency": "Agency for Science, Technology and Research",
+  "award_date": "5/11/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "D-TEAM ENGINEERING PTE. LTD.",
+  "awarded_amt": "373800"
+ },
+ {
+  "tender_no": "BCA000ETT26000003",
+  "tender_description": "PROVISION OF CONSTRUCTION QUALITY ASSESSMENT SYSTEM (CONQUAS) AND QUALITY MARK (QM) PART-TIME ASSESSMENT SERVICES FOR A PERIOD OF 2 YEARS",
+  "agency": "Building and Construction Authority",
+  "award_date": "30/3/2026",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "Jayanthi Peariahsamy Mudaliar",
+  "awarded_amt": "1"
+ },
+ {
+  "tender_no": "IMD000ETT25000005",
+  "tender_description": "The supply and delivery of Gitlab software subscription for 1 year and the option to extend up to 2 years",
+  "agency": "Info-communications Media Development Authority",
+  "award_date": "6/3/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "CXRUS SOLUTIONS PTE. LTD.",
+  "awarded_amt": "334080"
+ },
+ {
+  "tender_no": "SDC000ETT25000008",
+  "tender_description": "IMPLEMENTATION OF A DIGITAL DISPLAY SYSTEM WITH COMPREHENSIVE MAINTENANCE FOR A BASE PERIOD OF SIX (6) YEARS WITH AN OPTION TO EXTEND UP TO THREE (3) YEARS",
+  "agency": "Sentosa Development Corporation",
+  "award_date": "29/8/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "M-FUSION PTE LTD",
+  "awarded_amt": "1840420"
+ },
+ {
+  "tender_no": "BCA000ETT26000003",
+  "tender_description": "PROVISION OF CONSTRUCTION QUALITY ASSESSMENT SYSTEM (CONQUAS) AND QUALITY MARK (QM) PART-TIME ASSESSMENT SERVICES FOR A PERIOD OF 2 YEARS",
+  "agency": "Building and Construction Authority",
+  "award_date": "30/3/2026",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "Tan Boon Kee",
+  "awarded_amt": "1"
+ },
+ {
+  "tender_no": "MPA000ETT24000051",
+  "tender_description": "Design, Development, Support and Maintenance of the Maritime Energy Training Facility Digital Platform (\"METF Digital Platform\")",
+  "agency": "Maritime and Port Authority of Singapore",
+  "award_date": "14/2/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "AVEPOINT SINGAPORE PTE. LTD.",
+  "awarded_amt": "3560000"
+ },
+ {
+  "tender_no": "GVT000ETT25000001",
+  "tender_description": "For The Provision of Cybersecurity and Audit Services (CSAS) to Government Ministries, Departments, Organs of State, Statutory Boards and Participating Entities (PR25-01795 - GVT(T)25001)",
+  "agency": "Government Technology Agency  (GovTech)",
+  "award_date": "6/10/2025",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "ASSURITY TRUSTED SOLUTIONS PTE. LTD.",
+  "awarded_amt": "1"
+ },
+ {
+  "tender_no": "GVT000ETT24000018",
+  "tender_description": "SUPPLY OF ENTERPRISE SOFTWARE-AS-A-SERVICE (SAAS) AND RELATED CONSULTANCY PROFESSIONAL SERVICES TO GOVERNMENT MINISTRIES/DEPARTMENTS, STATUTORY BOARDS, ORGANS OF STATE AND PARTICIPATING ENTITIES (PR24-00897 - GVT(T)23008A)",
+  "agency": "Government Technology Agency  (GovTech)",
+  "award_date": "9/5/2025",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "OUTSYSTEMS SINGAPORE PTE. LTD.",
+  "awarded_amt": "1"
+ },
+ {
+  "tender_no": "TRADOSETT25000002",
+  "tender_description": "FOR THE PROVISION OF ORACLE MIDDLEWARE AND DATABASE SOFTWARE LICENSES",
+  "agency": "Ministry of Trade & Industry-Department of Statistics",
+  "award_date": "23/5/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "KEPPEL TECHNOLOGY SOLUTIONS PTE. LTD.",
+  "awarded_amt": "1845000"
+ },
+ {
+  "tender_no": "LAWHQ0ETT25000003",
+  "tender_description": "ITT TO PROCURE ORACLE LICENSE SOFTWARE MAINTENANCE AND SUPPORT",
+  "agency": "Ministry of Law-Ministry Headquarter",
+  "award_date": "29/10/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "CTC GLOBAL PTE. LTD.",
+  "awarded_amt": "120068.5"
+ },
+ {
+  "tender_no": "GVT000ETT25000001",
+  "tender_description": "For The Provision of Cybersecurity and Audit Services (CSAS) to Government Ministries, Departments, Organs of State, Statutory Boards and Participating Entities (PR25-01795 - GVT(T)25001)",
+  "agency": "Government Technology Agency  (GovTech)",
+  "award_date": "6/10/2025",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "RESOLVO SYSTEMS PTE LTD",
+  "awarded_amt": "1"
+ },
+ {
+  "tender_no": "INDACIETT25000005",
+  "tender_description": "Construction of Sheltered Pick-up/ Drop-off Point at Halls 2-4 Carpark; Construction of Sheltered Linkway from Dover Drive Gate to Old Block; and Refurbishment of Security Post at Ramp",
+  "agency": "Anglo-Chinese School (Independent)\t",
+  "award_date": "14/10/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "TEO ENGINEERING AND CONSTRUCTION PTE. LTD.",
+  "awarded_amt": "568888"
+ },
+ {
+  "tender_no": "RPO000ETT25000005",
+  "tender_description": "Provision of Maintenance and Support, Professional Services for the Joint Admission Exercise (JAE) Appeal System for 3 years with an option to extend for 2 years",
+  "agency": "Republic Polytechnic",
+  "award_date": "5/6/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "AVEPOINT SINGAPORE PTE. LTD.",
+  "awarded_amt": "892000"
+ },
+ {
+  "tender_no": "SSC000ETT24000056",
+  "tender_description": "REPAIR AND REPLACEMENT OF NEW FILTRATION SYSTEM AND ASSOCIATED WORKS FOR ACTIVESG SWIMMING COMPLEXES",
+  "agency": "Singapore Sports Council (Sport Singapore)",
+  "award_date": "2/6/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "WATERLAND SERVICES PTE. LTD.",
+  "awarded_amt": "2271500"
+ },
+ {
+  "tender_no": "PMOPSDETT25000006",
+  "tender_description": "Invitation To Tender For Purchase Of Global Mobility Data 2025-2030",
+  "agency": "Prime Minister's Office-Public Service Division",
+  "award_date": "30/10/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "AIRINC ASIA-PACIFIC LIMITED",
+  "awarded_amt": "103700"
+ },
+ {
+  "tender_no": "NST000ETT25000134",
+  "tender_description": "PROVISION OF ONE UNIT OF QUBIT CONTROL ELECTRONICS SYSTEM WITH INTEGRATED SIGNAL GENERATION AND MEASUREMENT CAPABILITIES",
+  "agency": "Agency for Science, Technology and Research",
+  "award_date": "17/3/2026",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "QM Technologies, Ltd.",
+  "awarded_amt": "565690.22"
+ },
+ {
+  "tender_no": "DST000ETT25000023",
+  "tender_description": "To engage Event Management Services for Brainhack Today I Learnt - Artificial Intelligence (TIL-AI) 2026 - 2028",
+  "agency": "Defence Science and Technology Agency",
+  "award_date": "27/1/2026",
+  "tender_detail_status": "Awarded to No Suppliers",
+  "supplier_name": "Unknown",
+  "awarded_amt": "0"
+ },
+ {
+  "tender_no": "FOR000ETT25000005",
+  "tender_description": "Provision of Security Personnel Services at the Consulate-General of the Republic of Singapore in Shanghai.",
+  "agency": "Ministry of Foreign Affairs",
+  "award_date": "19/6/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "SHANGHAI PROSEGUR SECURITY SERVICES CO., LTD.",
+  "awarded_amt": "710642.79"
+ },
+ {
+  "tender_no": "NST000ETT26000007",
+  "tender_description": "Provision of Cryostat System for low temperature study of crystal properties",
+  "agency": "Agency for Science, Technology and Research",
+  "award_date": "13/2/2026",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "QUANTUM DESIGN SINGAPORE PRIVATE LIMITED",
+  "awarded_amt": "187000"
+ },
+ {
+  "tender_no": "CAA000ETT25000033",
+  "tender_description": "Provision of Cybersecurity Incident Response Support Services",
+  "agency": "Civil Aviation Authority of Singapore",
+  "award_date": "16/9/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "ENSIGN INFOSECURITY (SMARTTECH) PTE. LTD.",
+  "awarded_amt": "114000"
+ },
+ {
+  "tender_no": "MOMHQ0ETT25000006",
+  "tender_description": "PROVISION OF SOFTWARE MAINTENANCE AND SUPPORT SERVICES FOR A PERIOD OF ONE (1) YEAR WITH AN OPTION FOR THE GOVERNMENT TO EXTEND THE CONTRACT ON A YEARLY BASIS FOR UP TO THREE ADDITIONAL (3) YEARS",
+  "agency": "Ministry of Manpower-Ministry Headquarter",
+  "award_date": "29/7/2025",
+  "tender_detail_status": "Awarded by Items",
+  "supplier_name": "NTT SINGAPORE PTE. LTD.",
+  "awarded_amt": "1179896"
+ },
+ {
+  "tender_no": "ITE000ETT25000014",
+  "tender_description": "ITEa25-00091_CDE_Provision of Cost & Contract Management Software for Institute of Technical Education",
+  "agency": "Institute of Technical Education",
+  "award_date": "1/12/2025",
+  "tender_detail_status": "Awarded to No Suppliers",
+  "supplier_name": "Unknown",
+  "awarded_amt": "0"
+ },
+ {
+  "tender_no": "WSG000ETT25000001",
+  "tender_description": "PROVISION OF PUBLIC CLOUD SOFTWARE AS A SERVICE FOR THE ENHANCED INTEGRATED DIGITAL CAREER SERVICES PORTAL",
+  "agency": "Workforce Singapore",
+  "award_date": "26/5/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "MAVENTREE TECHNOLOGY PTE. LTD.",
+  "awarded_amt": "5002691.61"
+ },
+ {
+  "tender_no": "HPB000ETT25000008",
+  "tender_description": "FALT08/25 Provision of one (1) snack vending machine, including regular stock replenishment and inventory management, at the Health Promotion Board (HPB) for a base period of 16 months, with the option to renew for up to twelve (12) months.",
+  "agency": "Health Promotion Board",
+  "award_date": "28/8/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "LE TACH VENDING PTE. LTD.",
+  "awarded_amt": "102983.33"
+ },
+ {
+  "tender_no": "EMA000ETT25000007",
+  "tender_description": "SIMULATION SOFTWARE FOR ECONOMIC MODELLING AND RELIABILITY ASSESSMENT (EMA-ITT-2024-0038)",
+  "agency": "Energy Market Authority of Singapore",
+  "award_date": "16/6/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "AFRY SINGAPORE PTE. LTD.",
+  "awarded_amt": "458483.3"
+ },
+ {
+  "tender_no": "URA000ETT25000003",
+  "tender_description": "Tender for Purchase of Autodesk Software",
+  "agency": "Urban Redevelopment Authority",
+  "award_date": "14/4/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "INNOCOM TECHNOLOGIES PTE LTD",
+  "awarded_amt": "253981"
+ },
+ {
+  "tender_no": "MAS000ETT24000059",
+  "tender_description": "INVITATION TO TENDER FOR SUPPLY, DELIVERY, INSTALLATION, TESTING AND COMMISSIONING OF CYBERSECURITY TOOLS IN GCC+ WITH SUPPORT AND MAINTENANCE SERVICES (MAS-REQ-2024-001639/SY)",
+  "agency": "Monetary Authority of Singapore",
+  "award_date": "6/3/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "ENSIGN INFOSECURITY (SMARTTECH) PTE. LTD.",
+  "awarded_amt": "751260"
+ },
+ {
+  "tender_no": "NEA000ETT25000015",
+  "tender_description": "Provision of Long-Read Next Generation Sequencing Services by using Oxford Nanopore Technologies Systems",
+  "agency": "National Environment Agency",
+  "award_date": "5/12/2025",
+  "tender_detail_status": "Awarded to Suppliers",
+  "supplier_name": "NOVOGENEAIT GENOMICS SINGAPORE PTE. LTD.",
+  "awarded_amt": "1156380"
+ }
+]
