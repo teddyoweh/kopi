@@ -22,7 +22,7 @@ export function QueryInput({
 }) {
   return (
     <div className="relative">
-      <Search className="pointer-events-none absolute top-1/2 left-4 size-4.5 -translate-y-1/2 text-muted-foreground" aria-hidden />
+      <Search className="pointer-events-none absolute top-1/2 left-5 size-4.5 -translate-y-1/2 text-muted-foreground" aria-hidden />
       <input
         type="search"
         value={value}
@@ -33,16 +33,16 @@ export function QueryInput({
         placeholder={placeholder}
         autoComplete="off"
         spellCheck={false}
-        className="h-11 w-full rounded-lg border bg-card pr-20 pl-11 text-[15px] transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-kopi/50 focus-visible:ring-2 focus-visible:ring-kopi/15 [&::-webkit-search-cancel-button]:hidden"
+        className="h-12 w-full rounded-full border bg-card pr-20 pl-12 text-[15px] transition-[border-color,box-shadow] outline-none placeholder:text-muted-foreground/80 focus-visible:border-kopi/40 focus-visible:ring-4 focus-visible:ring-kopi/10 [&::-webkit-search-cancel-button]:hidden"
       />
-      <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-1">
+      <div className="absolute top-1/2 right-2.5 flex -translate-y-1/2 items-center gap-1">
         {busy && <Loader2 className="size-4 animate-spin text-muted-foreground" aria-label="Searching" />}
         {value && (
           <button
             type="button"
             onClick={onClear}
             aria-label="Clear search"
-            className="grid size-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <X className="size-4" aria-hidden />
           </button>

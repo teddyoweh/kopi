@@ -41,8 +41,8 @@ function IconLink({ href, label, round, children, onNavigate }: { href: string; 
             aria-label={label}
             className={
               round
-                ? "grid size-7 place-items-center rounded-full border bg-card text-sidebar-foreground transition-colors hover:bg-sidebar-hover"
-                : "grid size-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-hover hover:text-foreground"
+                ? "grid size-7 place-items-center rounded-full border border-black/[0.07] bg-card text-sidebar-foreground transition-colors hover:bg-sidebar-hover"
+                : "grid size-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sidebar-hover hover:text-foreground"
             }
           />
         }
@@ -81,7 +81,7 @@ function SectionTitle() {
   const item = currentItem(usePathname());
   const Icon = item.icon;
   return (
-    <span className="flex items-center gap-2 text-[14px] font-medium group-has-[[data-page-title]]/topbar:hidden">
+    <span className="flex items-center gap-2 text-[13.5px] font-medium group-has-[[data-page-title]]/topbar:hidden">
       <Icon className="size-4 text-muted-foreground" aria-hidden />
       {item.label}
     </span>
@@ -105,12 +105,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div
             ref={setScroller}
             id="kopi-panel"
-            className="relative flex min-w-0 flex-1 flex-col overflow-y-auto bg-background [scrollbar-gutter:stable] lg:rounded-xl lg:border"
+            className="relative flex min-w-0 flex-1 flex-col overflow-y-auto bg-background [scrollbar-gutter:stable] lg:rounded-2xl lg:border lg:border-black/[0.06]"
           >
-            <header className="group/topbar sticky top-0 z-30 flex h-13 shrink-0 items-center gap-2 border-b bg-background px-3 sm:px-5">
+            <header className="group/topbar sticky top-0 z-30 flex h-13 shrink-0 items-center gap-2 border-b border-border/70 bg-background/90 px-3 backdrop-blur-md sm:px-5">
               <button
                 type="button"
-                className="-ml-1 grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-muted lg:hidden"
+                className="-ml-1 grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-muted lg:hidden"
                 aria-label="Open menu"
                 onClick={() => setMenuOpen(true)}
               >

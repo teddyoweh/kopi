@@ -77,7 +77,7 @@ function StepRow({ step }: { step: Step }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="group flex w-full min-w-0 items-start gap-2.5 px-3 py-2 text-left transition-colors hover:bg-muted/50"
+        className="group flex w-full min-w-0 items-start gap-2.5 px-3.5 py-2.5 text-left transition-colors hover:bg-muted/50"
       >
         {running ? (
           <Loader2 className="mt-[3px] size-3.5 shrink-0 animate-spin text-kopi" aria-label="Running" />
@@ -102,7 +102,7 @@ function StepRow({ step }: { step: Step }) {
         <span className="sr-only">{open ? "Hide details" : "Show details"}</span>
       </button>
       {open && (
-        <dl className="flex flex-col gap-2 border-t bg-muted/40 px-3 py-2.5 pl-9 text-xs">
+        <dl className="flex flex-col gap-2 border-t border-border/70 bg-muted/40 px-3.5 py-2.5 pl-9.5 text-xs">
           {lines.length === 0 && <p className="text-muted-foreground">No input.</p>}
           {lines.map(([key, value]) => (
             <div key={key} className="flex min-w-0 flex-col gap-0.5">
@@ -136,12 +136,12 @@ function FileCard({
   onOpen: () => void;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border bg-card px-3 py-2.5">
-      <span className="grid size-8 shrink-0 place-items-center rounded-md bg-kopi-soft">
+    <div className="flex items-center gap-3 rounded-xl border bg-card py-2.5 pr-2.5 pl-3">
+      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-kopi-soft">
         <FileText className="size-4 text-kopi" aria-hidden />
       </span>
       <div className="flex min-w-0 flex-1 flex-col">
-        <p className="line-clamp-2 text-[13px] font-medium">{title || "Draft written"}</p>
+        <p className="line-clamp-2 text-[13px] font-book">{title || "Draft written"}</p>
         <p className="truncate text-xs text-muted-foreground">{name}</p>
       </div>
       {saving || !sessionId ? (
@@ -179,12 +179,12 @@ function Reason({ detail }: { detail: string }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-fit items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+        className="flex w-fit items-center gap-1 text-xs font-book text-muted-foreground hover:text-foreground"
       >
         {open ? "Hide the reason" : "Show the reason"}
         <ChevronDown className={cn("size-3 transition-transform", open && "rotate-180")} aria-hidden />
       </button>
-      {open && <p className="rounded-md border bg-muted/40 px-3 py-2 text-xs leading-relaxed break-words text-muted-foreground">{detail}</p>}
+      {open && <p className="rounded-lg bg-muted/70 px-3 py-2 text-xs leading-relaxed break-words text-muted-foreground">{detail}</p>}
     </div>
   );
 }
@@ -288,9 +288,9 @@ function ProblemCard({ problem, actions }: { problem: Problem; actions: ProblemA
   const view = views[problem.kind];
   const Icon = view.icon;
   return (
-    <div role="status" className="flex flex-col gap-3.5 rounded-lg border bg-card p-4">
+    <div role="status" className="flex flex-col gap-3.5 rounded-xl border bg-card p-4 sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="grid size-8 shrink-0 place-items-center rounded-md border bg-background">
+        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-kopi-soft">
           <Icon className="size-4 text-kopi" aria-hidden />
         </span>
         <div className="flex min-w-0 flex-col gap-0.5 pt-px">
@@ -331,11 +331,11 @@ export function UserMessage({ text }: { text: string }) {
   const long = text.length > LONG_MESSAGE;
   return (
     <div className="flex flex-col items-end gap-1">
-      <div className="max-w-[85%] rounded-lg bg-muted px-3.5 py-2 sm:max-w-[80%]">
+      <div className="max-w-[85%] rounded-2xl rounded-br-md bg-muted px-4 py-2.5 sm:max-w-[80%]">
         <p className={cn("text-[14px] leading-relaxed break-words whitespace-pre-wrap", long && !open && "line-clamp-4")}>{text}</p>
       </div>
       {long && (
-        <button type="button" onClick={() => setOpen((v) => !v)} className="px-1 text-xs font-medium text-muted-foreground hover:text-foreground">
+        <button type="button" onClick={() => setOpen((v) => !v)} className="px-1 text-xs font-book text-muted-foreground hover:text-foreground">
           {open ? "Show less" : "Show the whole request"}
         </button>
       )}
@@ -367,7 +367,7 @@ export function AssistantTurn({
         group.kind === "text" ? (
           <Markdown key={i} text={group.text} className="text-[15px] leading-[1.6]" />
         ) : group.kind === "steps" ? (
-          <ul key={i} className="flex flex-col divide-y overflow-hidden rounded-lg border bg-card" aria-label="What Kopi did">
+          <ul key={i} className="flex flex-col divide-y divide-border/70 overflow-hidden rounded-xl border bg-card" aria-label="What Kopi did">
             {group.steps.map((step) => (
               <StepRow key={step.id} step={step} />
             ))}

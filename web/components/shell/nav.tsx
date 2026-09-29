@@ -51,11 +51,11 @@ function NavLink({ item, active, count, onNavigate }: { item: Item; active: bool
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex h-8 items-center gap-2.5 rounded-md px-2 text-[13.5px] font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-hover",
-        active && "bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent",
+        "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13.5px] font-book text-sidebar-foreground transition-colors hover:bg-sidebar-hover",
+        active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground hover:bg-sidebar-accent",
       )}
     >
-      <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      <Icon className={cn("size-4 shrink-0", active ? "text-foreground/80" : "text-muted-foreground")} aria-hidden />
       <span className="min-w-0 flex-1 truncate">{item.label}</span>
       {count ? (
         <span className="text-xs text-muted-foreground tabular-nums" aria-label={`${count} tracked`}>
@@ -74,7 +74,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex h-7 w-fit items-center gap-1 rounded-md px-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+        className="flex h-7 w-fit items-center gap-1 rounded-md px-2.5 text-[12.5px] font-book text-muted-foreground transition-colors hover:text-foreground"
       >
         {title}
         <ChevronDown className={cn("size-3 transition-transform", !open && "-rotate-90")} aria-hidden />

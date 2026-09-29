@@ -63,7 +63,7 @@ function LicenceCard({ licence }: { licence: Licence }) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="text-[13px] font-book text-muted-foreground transition-colors hover:text-foreground"
         >
           {open ? "Show less" : "Show details"}
         </button>
@@ -72,17 +72,17 @@ function LicenceCard({ licence }: { licence: Licence }) {
         href={licence.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-1.5 text-[13px] font-medium text-kopi hover:underline"
+        className="flex items-center gap-1.5 text-[13px] font-book text-kopi hover:underline"
       >
         {/gobusiness/i.test(licence.url) ? "View on GoBusiness" : "Official page"} <ExternalLink className="size-3.5" aria-hidden />
       </a>
     </>
   );
   return (
-    <li className="flex flex-col gap-3 border-b px-4 py-4 last:border-b-0 sm:px-5">
+    <li className="flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex items-start justify-between gap-6">
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h3 className="text-[14px] leading-snug font-medium break-words">{licence.name}</h3>
+          <h3 className="text-[14px] leading-snug font-medium tracking-[-0.005em] break-words">{licence.name}</h3>
           <p className="text-[13px] text-muted-foreground">{licence.agency}</p>
         </div>
         <div className="hidden shrink-0 items-center gap-5 sm:flex">{actions}</div>
@@ -90,7 +90,7 @@ function LicenceCard({ licence }: { licence: Licence }) {
       {licence.description && (
         <p className={cn("max-w-3xl text-[13px] break-words whitespace-pre-line text-muted-foreground", !open && "line-clamp-2")}>{licence.description}</p>
       )}
-      <dl className="grid grid-cols-1 gap-3 rounded-md bg-muted/60 p-3 sm:grid-cols-3 sm:gap-6 sm:p-3.5">
+      <dl className="grid grid-cols-1 gap-3 rounded-lg bg-muted/70 p-3.5 sm:grid-cols-3 sm:gap-6 sm:px-4">
         <LicenceFact label="Fee" value={fee} open={open} />
         <LicenceFact label="Processing time" value={licence.processing_time} open={open} />
         <LicenceFact label="Validity" value={licence.validity} open={open} />
@@ -105,7 +105,7 @@ function LicenceCard({ licence }: { licence: Licence }) {
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="mr-1 text-xs text-muted-foreground">Needs first</span>
           {licence.prerequisites.map((p) => (
-            <span key={p} className="rounded-md border bg-card px-1.5 py-0.5 text-xs font-medium">
+            <span key={p} className="rounded-full border bg-card px-2.5 py-0.5 text-xs font-book">
               {p}
             </span>
           ))}
@@ -120,7 +120,7 @@ function CardsSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading">
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="flex flex-col gap-4 rounded-lg border bg-card p-5">
+        <div key={i} className="flex flex-col gap-4 rounded-xl border bg-card p-5">
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-1/2" />
             <Skeleton className="h-3 w-1/3" />
@@ -136,7 +136,7 @@ function LicenceList({ licences }: { licences: Licence[] }) {
   const [count, setCount] = useState(PAGE);
   return (
     <div className="flex flex-col gap-4">
-      <ul className="flex flex-col overflow-hidden rounded-lg border bg-card">
+      <ul className="flex flex-col divide-y divide-border/70 overflow-hidden rounded-xl border bg-card">
         {licences.slice(0, count).map((licence) => (
           <LicenceCard key={licence.id} licence={licence} />
         ))}
@@ -145,7 +145,7 @@ function LicenceList({ licences }: { licences: Licence[] }) {
         <button
           type="button"
           onClick={() => setCount((n) => n + PAGE)}
-          className="w-fit rounded-md border bg-card px-3 py-1.5 text-[13px] font-medium transition-colors hover:bg-accent"
+          className="h-8 w-fit rounded-full border bg-card px-3.5 text-[13px] font-book transition-colors hover:bg-muted"
         >
           Show {Math.min(PAGE, licences.length - count)} more of {licences.length - count}
         </button>
@@ -173,7 +173,7 @@ function Browse({ api, attempt, onRetry, onPick }: { api: KopiApi; attempt: numb
             key={example}
             type="button"
             onClick={() => onPick(example)}
-            className="h-7 rounded-md border bg-card px-2.5 text-[13px] transition-colors hover:bg-accent hover:text-kopi"
+            className="h-8 rounded-full border bg-card px-3.5 text-[13px] transition-colors hover:border-kopi/30 hover:bg-kopi-soft/60 hover:text-kopi"
           >
             {example}
           </button>
@@ -183,7 +183,7 @@ function Browse({ api, attempt, onRetry, onPick }: { api: KopiApi; attempt: numb
       <section aria-labelledby="catalogue" className="flex flex-col gap-4">
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-0.5">
-            <h2 id="catalogue" className="text-[14px] font-semibold tracking-[-0.01em]">
+            <h2 id="catalogue" className="text-[15px] font-medium tracking-[-0.01em]">
               All licences
             </h2>
             <p className="text-[13px] text-muted-foreground">
