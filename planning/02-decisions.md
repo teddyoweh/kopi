@@ -133,3 +133,14 @@ read-only Kopi MCP tool that calls the API with the session's token, and anythin
 pre-approved is denied (`dontAsk`).
 **Why:** the agent reads untrusted notice text. The worst a hostile notice can make it
 do is read other public tenders and write a markdown file in its own drafts folder.
+
+## D17 — A sandbox per conversation, a scoped token per turn (KP-12)
+**Picked:** a Modal Sandbox per chat session, with egress limited to Anthropic and the
+Kopi API. Each turn is a fresh runner process with a 20-minute read-only token, and
+drafts are copied to a Modal Dict after every turn.
+**Rejected:** running the agent inside the API container. It would share the API's
+secrets and network, and one stuck agent would stall search for everyone.
+**Why:** the agent's blast radius is its own sandbox. It can't reach GeBIZ, GitHub or
+anything but Claude and Kopi's read routes (all three blocked hosts were checked from
+inside a live sandbox), and its token can't chat, read drafts or spend Claude on
+overviews.

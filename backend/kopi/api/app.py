@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 
-from kopi.api.auth import Authed, check_code, issue
+from kopi.api.auth import AppOnly, Authed, check_code, issue, require_token
 from kopi.api.limits import LIMITS, RateLimiter, limited
 from kopi.config import Settings
 from kopi.models import (
@@ -30,6 +30,7 @@ from kopi.models import (
     SessionFile,
     TenderDetail,
 )
+from kopi.sandbox import CopilotUnavailable, LimitReached
 from kopi.store import FixtureStore, NotFound, Store
 
 
@@ -47,8 +48,10 @@ def sse(event: ChatEvent) -> str:
     return f"event: {event.type.value}\ndata: {event.model_dump_json(exclude_none=True)}\n\n"
 
 
-class CopilotUnavailable(RuntimeError):
-    """Raised by a store whose copilot is not wired; the chat route answers 503."""
+def caller_of(request: Request) -> str:
+    """Who is chatting, for per-caller caps: the token itself (each sign-in gets its own)."""
+    header = request.headers.get("authorization", "")
+    return header.removeprefix("Bearer ").strip() or (request.client.host if request.client else "local")
 
 
 def default_store(settings: Settings) -> Store:
@@ -121,7 +124,7 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
     def tender_for_profile(request: Request, doc_no: str, body: OverviewRequest) -> TenderDetail:
         return db(request).tender(doc_no, body.profile)
 
-    @app.post("/tenders/{doc_no}/overview", response_model=Overview, dependencies=[Authed, limited("overview")])
+    @app.post("/tenders/{doc_no}/overview", response_model=Overview, dependencies=[AppOnly, limited("overview")])
     def overview(request: Request, doc_no: str, body: OverviewRequest) -> Overview:
         return db(request).overview(doc_no, body.profile)
 
@@ -143,14 +146,16 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
                         limit: int = Query(10, le=50)) -> list[Licence]:
         return db(request).search_licences(q, limit)
 
-    @app.post("/chat", dependencies=[Authed, limited("chat")], response_class=StreamingResponse,
+    @app.post("/chat", dependencies=[AppOnly, limited("chat")], response_class=StreamingResponse,
               responses={200: {"content": {"text/event-stream": {}}, "description": "ChatEvent per SSE message"}})
     async def chat(request: Request, body: ChatRequest) -> StreamingResponse:
-        events = db(request).chat(body)
+        events = db(request).chat(body, caller=caller_of(request))
         try:
             first = await anext(events)
         except CopilotUnavailable as error:
             raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(error)) from None
+        except LimitReached as error:
+            raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, str(error)) from None
         except StopAsyncIteration:
             first = None
 
@@ -163,11 +168,11 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
 
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 
-    @app.get("/sessions/{session_id}/files", response_model=list[SessionFile], dependencies=[Authed])
+    @app.get("/sessions/{session_id}/files", response_model=list[SessionFile], dependencies=[AppOnly])
     def session_files(request: Request, session_id: str) -> list[SessionFile]:
         return db(request).session_files(session_id)
 
-    @app.get("/sessions/{session_id}/files/{name}", dependencies=[Authed], response_class=Response)
+    @app.get("/sessions/{session_id}/files/{name}", dependencies=[AppOnly], response_class=Response)
     def session_file(request: Request, session_id: str, name: str) -> Response:
         if "/" in name or name.startswith("."):
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "bad file name")

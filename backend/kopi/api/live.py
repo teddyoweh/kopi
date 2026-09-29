@@ -15,11 +15,12 @@ from collections.abc import AsyncIterator, Callable
 from datetime import UTC, datetime
 from pathlib import Path
 
+import anyio
 import numpy as np
 
 from kopi import eligibility, market
 from kopi.bundle import read_bundle
-from kopi.api.app import CopilotUnavailable
+from kopi.sandbox import Copilot, CopilotUnavailable
 from kopi.config import DATA_DIR
 from kopi.index import AWARDS, LICENCES, NOTICES, notice_filter, query
 from kopi.models import (
@@ -60,6 +61,7 @@ class LiveStore:
         reload: Callable[[], None] | None = None,
         registry: eligibility.Registry | None = None,
         refresh_seconds: float = 300,
+        copilot: Copilot | None = None,
     ) -> None:
         self.db = db
         self.embed_query = embed_query
@@ -68,6 +70,7 @@ class LiveStore:
         self.reload = reload
         self.registry = registry
         self.refresh_seconds = refresh_seconds
+        self.copilot = copilot
         self._loaded_at = 0.0
         self.notices: dict[str, Notice] = {}
         self.catalogue: list[Licence] = []
@@ -199,15 +202,23 @@ class LiveStore:
 
     # ------------------------------------------------------------ copilot (KP-11/KP-12)
 
-    async def chat(self, request: ChatRequest) -> AsyncIterator[ChatEvent]:
-        raise CopilotUnavailable("the copilot is not deployed yet")
-        yield  # pragma: no cover  (makes this an async generator)
+    async def chat(self, request: ChatRequest, caller: str = "local") -> AsyncIterator[ChatEvent]:
+        """One copilot turn. The sandbox API is blocking, so each event is pulled on a worker thread."""
+        if self.copilot is None:
+            raise CopilotUnavailable("the copilot is not configured on this deployment")
+        events = self.copilot.turn(request, caller)
+        while (event := await anyio.to_thread.run_sync(next, events, None)) is not None:
+            yield event
 
     def session_files(self, session_id: str) -> list[SessionFile]:
-        return []
+        if self.copilot is None:
+            return []
+        return self.copilot.files(session_id)
 
     def session_file(self, session_id: str, name: str) -> bytes:
-        raise NotFound(f"no file {name} in session {session_id}")
+        if self.copilot is None:
+            raise NotFound(f"no file {name} in session {session_id}")
+        return self.copilot.file(session_id, name)
 
 
 def needle_filter(filters: SearchFilters) -> dict | None:
@@ -226,7 +237,7 @@ def needle_filter(filters: SearchFilters) -> dict | None:
     return base or None
 
 
-def from_environment(reload: Callable[[], None] | None = None) -> LiveStore:
+def from_environment(reload: Callable[[], None] | None = None, copilot: Copilot | None = None) -> LiveStore:
     """The store the deployed API uses: NeedleDB from NEEDLEDB_URL/NEEDLEDB_API_KEY, Qwen3 on CPU."""
     import os
     from functools import lru_cache
@@ -256,4 +267,5 @@ def from_environment(reload: Callable[[], None] | None = None) -> LiveStore:
         reload=reload,
         # Local disk, not the Volume: an open file on the Volume blocks `reload()`.
         registry=LiveRegistry(http, cache_dir=Path("/tmp/kopi-registers")),
+        copilot=copilot,
     )
