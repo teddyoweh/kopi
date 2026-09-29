@@ -181,7 +181,8 @@ function Workspace({ doc }: { doc: string }) {
             }
             dispatch({ type: "event", turnId, event });
             if (event.type === "tool_call") lastTool = event.tool;
-            if (event.type === "tool_result" && lastTool && MEMORY_TOOLS.has(lastTool) && sid) refreshMemory(sid);
+            const tool = event.type === "tool_result" ? (event.tool ?? lastTool) : undefined;
+            if (tool && MEMORY_TOOLS.has(tool) && sid) refreshMemory(sid);
             if (event.type === "file" && event.file && sid) {
               recordDraft(doc, sid, event.file);
               refreshFiles(sid);
