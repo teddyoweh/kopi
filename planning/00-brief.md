@@ -2,6 +2,7 @@
 
 **Received:** Tue 29 Sep 2026 · **Due:** Thu 1 Oct 2026
 **Assessment:** Pragnition Labs — AI-Native Builder Technical Assessment
+**Project:** Kopi — a copilot for Singapore government tenders
 
 ## What they asked for
 
@@ -18,37 +19,44 @@ whether it works and is understood quickly, whether the technical choices are
 simple, maintainable and secure, sensible trade-offs, and whether I can say where the
 AI helped, where it failed, and how I corrected it.
 
+## The product
+
+Pragnition builds AI systems for Singapore government agencies. The other side of
+that market is the supplier. Every day GeBIZ publishes new procurement opportunities
+(53 on the day I looked), and a small firm's bid team has to read all of them, work out
+which ones it is even eligible for, find the registrations and licences each one
+needs, and then produce a submission against a deadline.
+
+Kopi does that work alongside them, in four parts:
+
+1. **Overview** — every open GeBIZ opportunity, indexed and searchable by meaning,
+   with an AI overview per tender: what is being bought, who is eligible, how it fits
+   the company, and what similar tenders were actually awarded for.
+2. **Permits and licences** — what registrations (GRA supply heads, BCA workheads)
+   and licences a tender needs, whether the company holds them, and how to get them.
+3. **Document drafting** — a copilot that drafts the working documents of a bid:
+   clarification questions, a compliance matrix, a cover letter, a proposal outline.
+4. **Submissions** — a checklist and pack per tender built from the notice itself
+   (items to respond, envelopes, validity, closing time), tracked to the deadline.
+   The final submission stays with the person on GeBIZ; Kopi prepares, it does not submit.
+
 ## What winning looks like
 
-A reviewer at Pragnition opens the repo and, inside five minutes:
-
-1. understands the problem from the first screen of the README,
-2. runs `make demo` with **no API key and no network** and sees a real report,
-3. opens `planning/` and can follow the thinking: why this problem, what I found, what
-   I decided, how the work was split between agents, what went wrong,
-4. finds the session logs, readable and scrubbed of secrets.
-
-## Why this problem
-
-Pragnition builds AI systems for Singapore government agencies and large enterprises.
-The other side of that market is the supplier: every day GeBIZ publishes dozens of new
-procurement opportunities (53 on the day I looked), and a small firm's bid manager has
-to read all of them to find the two worth a response. That reading is exactly the kind
-of work that "wastes people's time" and that an AI system can take over without taking
-the decision away from the person.
-
-So the product is a **triage tool for a supplier's bid manager**: it reads today's
-GeBIZ opportunities against a company's capability profile and returns a ranked
-shortlist with a bid / maybe / no-bid call, the evidence for it, the requirements to
-check, and what similar tenders were awarded for in the past — so the person reads
-five memos instead of fifty notices.
+A reviewer at Pragnition opens the live app, searches "AI chatbot for citizen
+services", opens a tender, reads an overview whose every quote is verified against
+the notice, asks the copilot to draft clarification questions, and downloads the
+draft, in under five minutes. Then they open `planning/` and can follow the thinking:
+what I found, what I decided and changed, how the work was split between agents,
+where the agents went wrong and how it was caught.
 
 ## Constraints I set myself
 
-- Small and finished beats big and 90% there. Target: one CLI, one report, done well.
-- Every AI claim must be checkable. Quotes the model gives as evidence are verified
-  against the source text; anything unverified is shown as unverified.
-- Runs for a reviewer with nothing installed but Python and `uv`.
-- Respect the source: GeBIZ notices carry a no-republication clause and name
-  officials. Nothing scraped from GeBIZ is committed or published; contact details
-  are dropped at parse time.
+- Every AI claim is checkable. Quotes cited as evidence are verified against the
+  source; anything unverified is shown as unverified.
+- Everything a rule can decide, a rule decides: eligibility gates are code, not prompts.
+- Least privilege for the agent: it runs in a Modal sandbox with read-only tools and
+  no web access, and the notice text it reads is treated as untrusted.
+- Respect the source: officials' contact details are dropped at scrape time, every
+  tender links back to GeBIZ, and the app sits behind an access code, not on the open
+  web (GeBIZ notices carry a no-republication clause).
+- Finished beats big. Each of the four parts is thin and works end to end.
