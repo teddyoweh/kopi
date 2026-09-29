@@ -151,3 +151,18 @@ notice as the model saw it and the profile. Any miss caps BID at MAYBE and says 
 **Why:** the brief drives a bid or no-bid decision, so its evidence must be real. Over
 10 live overviews, every verified quote was in the notice. Code can check that the words
 exist, but not that they prove the point, so the UI calls a quote evidence, not proof.
+
+## D19 — Claude Opus 5.5 for the copilot and overviews
+**Picked:** `claude-opus-5-5`, overridable with `KOPI_MODEL`.
+**Rejected:** Sonnet, which I first wrote into the plan without being asked; Teddy never
+chose it.
+**Why:** it is the current default model for new Claude work. Measured cost is about
+$0.055 per overview and $0.18 per copilot turn, well within a demo budget, and overviews
+are cached.
+
+## D20 — Publish the static export, not the source
+**Picked:** build `web/` locally with `.env.production` holding the live API origin, and
+publish `web/out` as a plain static folder to kopi.unv.run.
+**Why:** the hosting tool's build step can't find Node on this machine. A static export
+needs no build on the host, is identical to what was QA'd, and can't carry a secret,
+because the only variable baked in is the public API origin.
