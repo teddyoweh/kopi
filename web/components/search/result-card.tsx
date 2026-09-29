@@ -33,6 +33,15 @@ export function queryWords(q: string): string[] {
   return (q.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((w) => !stop.has(w) && w.length > 1);
 }
 
+const plain = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+/** Many GeBIZ notices repeat the title as their description; a snippet that only repeats it adds nothing. */
+export function addsToTitle(snippet: string, title: string): boolean {
+  const a = plain(snippet);
+  const b = plain(title);
+  return !(a === b || b.startsWith(a) || a.startsWith(b) && a.length - b.length < 24);
+}
+
 export type CardProps = {
   notice: NoticeSummary;
   score?: number;
@@ -50,6 +59,7 @@ export type CardProps = {
  */
 export const ResultCard = forwardRef<HTMLElement, CardProps>(function ResultCard({ notice, score, highlights, words, insight, selected, onSelect }, ref) {
   const ready = insight && insight !== "failed" ? insight : null;
+  const snippet = ready?.snippet && addsToTitle(ready.snippet, notice.title) ? ready.snippet : null;
   return (
     <article
       ref={ref}
@@ -77,9 +87,9 @@ export const ResultCard = forwardRef<HTMLElement, CardProps>(function ResultCard
             <Highlighted text={displayTitle(notice.title)} words={highlights} />
           </Link>
         </h3>
-        {ready?.snippet ? (
+        {snippet ? (
           <p className="line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
-            <Highlighted text={ready.snippet} words={words} />
+            <Highlighted text={snippet} words={words} />
           </p>
         ) : insight === undefined ? (
           <span className="flex flex-col gap-1.5 py-0.5" aria-hidden>
