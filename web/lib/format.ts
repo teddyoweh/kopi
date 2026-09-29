@@ -87,3 +87,34 @@ export function categoryLeaf(category: string | null | undefined): string {
   if (!category) return "";
   return category.split("⇒").pop()!.trim();
 }
+
+/** A copilot turn's cost, which the API reports in US dollars: "US$0.18". */
+export function usd(value: number): string {
+  if (value > 0 && value < 0.01) return "under US$0.01";
+  return `US$${value.toFixed(2)}`;
+}
+
+/** "840 B", "2.4 KB", "1.1 MB". */
+export function fileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1).replace(/\.0$/, "")} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1).replace(/\.0$/, "")} MB`;
+}
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+/**
+ * Time left until a deadline: the lead figure ("6 days", "5 hours", "12 minutes") and the
+ * remainder ("4 hours", "12 minutes"), or `closed`. Absolute time, so the zone does not
+ * matter; the deadline itself is shown with `dateTime` in SGT beside it.
+ */
+export function timeLeft(iso: string, now = Date.now()): { closed: boolean; lead: string; rest: string | null; hours: number } {
+  const ms = new Date(iso).getTime() - now;
+  if (ms <= 0) return { closed: true, lead: "Closed", rest: null, hours: 0 };
+  const minutes = Math.floor(ms / 60_000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  if (days >= 1) return { closed: false, lead: plural(days, "day"), rest: hours % 24 ? plural(hours % 24, "hour") : null, hours };
+  if (hours >= 1) return { closed: false, lead: plural(hours, "hour"), rest: minutes % 60 ? plural(minutes % 60, "minute") : null, hours };
+  return { closed: false, lead: plural(Math.max(minutes, 1), "minute"), rest: null, hours };
+}

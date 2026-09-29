@@ -1,28 +1,18 @@
 "use client";
 
-import {
-  ArrowLeft,
-  Check,
-  CircleHelp,
-  ExternalLink,
-  FileSearch,
-  ListChecks,
-  MessageCircleQuestion,
-  Sparkles,
-  TableProperties,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowLeft, Check, CircleHelp, ExternalLink, FileSearch, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useApi, useKopi } from "@/components/kopi-provider";
 import { EmptyState, ErrorState } from "@/components/states";
+import { AiOverview, TenderActions, TrackButton } from "@/components/tender-ai";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { EligibilityCheck, MarketContext, Notice, Profile } from "@/lib/api";
 import { categoryLeaf, closingLabel, dateTime, money, moneyShort } from "@/lib/format";
+import { rememberTitle } from "@/lib/submissions";
 import { useAsync } from "@/lib/use-async";
 import { cn } from "@/lib/utils";
 
@@ -269,71 +259,6 @@ function Market({ market, agency }: { market: MarketContext; agency: string }) {
   );
 }
 
-// ---------------------------------------------------------------- coming with the copilot
-
-function ComingLabel() {
-  return <span className="rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">Coming next</span>;
-}
-
-function AiOverviewComing({ profile }: { profile: Profile }) {
-  return (
-    <section aria-labelledby="ai-overview" className="flex flex-col gap-3 rounded-xl bg-secondary px-5 py-5 sm:px-6">
-      <div className="flex items-center gap-3">
-        <span className="grid size-8 place-items-center rounded-lg bg-background">
-          <Sparkles className="size-4 text-kopi" aria-hidden />
-        </span>
-        <h2 id="ai-overview" className="text-base font-semibold tracking-tight">
-          AI overview
-        </h2>
-        <ComingLabel />
-      </div>
-      <p className="max-w-2xl text-sm text-muted-foreground">
-        A short read of this notice for {profile.name}: what the agency is buying, who can bid, how well it fits and what could go wrong,
-        with every claim quoted from the notice. It arrives with the copilot; until then, the notice itself is below.
-      </p>
-    </section>
-  );
-}
-
-const ACTIONS: { label: string; what: string; icon: LucideIcon }[] = [
-  { label: "Draft clarification questions", what: "Questions for the agency, from gaps in the notice", icon: MessageCircleQuestion },
-  { label: "Draft compliance matrix", what: "Each requirement, and how you meet it", icon: TableProperties },
-  { label: "Build submission checklist", what: "Every document and form to send, and when", icon: ListChecks },
-];
-
-function ActionsComing() {
-  return (
-    <section aria-labelledby="actions" className="flex flex-col gap-4 rounded-xl bg-secondary p-5">
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-3">
-          <h2 id="actions" className="text-base font-semibold tracking-tight">
-            Prepare a response
-          </h2>
-          <ComingLabel />
-        </div>
-        <p className="text-sm text-muted-foreground">Drafts the copilot will write from this notice and your profile.</p>
-      </div>
-      <ul className="flex flex-col gap-1.5">
-        {ACTIONS.map(({ label, what, icon: Icon }) => (
-          <li key={label}>
-            <button
-              type="button"
-              disabled
-              className="flex w-full cursor-not-allowed items-start gap-3 rounded-lg bg-background px-3.5 py-3 text-left"
-            >
-              <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
-              <span className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium text-foreground/70">{label}</span>
-                <span className="text-xs text-muted-foreground">{what}</span>
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 // ---------------------------------------------------------------- page
 
 function TenderSkeleton() {
@@ -362,6 +287,10 @@ export function TenderView() {
   const { profile } = useKopi();
   const [attempt, setAttempt] = useState(0);
   const state = useAsync(async () => (api && doc ? api.tender(doc, profile) : null), [api, doc, profile, attempt]);
+  const loaded = state.data?.notice;
+  useEffect(() => {
+    if (loaded) rememberTitle(loaded.doc_no, loaded.title);
+  }, [loaded]);
 
   if (!doc) {
     return (
@@ -405,14 +334,17 @@ export function TenderView() {
           <h1 className="max-w-4xl text-2xl leading-tight font-semibold tracking-tight break-words sm:text-[28px]">{notice.title}</h1>
           <p className="text-[15px] text-muted-foreground">{notice.agency}</p>
         </div>
-        <a
-          href={notice.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-fit items-center gap-1.5 text-sm font-medium text-kopi hover:underline"
-        >
-          View on GeBIZ <ExternalLink className="size-3.5" aria-hidden />
-        </a>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <TrackButton notice={notice} />
+          <a
+            href={notice.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-fit items-center gap-1.5 text-sm font-medium text-kopi hover:underline"
+          >
+            View on GeBIZ <ExternalLink className="size-3.5" aria-hidden />
+          </a>
+        </div>
       </div>
 
       <Facts notice={notice} />
@@ -421,7 +353,11 @@ export function TenderView() {
         <div className="flex min-w-0 flex-col gap-10">
           <Eligibility checks={eligibility} notice={notice} profile={profile} />
 
-          <AiOverviewComing profile={profile} />
+          <AiOverview doc={notice.doc_no} profile={profile} />
+
+          <div className="lg:hidden">
+            <TenderActions notice={notice} profile={profile} />
+          </div>
 
           {notice.description && (
             <section className="flex max-w-3xl flex-col gap-2">
@@ -459,8 +395,8 @@ export function TenderView() {
           {market && market.similar_count > 0 && <Market market={market} agency={notice.agency} />}
         </div>
 
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-20 lg:self-start">
-          <ActionsComing />
+        <aside className="hidden flex-col gap-4 lg:sticky lg:top-20 lg:flex lg:self-start">
+          <TenderActions notice={notice} profile={profile} />
         </aside>
       </div>
     </article>

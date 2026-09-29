@@ -123,6 +123,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tenders/{doc_no}/checklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Checklist */
+        post: operations["checklist_tenders__doc_no__checklist_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/eligibility": {
         parameters: {
             query?: never;
@@ -301,6 +318,25 @@ export interface components {
              * @description The tender the conversation is about, if any
              */
             doc_no?: string | null;
+        };
+        /** ChecklistItem */
+        ChecklistItem: {
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+            /**
+             * Detail
+             * @default
+             */
+            detail: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "notice" | "eligibility" | "drafting" | "submission";
+            /** Due */
+            due?: string | null;
         };
         /** EligibilityCheck */
         EligibilityCheck: {
@@ -977,6 +1013,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Overview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checklist_tenders__doc_no__checklist_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doc_no: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OverviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistItem"][];
                 };
             };
             /** @description Validation Error */

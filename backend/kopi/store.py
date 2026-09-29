@@ -9,18 +9,16 @@ from __future__ import annotations
 
 import json
 import re
-from collections import Counter
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime
 from functools import cached_property
-from statistics import median
 from typing import Protocol
 
 from kopi.checklist import submission_checklist
 from kopi.config import FIXTURES_DIR
+from kopi.market import market_context
 from kopi.models import (
     Award,
-    AwardExample,
     ChatEvent,
     ChatEventType,
     ChatRequest,
@@ -40,9 +38,9 @@ from kopi.models import (
     SearchHit,
     SearchResponse,
     SessionFile,
-    SupplierWins,
     TenderDetail,
 )
+from kopi.sources.awards import group_tenders
 
 
 class NotFound(LookupError):
@@ -196,32 +194,11 @@ class FixtureStore:
         )
 
     def similar_awards(self, query: str, agency: str | None, k: int) -> MarketContext:
+        """Word-overlap ranking over the fixture awards, then the same market maths as live."""
         terms = tokens(query)
-        ranked = sorted(self.awards, key=lambda a: -overlap_score(terms, a.tender_description))[:k]
-        ranked = [a for a in ranked if overlap_score(terms, a.tender_description) > 0]
-        amounts = sorted(a.awarded_amt for a in ranked if a.awarded_amt)
-        wins = Counter(a.supplier_name for a in ranked if a.supplier_name)
-        incumbents = Counter(a.supplier_name for a in ranked if agency and a.agency == agency and a.supplier_name)
-        return MarketContext(
-            similar_count=len({a.tender_no for a in ranked}),
-            median_amount=median(amounts) if amounts else None,
-            p25_amount=amounts[len(amounts) // 4] if amounts else None,
-            p75_amount=amounts[(3 * len(amounts)) // 4] if amounts else None,
-            top_suppliers=[SupplierWins(supplier=s, wins=n) for s, n in wins.most_common(5)],
-            agency_incumbents=[SupplierWins(supplier=s, wins=n) for s, n in incumbents.most_common(3)],
-            no_award_share=None,
-            examples=[
-                AwardExample(
-                    tender_no=a.tender_no,
-                    description=a.tender_description,
-                    agency=a.agency,
-                    year=a.award_date.year if a.award_date else None,
-                    amount=a.awarded_amt,
-                    suppliers=[a.supplier_name],
-                )
-                for a in ranked[:3]
-            ],
-        )
+        scored = [(overlap_score(terms, t.description), t) for t in group_tenders(self.awards)]
+        ranked = [t for score, t in sorted(scored, key=lambda pair: -pair[0]) if score > 0][:k]
+        return market_context(ranked, agency)
 
     def licences(self, limit: int, offset: int) -> list[Licence]:
         return self._licences[offset : offset + limit]
