@@ -95,27 +95,27 @@ into the repo, which most of their terms forbid and which would go stale.
 Only a register that answered, or a profile that states the fact, can give `unmet`.
 Failed HTTP calls raise instead of parsing an error page as "holds nothing".
 
-## D12 — Qwen3's generic query instruction, measured (KP-6)
+## D14 — Qwen3's generic query instruction, measured (KP-6)
 **Picked:** `SEARCH_TASK = "Given a web search query, retrieve relevant passages that answer the query"`.
 **Rejected:** a domain instruction written for Kopi, which scored nDCG@10 0.444 against 0.695.
 **Why:** measured on 30 supplier queries over 12,052 awarded tenders (evals/RESULTS.md).
 With the generic instruction, Qwen3-0.6B beats BGE-small (0.609) and BM25 (0.594), which
 confirms D3 on our own data rather than MTEB alone.
 
-## D13 — Kopi runs in the kryptonairc-lc Modal workspace
+## D15 — Kopi runs in the kryptonairc-lc Modal workspace
 **Picked:** the kryptonairc-lc workspace, with every resource prefixed `kopi`.
 **Why:** Teddy's call on 29 Sep. The personal teddyoweh workspace is paused on billing,
 and he chose this one over the Spawn Labs workspaces. Kopi touches only its own `kopi*`
 app, Volume and secrets there, so its keys and data share nothing with anything else in
 the workspace.
 
-## D14 — Hybrid search, measured (KP-8)
+## D16 — Hybrid search, measured (KP-8)
 **Picked:** dense top 50 from NeedleDB, plus BM25 over titles at weight 0.05, plus a
 fast path for tender numbers.
 **Why:** on evals/, nDCG@10 goes 0.695 → 0.715 with P@10 unchanged; weights of 0.1–0.3
 were no better. Keyword matches break ties toward exact words without overriding meaning.
 
-## D15 — The Volume stores data; containers never hold files open on it (KP-8)
+## D17 — The Volume stores data; containers never hold files open on it (KP-8)
 **Picked:**
 - the embedding model baked into the API image;
 - registry caches in /tmp;
@@ -126,7 +126,7 @@ model weights count, so the API would never have seen a new ingest. Every file o
 the Volume is also a network round trip: 732 single-file reads took 37.5 s, and one
 bundle takes 0.3 s.
 
-## D16 — The copilot is locked down by construction (KP-11)
+## D18 — The copilot is locked down by construction (KP-11)
 **Picked:** the agent's only built-in tools are Read, Write, Edit and Glob, fenced by a
 PreToolUse hook to the workspace (writes to drafts/ only). Every other capability is a
 read-only Kopi MCP tool that calls the API with the session's token, and anything not
@@ -134,7 +134,7 @@ pre-approved is denied (`dontAsk`).
 **Why:** the agent reads untrusted notice text. The worst a hostile notice can make it
 do is read other public tenders and write a markdown file in its own drafts folder.
 
-## D17 — A sandbox per conversation, a scoped token per turn (KP-12)
+## D19 — A sandbox per conversation, a scoped token per turn (KP-12)
 **Picked:** a Modal Sandbox per chat session, with egress limited to Anthropic and the
 Kopi API. Each turn is a fresh runner process with a 20-minute read-only token, and
 drafts are copied to a Modal Dict after every turn.
@@ -144,7 +144,7 @@ secrets and network, and one stuck agent would stall search for everyone.
 anything but Claude and Kopi's read routes (all three blocked hosts were checked from
 inside a live sandbox), and its token can't chat, read drafts or spend Claude on
 overviews.
-## D18 — The overview's evidence is checked by code, not trusted (KP-10)
+## D20 — The overview's evidence is checked by code, not trusted (KP-10)
 **Picked:** the overview is a one-shot Claude call with no tools that returns structured
 output. Code then checks every quote word for word, after normalising, against the
 notice as the model saw it and the profile. Any miss caps BID at MAYBE and says so.
@@ -152,7 +152,7 @@ notice as the model saw it and the profile. Any miss caps BID at MAYBE and says 
 10 live overviews, every verified quote was in the notice. Code can check that the words
 exist, but not that they prove the point, so the UI calls a quote evidence, not proof.
 
-## D19 — Claude Opus 5.5 for the copilot and overviews
+## D21 — Claude Opus 5.5 for the copilot and overviews
 **Picked:** `claude-opus-5-5`, overridable with `KOPI_MODEL`.
 **Rejected:** Sonnet, which I first wrote into the plan without being asked; Teddy never
 chose it.
@@ -160,7 +160,7 @@ chose it.
 $0.055 per overview and $0.18 per copilot turn, well within a demo budget, and overviews
 are cached.
 
-## D20 — Publish the static export, not the source
+## D22 — Publish the static export, not the source
 **Picked:** build `web/` locally with `.env.production` holding the live API origin, and
 publish `web/out` as a plain static folder to kopi.unv.run.
 **Why:** the hosting tool's build step can't find Node on this machine. A static export

@@ -21,9 +21,12 @@ wrong**. This page pulls those together and sorts them by the thing that matters
 - **One main agent, plus task agents staffed by the board.** A task that needed a fresh
   context (the web pages, the overview) went to a subagent with a precise brief, and the
   main agent closed it only after running the check and looking at the screenshots itself.
-- **An independent reviewer agent read every finished task.** It reran the check from
+- **An independent reviewer agent read each milestone-1 task.** It reran the check from
   `main`, not the author's worktree, and filed `ok` or `concerns`. Concerns held the
-  milestone until they were fixed.
+  milestone until they were fixed. From milestone 2 on the board assigned no reviewer,
+  so those tasks rest on their own tests, the retrieval eval and live runs against the
+  deployed API. That is why the "caught only by running it for real" list below is the
+  longest.
 - **Research before code.** The data sources and the Claude Agent SDK were probed with
   real requests before anything was built (`planning/research/`).
 
@@ -115,7 +118,29 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
   so in its answer. The rules counted 24-hour periods; they now count Singapore calendar
   days.
 
+### Caught while preparing these logs (KP-16)
+- **The raw transcripts were not publishable.** They carried the agent's private memory
+  (as prompt snapshots), a Gmail search, secret *names* from another Modal workspace,
+  a client's internal skill file and GeBIZ officers' names and phone numbers. The
+  exporter keeps an allowlist of record types, masks by pattern and by literal value, and
+  refuses to write if anything on the deny list survives.
+- **The gate refused the first export**, on false alarms: JSON-escaped `\n@pytest.fixture`
+  read as an email, and a name cut in half by truncation. Both fixed in the exporter.
+- **Reading the output found what the patterns missed.** A debugging command had printed
+  another workspace's secret names, and the command that wrote the local deny list still
+  spelled out a personal detail inside its regex. The privacy review's own shell calls
+  are now omitted as a block, with a note, because their output *is* the private
+  material.
+- **Over-redaction is a bug too.** The first "high-entropy secret" rule masked tender
+  numbers and GeBIZ form ids, which would have made the logs unreadable. It now needs
+  mixed case, digits, no dictionary words and real entropy, with tests for both sides.
+- **Two decisions shared a number.** D12 and D13 were each used twice after a merge. The
+  file is renumbered D1–D22 and the references updated.
+
 ### Mistakes in the agents' own reports
+- **"A reviewer on every task" (KP-15).** The README and this journal first said an
+  independent reviewer read every task. Reviewers ran only on milestone 1; the claim was
+  corrected in KP-16 while cross-checking the board.
 - **Overview and redeploy (KP-10).** The main agent reported that AI overviews would
   switch on "with no redeploy" once the Claude secret existed. That's wrong: the secret
   is attached at deploy time. Corrected on the build feed within minutes.
