@@ -19,7 +19,6 @@ def _csv(value: str) -> list[str]:
 @dataclass(frozen=True)
 class Settings:
     store: str = field(default_factory=lambda: os.environ.get("KOPI_STORE", "fixtures"))
-    model: str = field(default_factory=lambda: os.environ.get("KOPI_MODEL", "claude-sonnet-5-5"))
     access_codes: list[str] = field(default_factory=lambda: _csv(os.environ.get("KOPI_ACCESS_CODES", "")))
     signing_key: str | None = field(default_factory=lambda: os.environ.get("KOPI_SIGNING_KEY"))
     allowed_origins: list[str] = field(
