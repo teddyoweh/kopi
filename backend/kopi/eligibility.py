@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta, timezone
 
 from kopi.models import BcaWorkhead, EligibilityCheck, EligibilityStatus, GraHead, Licence, Notice, Profile, Registration
 from kopi.sources.licences import (
@@ -32,6 +32,7 @@ from kopi.sources.licences import (
     normalise_gsr_grade,
 )
 
+SGT = timezone(timedelta(hours=8))  # GeBIZ deadlines and "today" are Singapore calendar days
 MET, UNMET, UNKNOWN = EligibilityStatus.MET, EligibilityStatus.UNMET, EligibilityStatus.UNKNOWN
 BIZSAFE_REQUIREMENT = re.compile(r"\bbizSAFE\s*(?:level\s*)?(\d|star)\b", re.IGNORECASE)
 BIZSAFE_URL = "https://www.tal.sg/wshc/programmes/bizsafe/bizsafe-e-services"
@@ -123,8 +124,8 @@ def closing_check(notice: Notice, now: datetime) -> EligibilityCheck:
     left = notice.closing - now
     if left.total_seconds() <= 0:
         return EligibilityCheck(kind="closing", requirement=f"Closes {notice.closing:%d %b %Y, %I:%M %p}", status=UNMET, reason="Closed; submissions are no longer accepted", source_url=notice.url)
-    days = left.days
-    when = "today" if days == 0 else f"in {days} day{'s' if days != 1 else ''}"
+    days = (notice.closing.astimezone(SGT).date() - now.astimezone(SGT).date()).days
+    when = {0: "today", 1: "tomorrow"}.get(days, f"in {days} days")
     return EligibilityCheck(kind="closing", requirement=f"Closes {notice.closing:%d %b %Y, %I:%M %p}", status=MET, reason=f"Open; closes {when}", source_url=notice.url)
 
 
