@@ -208,7 +208,7 @@ export function inputLines(input: Record<string, unknown>): [string, string][] {
   });
 }
 
-// ---------------------------------------------------------------- requests and starters
+// ---------------------------------------------------------------- requests and examples
 
 /** The precise requests behind the tender page's actions; each opens the copilot on that tender. */
 export function tenderAsks(doc: string, agency: string, profile: Profile) {
@@ -227,22 +227,54 @@ export function tenderAsks(doc: string, agency: string, profile: Profile) {
   };
 }
 
-export type StarterGroup = { part: string; asks: string[] };
+/** A suggested first question: the card's title and line, the part of the job it belongs to, and the request it sends. */
+export type Example = { part: "Overview" | "Permits and licences" | "Drafting" | "Submissions"; title: string; description: string; ask: string };
 
-/** Suggested first questions, one group per part of the job. */
-export function starters(profile: Profile, doc: string | null): StarterGroup[] {
+/**
+ * Three suggested first questions, one per part of the job. About the tender when one is in
+ * context; otherwise the three that fit any profile (a licence question needs a trade to ask about).
+ */
+export function examples(profile: Profile, doc: string | null): Example[] {
   if (doc) {
     return [
-      { part: "Overview", asks: [`What is ${doc} buying, and how well does it fit ${profile.name}?`] },
-      { part: "Permits and licences", asks: [`Which registrations and licences does ${doc} need, and do we hold them?`] },
-      { part: "Drafting", asks: [`Draft clarification questions for ${doc}`, `Draft a compliance matrix for ${doc}`] },
-      { part: "Submissions", asks: [`What do we need to submit for ${doc}, and by when?`] },
+      {
+        part: "Overview",
+        title: "Size up this tender",
+        description: `What it is buying, and how well it fits ${profile.name}`,
+        ask: `What is ${doc} buying, and how well does it fit ${profile.name}?`,
+      },
+      {
+        part: "Permits and licences",
+        title: "Check registrations",
+        description: "What it asks for, and whether you hold it",
+        ask: `Which registrations and licences does ${doc} need, and do we hold them?`,
+      },
+      {
+        part: "Drafting",
+        title: "Draft clarification questions",
+        description: "Questions for the agency, from gaps in the notice",
+        ask: `Draft clarification questions for ${doc}`,
+      },
     ];
   }
   return [
-    { part: "Overview", asks: [`Find open tenders closing this month that ${profile.name} can bid for`] },
-    { part: "Permits and licences", asks: ["Which licences do we need to provide security screening at events?"] },
-    { part: "Drafting", asks: ["Draft clarification questions for the best-fitting tender closing this month"] },
-    { part: "Submissions", asks: ["Which of our best matches close this week, and what must we submit for each?"] },
+    {
+      part: "Overview",
+      title: "Find tenders to bid for",
+      description: `Open tenders closing this month that fit ${profile.name}`,
+      ask: `Find open tenders closing this month that ${profile.name} can bid for`,
+    },
+    {
+      part: "Drafting",
+      title: "Draft clarification questions",
+      description: "For the best-fitting tender closing this month",
+      ask: "Draft clarification questions for the best-fitting tender closing this month",
+    },
+    {
+      part: "Submissions",
+      title: "Plan this week's bids",
+      description: "Your best matches closing this week, and what each needs",
+      ask: "Which of our best matches close this week, and what must we submit for each?",
+    },
   ];
 }

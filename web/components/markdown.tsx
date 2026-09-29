@@ -212,7 +212,7 @@ function inline(text: string, linkDocs: boolean): ReactNode[] {
     const key = n++;
     if (m[1] !== undefined) {
       out.push(
-        <code key={key} className="rounded bg-secondary px-1 py-0.5 font-mono text-[0.88em]">
+        <code key={key} className="rounded-[4px] bg-muted px-1 py-px font-sans text-[0.93em]">
           {m[1]}
         </code>,
       );
@@ -268,9 +268,9 @@ function inline(text: string, linkDocs: boolean): ReactNode[] {
 // ---------------------------------------------------------------- blocks
 
 const HEADING_CLASS: Record<number, string> = {
-  1: "text-xl font-semibold tracking-tight",
-  2: "text-lg font-semibold tracking-tight pt-2 first:pt-0",
-  3: "text-base font-semibold pt-1 first:pt-0",
+  1: "text-lg font-semibold tracking-[-0.01em]",
+  2: "text-base font-semibold tracking-[-0.01em] pt-2 first:pt-0",
+  3: "text-[15px] font-semibold pt-1 first:pt-0",
 };
 
 function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) {
@@ -300,18 +300,18 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
             );
           case "code":
             return (
-              <pre key={i} className="overflow-x-auto rounded-lg bg-secondary px-4 py-3 font-mono text-[13px] leading-relaxed">
+              <pre key={i} className="overflow-x-auto rounded-lg border bg-muted/50 px-4 py-3 font-mono text-[12.5px] leading-relaxed">
                 {block.text}
               </pre>
             );
           case "quote":
             return (
-              <blockquote key={i} className="flex flex-col gap-2 rounded-lg bg-secondary px-4 py-3 text-muted-foreground">
+              <blockquote key={i} className="flex flex-col gap-2 border-l-2 pl-3.5 text-muted-foreground">
                 <Blocks blocks={block.children} linkDocs={linkDocs} />
               </blockquote>
             );
           case "rule":
-            return <div key={i} className="h-1" aria-hidden />;
+            return <hr key={i} className="my-1 border-border" />;
           case "list": {
             const Tag = block.ordered ? "ol" : "ul";
             const tasks = block.items.every((item) => item.checked !== null);
@@ -331,8 +331,8 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
                       <span
                         aria-label={item.checked ? "Done" : "To do"}
                         className={cn(
-                          "mt-[0.2em] grid size-4 shrink-0 place-items-center rounded text-[10px]",
-                          item.checked ? "bg-kopi text-white" : "bg-background ring-1 ring-foreground/25 ring-inset",
+                          "mt-[0.25em] grid size-4 shrink-0 place-items-center rounded-[4px] border text-[10px]",
+                          item.checked ? "border-kopi bg-kopi text-white" : "border-foreground/25 bg-card",
                         )}
                       >
                         {item.checked ? "✓" : ""}
@@ -349,14 +349,14 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
           }
           case "table":
             return (
-              <div key={i} className="-mx-1 overflow-x-auto px-1">
-                <table className="w-full min-w-[32rem] border-separate border-spacing-0 text-left text-sm">
+              <div key={i} className="overflow-x-auto rounded-lg border bg-card">
+                <table className="w-full min-w-[32rem] border-collapse text-left text-[13px] leading-normal">
                   <thead>
                     <tr>
                       {block.head.map((cell, c) => (
                         <th
                           key={c}
-                          className="bg-secondary px-3 py-2 align-bottom text-xs font-medium text-muted-foreground first:rounded-l-lg last:rounded-r-lg"
+                          className="border-b bg-muted/50 px-3 py-2 align-bottom text-xs font-medium text-muted-foreground"
                           style={{ textAlign: block.align[c] ?? "left" }}
                         >
                           {inline(cell, linkDocs)}
@@ -366,9 +366,9 @@ function Blocks({ blocks, linkDocs }: { blocks: MdBlock[]; linkDocs: boolean }) 
                   </thead>
                   <tbody>
                     {block.rows.map((row, r) => (
-                      <tr key={r} className="even:[&>td]:bg-secondary/50">
+                      <tr key={r} className="border-b last:border-b-0">
                         {block.head.map((_, c) => (
-                          <td key={c} className="px-3 py-2.5 align-top first:rounded-l-lg last:rounded-r-lg" style={{ textAlign: block.align[c] ?? "left" }}>
+                          <td key={c} className="px-3 py-2 align-top" style={{ textAlign: block.align[c] ?? "left" }}>
                             {inline(row[c] ?? "", linkDocs)}
                           </td>
                         ))}

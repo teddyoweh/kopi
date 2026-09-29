@@ -96,10 +96,10 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
   const text = state.data ?? undefined;
   return (
     <>
-      <div className="flex flex-col gap-3 px-5 pt-5 pr-12 sm:px-8 sm:pt-6">
-        <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
+      <div className="flex flex-col gap-3 border-b px-5 pt-4 pb-3.5 pr-12 sm:px-8">
+        <div className="flex min-w-0 items-center gap-2 text-[13px] text-muted-foreground">
           <FileText className="size-3.5 shrink-0 text-kopi" aria-hidden />
-          <span className="truncate font-mono">{draft.file}</span>
+          <span className="truncate">{draft.file}</span>
         </div>
         {/* The draft's own first heading is its visible title. */}
         <SheetTitle className="sr-only">{draft.title || draft.file}</SheetTitle>
@@ -109,14 +109,14 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
           {text && <CopyButton text={text} />}
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-10 sm:px-8">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-10 sm:px-8">
         {state.status === "loading" && (
-          <div className="flex items-center gap-2 py-6 text-sm text-muted-foreground" aria-busy="true">
+          <div className="flex items-center gap-2 py-2 text-[13px] text-muted-foreground" aria-busy="true">
             <Loader2 className="size-4 animate-spin" aria-hidden /> Opening the draft
           </div>
         )}
         {state.status === "error" && (
-          <div className="rounded-lg bg-secondary px-4 py-3.5 text-sm">
+          <div className="rounded-lg border bg-card px-4 py-3.5 text-[13px]">
             <p className="font-medium">This draft can&apos;t be opened.</p>
             <p className="text-muted-foreground">
               {state.error instanceof ApiError && state.error.status === 404
@@ -125,7 +125,7 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
             </p>
           </div>
         )}
-        {text !== undefined && <Markdown text={text} className="text-[15px]" />}
+        {text !== undefined && <Markdown text={text} className="text-[15px] leading-[1.6]" />}
       </div>
     </>
   );
@@ -135,7 +135,7 @@ function PreviewBody({ draft }: { draft: DraftRefLike }) {
 export function DraftPreview({ draft, onClose }: { draft: DraftRefLike | null; onClose: () => void }) {
   return (
     <Sheet open={draft !== null} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-full gap-3 border-none p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-2xl">
+      <SheetContent side="right" className="w-full gap-0 border-l p-0 shadow-float data-[side=right]:w-full data-[side=right]:sm:max-w-2xl">
         {draft && <PreviewBody key={`${draft.session_id}/${draft.file}`} draft={draft} />}
       </SheetContent>
     </Sheet>
