@@ -181,6 +181,32 @@ per line with the neighbouring lines as context, played at 1.07×.
 Every line of the final voice was then transcribed back and checked against the script. That
 check caught "git worktrees" being heard as "guide work trees", and the line was reworded.
 
+## D24 — Session logs are published through a redacting exporter with a leak gate (KP-16, KP-23)
+**Picked:** `scripts/export_logs.py` turns each raw agent transcript into JSONL plus a
+readable Markdown copy.
+- It keeps an allowlist of record types, and cuts long tool results (3,000 characters in
+  the JSONL, 700 in the Markdown).
+- It redacts key and token patterns, emails, phone numbers, private IPs, home paths,
+  GeBIZ contact blocks, every literal value in the local secrets folder, and a personal
+  strings list.
+- It replaces the results of tools that carry account data with a note saying what was
+  left out.
+- Before writing a file it runs a leak gate over the decoded text: secret literals,
+  personal strings, emails, Anthropic, GitHub and AWS key shapes, signed tokens and home
+  paths. It refuses to write if anything survives.
+- It is re-run before every push, and covered by 43 tests.
+
+**Rejected:**
+- Publishing the raw transcripts: they hold keys, tokens, access codes and personal data.
+- Hand-editing the logs: they were exported 15 times as the build grew, and a manual pass
+  would miss something one of those times.
+
+**Why:** the brief asks for exported agent logs, and it grades security. A log that leaks
+a key would undo the rest of the security story. The patterns alone were not enough.
+Reading the first export found a debugging command that had printed another workspace's
+secret names, so the privacy review's own shell calls are now left out as a block, with a
+note saying so. The AI journal ("Caught while preparing these logs") has the details.
+
 ## D25 — Kopi looks like Linear (KP-25)
 **Picked:** Linear's light theme and layout, with tokens sampled from Teddy's screenshot of
 Linear Agent (`uploads/image.png`):
