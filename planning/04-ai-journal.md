@@ -196,10 +196,11 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
 
 ## What the agents couldn't do
 
-- **The Claude credential.** Creating `kopi-claude` needs my browser sign-in
-  (`claude setup-token`). Until it exists, the live copilot answers with a designed 503
-  and overviews use the extractive fallback. The same copilot ran end to end locally
-  against the live API: $0.18 and a 14-question clarification draft.
+- **The Claude credential.** Creating `kopi-claude` needs a person's sign-in. It was missing
+  for a day, and the live copilot answered with a designed 503. I found that out by starting a
+  bid myself. The agent then ran `claude setup-token` so the only step left was mine. I pasted
+  a token, and the first bid on the published site worked end to end: 240 s, US$0.39, all
+  five documents.
 - **Choosing whose money to spend.** My personal Modal workspace was paused on billing.
   The agents stopped and asked, and I chose the workspace.
 - **A tool bug.** Universe's own build tool couldn't mark review concerns answered on

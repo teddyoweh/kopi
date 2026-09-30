@@ -122,6 +122,10 @@ behind it (D1–D30) are in [planning/02-decisions.md](planning/02-decisions.md)
     restored drafts. It caught that the ITT requires the Tenderer itself to hold S6, moved
     the clarification deadline to the ITT's 5 Oct, and rewrote the plan, questions and
     matrix. That turn took 87 s and cost US$0.36.
+- **A bid on the published site** (MAS000ETT26000053, real Opus in the Modal sandbox, started
+  from kopi.unv.run): the first event came after 16 s and the turn took 240 s, 23 steps and
+  US$0.39. It saved 9 facts, wrote all five documents, and moved the bid to *clarify* with
+  dated next steps.
 - **Search cards:** 25 cards' eligibility, snippet and price band in about 2 s cold on the
   deployed API (11.5 s before bands came from each notice's stored vector), and
   milliseconds when cached.
@@ -169,12 +173,11 @@ behind it (D1–D30) are in [planning/02-decisions.md](planning/02-decisions.md)
 
 ## Weakest parts, and what I'd do next
 
-1. **The hosted copilot is waiting on a credential.** Every piece is deployed and proven:
-   the sandbox, egress, tokens, streaming and the drafts store. The live copilot needs the
-   `kopi-claude` Modal secret (a Claude OAuth token from `claude setup-token`); until
-   then the copilot and bids answer with a clear "being connected" state, and overviews use an
-   extractive fallback. The same agent, bid playbook included, ran end to end locally
-   against the live API.
+1. **The copilot runs on one person's Claude subscription.** The hosted copilot uses a Claude
+   OAuth token (the `kopi-claude` Modal secret). That was right for a one-day build, but it
+   is not how a product should pay for inference. **Next:** an Anthropic API key per
+   organisation with usage limits, and per-bid cost shown in the UI (the runner already
+   reports it: a live kickoff on kopi.unv.run cost US$0.39).
 2. **Quotes are checked for existence, not relevance.** Code can prove Claude's quote is
    in the notice, not that it supports the point. Two of 47 live reasons quoted real but
    irrelevant words. **Next:** a cheap second-pass judge, and showing quotes as "evidence
