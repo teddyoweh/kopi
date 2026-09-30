@@ -6,6 +6,12 @@ similar tenders were actually awarded for. Start a bid and its copilot works the
 you. It qualifies the tender and writes a bid plan with a timeline back from closing. It
 drafts clarification questions, a compliance matrix, a submission checklist and a proposal
 outline, and keeps what it learns in a bid memory that it reads on every later turn.
+Around it is a workspace:
+- Home, built around your bids;
+- an Inbox of what needs you;
+- your bids in the sidebar with their stage;
+- saved views that count what is new;
+- ⌘K to search or jump anywhere.
 
 **Live:** https://kopi.unv.run (the access code is in the submission email)
 
@@ -53,6 +59,11 @@ cd backend && MODAL_PROFILE=<workspace> uv run --extra deploy modal deploy modal
 | **Permits & licences** | Can we bid? Met / not met / unknown for the closing date, GRA supply head and grade, BCA workhead and grade, and named or implied licences, each with a reason and a source. Plus 324 licences searchable by activity | Deterministic rules over the GRA and BCA tables and the GoBusiness catalogue. Live register lookups by company registration number (UEN) |
 | **Drafting** | A copilot that searches, checks eligibility, reads notices and writes drafts you can download | Claude Agent SDK with Kopi's own MCP tools, in a locked-down Modal Sandbox |
 | **Bids** (submissions) | Start a bid and Kopi works it, as a chat with an artifacts panel on one page. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. **Each document types itself into the panel as the model writes it.** Upload the tender documents (PDFs preview in place) and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission tasks and deadline in Singapore time | A bid playbook for the same agent, with `remember` and `set_bid_stage` tools. The memory, drafts and uploads live outside the sandbox and are restored into a fresh one, so a bid survives the copilot restarting |
+| **Workspace** | Home: your bids with their stage and next step, a 14-day strip of GeBIZ closings with your deadlines marked, a get-started checklist, then the market. An **Inbox** of what needs you (bid deadlines, the next step Kopi set, bids not started, new tenders matching your company or a view) with a preview pane and j/k/e keys. A sidebar with **your bids** (stage ring, days left) and **saved views** that count what was published since you last looked. **⌘K** searches tenders by meaning, plus bids, licences, pages and actions for the tender you're on. `?` lists every shortcut, and toasts offer Undo | Worked out in the browser from the bids, their session memory and the same searches; no feed and no new service. Only views and read/done state are stored. A view's "match" is a hit within 0.12 of its best, and never below 0.30, which on live data drops the long tail every vector search returns |
+
+![Home: your bids, the next two weeks of closings, and the market](docs/images/home.png)
+
+![The Inbox: deadlines, next steps and new matches, with the selected tender previewed](docs/images/inbox.png)
 
 ![Search results as cards, with the selected tender in the preview pane](docs/images/search.png)
 
@@ -78,7 +89,7 @@ GoBusiness licences (324) ──────────────────
 ```
 
 The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
-behind it (D1–D29) are in [planning/02-decisions.md](planning/02-decisions.md).
+behind it (D1–D30) are in [planning/02-decisions.md](planning/02-decisions.md).
 
 ## Numbers
 
@@ -180,10 +191,12 @@ behind it (D1–D29) are in [planning/02-decisions.md](planning/02-decisions.md)
    requirements (registrations, experience, SLAs, clarification deadline) into the same
    rule checks.
 6. **Bid storage is the demo's.** Bid memory, drafts and uploads sit in a Modal Dict, which
-   drops entries after 7 days untouched, and which bid is whose lives in the browser. **Next:**
-   a Volume or object store for files, and accounts, once there is more than one team.
-7. **Next features:** daily email or Slack digests of new matches, a per-agency incumbent
-   view, shared team profiles.
+   drops entries after 7 days untouched. Which bid is whose, saved views and Inbox read
+   state live in the browser. **Next:** a Volume or object store for files, and accounts
+   once there is more than one team.
+7. **Next features:** the Inbox already works out what is new each day. Next is sending it
+   as a daily email or Slack digest. After that, a per-agency incumbent view and shared team
+   profiles.
 
 ## How AI built this
 
@@ -196,9 +209,11 @@ behind it (D1–D29) are in [planning/02-decisions.md](planning/02-decisions.md)
   - subagents with fresh context for the web pages and the overview;
   - for search cards and bids: one contract task first (models, routes, client, mocks),
     then two background agents built the backend halves in their own worktrees while the
-    main agent built the UI. The main agent reviewed each diff before merging.
+    main agent built the UI. The main agent reviewed each diff before merging;
+  - for the workspace pass: a background agent built the ⌘K palette, shortcuts and toasts
+    in its own worktree while the main agent built the sidebar, Home and Inbox.
 - **Planning:** [`planning/`](planning/) holds the brief, the discovery research (every
-  source probed with real requests), the decisions D1–D29, the superseded v1 plan, and one
+  source probed with real requests), the decisions D1–D30, the superseded v1 plan, and one
   handoff per task.
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the
