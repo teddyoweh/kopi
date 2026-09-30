@@ -4,7 +4,7 @@ Every Claude Code session that built Kopi, exported by `scripts/export_logs.py`.
 
 | Log | Who | Model | Turns | Assistant messages | Tool calls | Output tokens | Span (UTC) |
 |---|---|---|---:|---:|---:|---:|---|
-| [01-main](01-main.md) | Main agent (lead): planning, research, orchestration and most build tasks | claude-opus-5-5 | 89 | 425 | 1534 | 1,414,665 | 29 Sep 07:20 UTC → 30 Sep 17:47 UTC |
+| [01-main](01-main.md) | Main agent (lead): planning, research, orchestration and most build tasks | claude-opus-5-5 | 97 | 448 | 1605 | 1,451,008 | 29 Sep 07:20 UTC → 30 Sep 19:19 UTC |
 | [02-crew-kp4](02-crew-kp4.md) | Crew agent 1: KP-4 permits, licences, registrations and eligibility gates | claude-opus-5-5 | 2 | 11 | 59 | 80,822 | 29 Sep 08:50 UTC → 29 Sep 09:07 UTC |
 | [03-crew-kp5](03-crew-kp5.md) | Crew agent 2: KP-5 web shell and design system | claude-opus-5-5 | 2 | 9 | 47 | 51,500 | 29 Sep 08:50 UTC → 29 Sep 09:00 UTC |
 | [04-review-kp1](04-review-kp1.md) | Reviewer: KP-1 contract, models and API | claude-sonnet-5 | 3 | 7 | 22 | 9,898 | 29 Sep 08:50 UTC → 29 Sep 09:13 UTC |
