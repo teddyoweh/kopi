@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { EligibilityCheck, MarketContext, Notice, Profile } from "@/lib/api";
 import { categoryLeaf, closingLabel, dateTime, daysUntil, money, moneyShort } from "@/lib/format";
+import { recordVisit } from "@/lib/recents";
 import { rememberTitle } from "@/lib/submissions";
 import { displayTitle } from "@/lib/title-case";
 import { useAsync } from "@/lib/use-async";
@@ -294,7 +295,9 @@ export function TenderView() {
   const state = useAsync(async () => (api && doc ? api.tender(doc, profile) : null), [api, doc, profile, attempt]);
   const loaded = state.data?.notice;
   useEffect(() => {
-    if (loaded) rememberTitle(loaded.doc_no, loaded.title);
+    if (!loaded) return;
+    rememberTitle(loaded.doc_no, loaded.title);
+    recordVisit(loaded);
   }, [loaded]);
 
   if (!doc) {

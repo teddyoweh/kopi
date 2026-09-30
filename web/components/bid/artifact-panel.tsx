@@ -10,6 +10,7 @@ import { useApi } from "@/components/kopi-provider";
 import { Markdown } from "@/components/markdown";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/toast";
 import { UPLOAD_LIMIT, UPLOAD_TYPES, type BidMemory } from "@/lib/api";
 import { fileSize } from "@/lib/format";
 import { useAsync } from "@/lib/use-async";
@@ -262,6 +263,7 @@ export function ArtifactPanel({
       try {
         await onUpload(file);
         onSelect({ kind: "upload", name: file.name });
+        toast({ title: `Added ${file.name}`, description: "Kopi reads it on its next turn", icon: Paperclip });
       } catch (e) {
         setErrors((now) => [...now, `${file.name}: ${e instanceof Error ? e.message : "the upload failed"}`]);
       }

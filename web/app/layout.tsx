@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 
+import { CommandProvider } from "@/components/command/command-provider";
 import { KopiProvider } from "@/components/kopi-provider";
 import { AppShell } from "@/components/shell/app-shell";
+import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
@@ -23,7 +25,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-dvh bg-frame">
         <KopiProvider>
           <TooltipProvider>
-            <AppShell>{children}</AppShell>
+            <CommandProvider>
+              <AppShell>{children}</AppShell>
+            </CommandProvider>
+            <Toaster />
           </TooltipProvider>
         </KopiProvider>
       </body>
