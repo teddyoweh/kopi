@@ -17,7 +17,7 @@ const FIRST_PAGE = 20;
 const WIDE = "(min-width: 1280px)";
 
 /** Whether the preview pane is showing: selecting a card previews it there instead of opening it. */
-function useWide(): boolean {
+export function useWide(): boolean {
   return useSyncExternalStore(
     (onChange) => {
       const query = window.matchMedia(WIDE);

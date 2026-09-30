@@ -118,3 +118,20 @@ export function timeLeft(iso: string, now = Date.now()): { closed: boolean; lead
   if (hours >= 1) return { closed: false, lead: plural(hours, "hour"), rest: minutes % 60 ? plural(minutes % 60, "minute") : null, hours };
   return { closed: false, lead: plural(Math.max(minutes, 1), "minute"), rest: null, hours };
 }
+
+/** The Singapore calendar day `offset` days from today: "Thu", "1", "Thu 1 Oct", and whether it is a weekend. */
+export function sgDayParts(offset: number, now = Date.now()): { weekday: string; day: string; long: string; weekend: boolean } {
+  const noon = new Date((sgDay(now) + offset) * DAY_MS - SGT_OFFSET_MS + 12 * 60 * 60 * 1000);
+  const part = (options: Intl.DateTimeFormatOptions) => noon.toLocaleDateString("en-SG", { timeZone: TZ, ...options });
+  return { weekday: part({ weekday: "short" }), day: part({ day: "numeric" }), long: part({ weekday: "short", day: "numeric", month: "short" }), weekend: [0, 6].includes(noon.getUTCDay()) };
+}
+
+/** How long ago, in the width of a badge: "now", "12m", "5h", "3d", then "12 Sep". */
+export function ago(iso: string, now = Date.now()): string {
+  const minutes = Math.floor((now - new Date(iso).getTime()) / 60_000);
+  if (minutes < 1) return "now";
+  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 24 * 60) return `${Math.floor(minutes / 60)}h`;
+  if (minutes < 14 * 24 * 60) return `${Math.floor(minutes / (24 * 60))}d`;
+  return new Date(iso).toLocaleDateString("en-SG", { timeZone: TZ, day: "numeric", month: "short" });
+}

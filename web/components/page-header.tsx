@@ -10,7 +10,7 @@ export type Crumb = { label: string; href?: string };
 
 /**
  * A page's name and actions go in the panel's top bar, as in Linear; its description, if any,
- * opens the page body. `crumbs` come before the title ("Overview / MOE000…").
+ * opens the page body. `crumbs` come before the title ("Home / MOE000…").
  */
 export function PageHeader({
   title,

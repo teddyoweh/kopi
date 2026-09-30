@@ -332,7 +332,7 @@ export function TenderView() {
     <article className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_21rem]">
       <PageHeader
         title={notice.doc_no}
-        crumbs={[{ label: "Overview", href: "/" }]}
+        crumbs={[{ label: "Home", href: "/" }]}
         actions={
           <>
             <a

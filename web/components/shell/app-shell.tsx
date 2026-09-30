@@ -1,16 +1,19 @@
 "use client";
 
-import { Menu, Search, SquarePen } from "lucide-react";
+import { CircleHelp, Menu, Search, SquarePen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 
+import { useCommand } from "@/components/command/command-provider";
 import { useKopi } from "@/components/kopi-provider";
 import { AccessGate } from "@/components/shell/access-gate";
 import { currentItem, Nav } from "@/components/shell/nav";
 import { ProfileSwitcher } from "@/components/shell/profile-switcher";
+import { Kbd } from "@/components/ui/kbd";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { isMac } from "@/lib/shortcuts";
 
 /**
  * Where a page puts its title and actions (the panel's top bar), and the element that scrolls
@@ -54,23 +57,69 @@ function IconLink({ href, label, round, children, onNavigate }: { href: string; 
   );
 }
 
+/** The sidebar's search: the command palette, which searches tenders, bids, licences and pages at once. */
+function SearchButton({ onOpen }: { onOpen?: () => void }) {
+  const { openPalette } = useCommand();
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <button
+            type="button"
+            onClick={() => {
+              onOpen?.();
+              openPalette();
+            }}
+            aria-label="Search or jump to (⌘K)"
+            className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sidebar-hover hover:text-foreground"
+          />
+        }
+      >
+        <Search className="size-4" aria-hidden />
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        Search
+        <span className="flex gap-0.5">
+          <Kbd className="bg-background/15 text-background">{isMac() ? "⌘" : "Ctrl"}</Kbd>
+          <Kbd className="bg-background/15 text-background">K</Kbd>
+        </span>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+  const { openShortcuts } = useCommand();
   return (
     <div className="flex h-full flex-col gap-5">
       <div className="flex items-center gap-1 pr-1">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 overflow-hidden">
           <ProfileSwitcher />
         </div>
-        <IconLink href="/search" label="Search" onNavigate={onNavigate}>
-          <Search className="size-4" aria-hidden />
-        </IconLink>
+        <SearchButton onOpen={onNavigate} />
         <IconLink href="/copilot/?new=1" label="New chat with Kopi" round onNavigate={onNavigate}>
           <SquarePen className="size-3.5" aria-hidden />
         </IconLink>
       </div>
-      <Nav onNavigate={onNavigate} />
-      <div className="mt-auto">
-        <SourceNote />
+      <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1 [scrollbar-width:none]">
+        <Nav onNavigate={onNavigate} />
+      </div>
+      <div className="flex items-end gap-2">
+        <div className="min-w-0 flex-1">
+          <SourceNote />
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            onNavigate?.();
+            openShortcuts();
+          }}
+          aria-label="Keyboard shortcuts (?)"
+          title="Keyboard shortcuts (?)"
+          className="grid size-7 shrink-0 place-items-center rounded-full border border-black/[0.07] bg-card text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <CircleHelp className="size-3.5" aria-hidden />
+        </button>
       </div>
     </div>
   );
@@ -88,6 +137,21 @@ function SectionTitle() {
   );
 }
 
+/** On a phone the sidebar is behind the menu, so the palette gets its own button in the top bar. */
+function MobileSearch() {
+  const { openPalette } = useCommand();
+  return (
+    <button
+      type="button"
+      onClick={() => openPalette()}
+      aria-label="Search or jump to"
+      className="-mr-1 grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-muted lg:hidden"
+    >
+      <Search className="size-4" aria-hidden />
+    </button>
+  );
+}
+
 /** Pages that lay out their own panes edge to edge (the bid workspace), instead of a centred column. */
 const BLEED = /^\/bid\/?$/;
 
@@ -101,7 +165,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <AccessGate>
       <div className="flex h-dvh bg-frame">
-        <aside className="hidden w-60 shrink-0 px-2 pt-2.5 pb-3 lg:block">
+        <aside className="hidden w-[16.5rem] shrink-0 px-2 pt-2.5 pb-3 lg:block">
           <Sidebar />
         </aside>
 
@@ -123,6 +187,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <SectionTitle />
               <div ref={setTitle} className="flex min-w-0 items-center" />
               <div ref={setActions} className="ml-auto flex shrink-0 items-center gap-2" />
+              <MobileSearch />
             </header>
             <PanelContext.Provider value={{ title, actions, scroller }}>
               <main className={bleed ? "flex min-h-0 w-full flex-1 flex-col" : "mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-16 sm:px-8 sm:pt-8"}>{children}</main>

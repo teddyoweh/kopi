@@ -16,6 +16,7 @@ import { EmptyState, ErrorState } from "@/components/states";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BidMemory, ChatEvent, Notice, SessionFile } from "@/lib/api";
+import { primeBidStatus } from "@/lib/bid-status";
 import { useBids } from "@/lib/bids";
 import { EMPTY, problemOf, reducer, restored, type Conversation } from "@/lib/copilot";
 import { recordDraft, rememberTitle } from "@/lib/submissions";
@@ -177,6 +178,10 @@ function Workspace({ doc }: { doc: string }) {
       refreshFiles(session);
     }
   }, [session, refreshMemory, refreshFiles]);
+  // The sidebar, Home and Inbox show this bid's stage too; tell them as soon as it moves.
+  useEffect(() => {
+    if (memory) primeBidStatus(memory.session, memory.value, files?.session === memory.session ? files.list : undefined);
+  }, [memory, files]);
 
   /** The person chose a tab; Kopi stops moving the panel for the rest of this turn. */
   const choose = useCallback((tab: Tab) => {

@@ -169,6 +169,20 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
   It then rewrote three documents. It also said the excerpt was labelled synthetic and
   should be checked against the real ITT.
 
+### Caught by live data and screenshots (KP-40 to KP-42)
+- **A view full of kitchen staff.** A saved view for "AI chatbot and knowledge base"
+  counted 25 new matches. The Inbox then listed manpower tenders for kitchen assistants and
+  receptionists. Vector search always returns its nearest 50, and past the first two hits
+  the scores were 0.28 and below. The mock's 30 notices never showed it. A view's matches
+  are now the hits within 0.12 of the best, never below 0.30. Measured on live data, that
+  keeps 2 of 50 for the AI query, 3 for pest control and 5 for Pragnition's profile.
+- **Two numbers for one thing.** Home's stat said 13 notices close within 7 days while the
+  new deadline strip beside it said 8. The stat counted notices already past their deadline,
+  and the strip stopped a day short. Both now count today plus seven days, the way Search's
+  filter does.
+- **A company name under the icons.** "BrightClean Services Pte. Ltd." ran under the
+  sidebar's search and new-chat buttons. The sidebar is wider now and the name truncates.
+
 ### Mistakes in the agents' own reports
 - **"A reviewer on every task" (KP-15).** The README and this journal first said an
   independent reviewer read every task. Reviewers ran only on milestone 1; the claim was

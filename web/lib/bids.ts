@@ -49,5 +49,8 @@ export function useBids() {
 
   const dropBid = useCallback((doc: string) => update((list) => list.filter((b) => b.doc_no !== doc)), [update]);
 
-  return { bids, bidFor, startBid, attachSession, dropBid };
+  /** Put a dropped bid back, session and all (the toast's Undo). */
+  const restoreBid = useCallback((bid: Bid) => update((list) => [...list.filter((b) => b.doc_no !== bid.doc_no), bid]), [update]);
+
+  return { bids, bidFor, startBid, attachSession, dropBid, restoreBid };
 }

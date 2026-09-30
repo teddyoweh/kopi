@@ -5,32 +5,23 @@ import Link from "next/link";
 
 import { stageLabel } from "@/components/bid/stage-stepper";
 import { Countdown, useNow } from "@/components/bid/time";
-import { useApi, useKopi } from "@/components/kopi-provider";
+import { useKopi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
 import { AgencyDisc } from "@/components/search/result-card";
 import { EmptyState } from "@/components/states";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/toast";
+import { useBidStatus } from "@/lib/bid-status";
 import { bidHref, useBids, type Bid } from "@/lib/bids";
+import { shortTitle } from "@/lib/short-title";
 import { displayTitle } from "@/lib/title-case";
-import { useAsync } from "@/lib/use-async";
 import { cn } from "@/lib/utils";
 
-/** A started bid's stage, next step and document count, from its session on the API. */
-function useBidStatus(bid: Bid) {
-  const api = useApi();
-  const session = bid.session_id ?? null;
-  return useAsync(async () => {
-    if (!api || !session) return null;
-    const [memory, files] = await Promise.all([api.memory(session), api.sessionFiles(session)]);
-    return { memory, drafts: files.filter((f) => f.kind !== "upload").length, uploads: files.filter((f) => f.kind === "upload").length };
-  }, [api, session]);
-}
-
 function BidRow({ bid, now, onRemove }: { bid: Bid; now: number; onRemove: () => void }) {
-  const status = useBidStatus(bid);
+  const { status, loading } = useBidStatus(bid.session_id);
   const started = !!bid.session_id;
-  const memory = status.data?.memory;
+  const memory = status?.memory;
   return (
     <li className="kopi-row relative flex flex-col gap-3 rounded-lg px-3 py-3.5 transition-colors before:absolute before:inset-x-3 before:top-0 before:h-px before:bg-border/80 first:before:hidden hover:bg-muted/70 hover:before:opacity-0 sm:flex-row sm:items-center sm:gap-5 [.kopi-row:hover+&]:before:opacity-0">
       <Link href={bidHref(bid.doc_no)} className="flex min-w-0 flex-1 items-start gap-3 after:absolute after:inset-0">
@@ -50,14 +41,14 @@ function BidRow({ bid, now, onRemove }: { bid: Bid; now: number; onRemove: () =>
       </Link>
       <div className="relative z-10 flex shrink-0 flex-wrap items-center gap-1.5 pl-9 sm:pl-0">
         {started ? (
-          status.status === "loading" ? (
+          loading && !status ? (
             <Skeleton className="h-6 w-28 rounded-full" />
           ) : (
             <>
               <span className="inline-flex h-6 items-center rounded-full bg-kopi-soft px-2.5 text-[12px] font-book text-kopi">{stageLabel(memory?.stage)}</span>
-              {status.data && (
+              {status && status.drafts > 0 && (
                 <span className="inline-flex h-6 items-center gap-1.5 rounded-full border bg-card px-2.5 text-[12px] font-book text-foreground/70">
-                  <FileText className="size-3.5" aria-hidden /> {status.data.drafts} {status.data.drafts === 1 ? "document" : "documents"}
+                  <FileText className="size-3.5" aria-hidden /> {status.drafts} {status.drafts === 1 ? "document" : "documents"}
                 </span>
               )}
             </>
@@ -72,7 +63,7 @@ function BidRow({ bid, now, onRemove }: { bid: Bid; now: number; onRemove: () =>
           type="button"
           onClick={onRemove}
           aria-label={`Stop bidding on ${bid.doc_no}`}
-          title="Stop bidding (the drafts stay on the API until the session expires)"
+          title="Stop bidding"
           className="grid size-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
         >
           <X className="size-3.5" aria-hidden />
@@ -95,7 +86,11 @@ function Group({ id, label, count, children }: { id: string; label: string; coun
 }
 
 export function BidsView() {
-  const { bids, dropBid } = useBids();
+  const { bids, dropBid, restoreBid } = useBids();
+  const stop = (bid: Bid) => {
+    dropBid(bid.doc_no);
+    toast({ title: "Stopped bidding", description: shortTitle(bid.title), icon: Briefcase, action: { label: "Undo", onClick: () => restoreBid(bid) } });
+  };
   const { profile } = useKopi();
   const now = useNow();
   const byDeadline = [...bids].sort((a, b) => new Date(a.closing).getTime() - new Date(b.closing).getTime());
@@ -131,14 +126,14 @@ export function BidsView() {
           {open.length > 0 && (
             <Group id="open-bids" label="Open" count={open.length}>
               {open.map((b) => (
-                <BidRow key={b.doc_no} bid={b} now={now} onRemove={() => dropBid(b.doc_no)} />
+                <BidRow key={b.doc_no} bid={b} now={now} onRemove={() => stop(b)} />
               ))}
             </Group>
           )}
           {closed.length > 0 && (
             <Group id="closed-bids" label="Closed" count={closed.length}>
               {closed.map((b) => (
-                <BidRow key={b.doc_no} bid={b} now={now} onRemove={() => dropBid(b.doc_no)} />
+                <BidRow key={b.doc_no} bid={b} now={now} onRemove={() => stop(b)} />
               ))}
             </Group>
           )}

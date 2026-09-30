@@ -302,3 +302,35 @@ view (the old `tender()`), and computing insights through `tender()` one tender 
 clean". A probe of the real SDK showed the document's text arriving in `input_json_delta`
 fragments long before the finished tool call. So the panel can type as the model writes,
 which is what makes it feel like one.
+
+## D30 — A workspace around the bids, worked out in the browser (KP-39 to KP-42)
+**Picked:**
+- **Home** is about the company's own work first:
+  - your bids;
+  - a 14-day strip of closings;
+  - a get-started checklist ticked from what the person has actually done;
+  - then the market.
+- **An Inbox** derived from state that already exists: bid deadlines within 7 days, the
+  next step in each bid's memory, bids not started, and notices published this week near the
+  top of the company's search or a saved view's. Only read and done ids are stored.
+- **The sidebar** carries your bids (stage ring, days left) and saved **Views** (search
+  words and filters) with a count of what was published since each was last opened.
+- **⌘K** opens a palette over semantic search, bids, licences and pages, with actions for
+  the tender on screen.
+- **One shortcut table** drives both the keys and the `?` sheet. Toasts give Undo for
+  stopping a bid, removing a view and marking an item done.
+
+**Rejected:**
+- A notifications service or a stored feed. It would need accounts and a database, which are
+  out of scope, and it could drift from the bids it describes.
+- `cmdk` and a toast library. Neither needs a dependency at this size.
+- Counting every hit a view's search returns: see the "match" rule below.
+
+**Why:**
+- Teddy, 30 Sep: "make the experience better and more platform feel".
+- A platform is where the work lives and what tells you what changed. Everything shown is
+  computed from the bids, their session memory and the same searches the rest of the app
+  runs, so it is always true to them.
+- A view's "match" is a hit within 0.12 of its best, and never below 0.30. On live data
+  that turned a view counting 25 "new" matches (mostly manpower tenders) into the 2 that
+  fit.

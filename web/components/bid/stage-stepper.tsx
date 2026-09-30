@@ -16,7 +16,8 @@ export function stageLabel(stage: BidStage | null | undefined): string {
 }
 
 /** Where the bid stands, in one line: five segments, the stage by name, and the next step under them. */
-export function StageLine({ memory, working }: { memory: BidMemory | null; working: boolean }) {
+/** `brief` drops the stage's hint, for panes too narrow to hold it on one line. */
+export function StageLine({ memory, working, brief = false }: { memory: BidMemory | null; working: boolean; brief?: boolean }) {
   const current = STAGES.findIndex((s) => s.id === memory?.stage);
   const next = memory?.next_step ?? (working ? "Kopi is working on the bid" : current < 0 ? "Start the bid and Kopi qualifies it, then drafts what you need" : null);
   return (
@@ -33,7 +34,8 @@ export function StageLine({ memory, working }: { memory: BidMemory | null; worki
               <span className="font-medium">{STAGES[current]!.label}</span>
               <span className="text-muted-foreground">
                 {" "}
-                · {STAGES[current]!.hint.toLowerCase()} · {current + 1} of {STAGES.length}
+                · {!brief && `${STAGES[current]!.hint.toLowerCase()} · `}
+                stage {current + 1} of {STAGES.length}
               </span>
             </>
           ) : (
@@ -48,5 +50,30 @@ export function StageLine({ memory, working }: { memory: BidMemory | null; worki
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * A bid's stage in 14px, the way Linear draws project status: a ring, dashed until the bid
+ * starts, with a pie inside that fills a fifth per stage.
+ */
+export function StageRing({ stage, started, className }: { stage: BidStage | null | undefined; started: boolean; className?: string }) {
+  const step = STAGES.findIndex((s) => s.id === stage) + 1;
+  const pie = 2 * Math.PI * 1.75;
+  return (
+    <svg viewBox="0 0 14 14" className={cn("size-3.5 shrink-0", className)} role="img" aria-label={started ? stageLabel(stage) : "Not started"}>
+      <circle
+        cx="7"
+        cy="7"
+        r="5.75"
+        fill="none"
+        strokeWidth="1.5"
+        className={started ? "stroke-kopi" : "stroke-foreground/30"}
+        strokeDasharray={started ? undefined : "1.5 2.1"}
+      />
+      {step > 0 && (
+        <circle cx="7" cy="7" r="1.75" fill="none" strokeWidth="3.5" className="stroke-kopi" strokeDasharray={`${(pie * step) / STAGES.length} ${pie}`} transform="rotate(-90 7 7)" />
+      )}
+    </svg>
   );
 }

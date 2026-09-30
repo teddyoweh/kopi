@@ -1,22 +1,20 @@
 "use client";
 
-import { Search, SearchX } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Layers, Search, SearchX } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { FilterChip, type ChipOption } from "@/components/filter-chip";
 import { useApi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
 import { QueryInput } from "@/components/query-input";
 import { Results, type Row } from "@/components/search/results";
+import { SaveView } from "@/components/search/save-view";
 import { EmptyState, ErrorState, RowsSkeleton } from "@/components/states";
-import type { TenderFilters } from "@/lib/api";
-import { sgDayEnd } from "@/lib/format";
+import { toast } from "@/components/ui/toast";
 import { useAsync } from "@/lib/use-async";
 import { useQueryText, useUrlParams } from "@/lib/use-url-query";
 import { cn } from "@/lib/utils";
-
-/** The live API's search depth: it re-ranks the 50 nearest notices, so 50 is everything it has. */
-const LIMIT = 50;
+import { readSearchQuery, runSearch, sameQuery, SEARCH_LIMIT, useViews, type SearchQuery } from "@/lib/views";
 
 const CATEGORIES: ChipOption[] = [
   { value: "IT&Telecommunication", label: "IT & Telecommunication" },
@@ -51,28 +49,6 @@ const EXAMPLES = [
 /** `key` names the query and filters it answers, so per-result UI state resets with it. */
 type Result = { key: string; mode: "search" | "browse"; total: number; rows: Row[] };
 
-type Filters = { category: string | null; method: string | null; closing: string | null; agency: string | null };
-
-function readFilters(params: URLSearchParams): Filters {
-  const closing = params.get("closing");
-  return {
-    category: params.get("category"),
-    method: params.get("method"),
-    closing: closing && WINDOWS.some((w) => w.value === closing) ? closing : null,
-    agency: params.get("agency"),
-  };
-}
-
-function toApi(f: Filters): TenderFilters {
-  return {
-    status: "open",
-    category: f.category ?? undefined,
-    method: f.method ?? undefined,
-    agency: f.agency ?? undefined,
-    closing_before: f.closing ? sgDayEnd(Number(f.closing)) : undefined,
-  };
-}
-
 /** Agencies in the results, most results first: the only values the exact agency filter can match. */
 function agencyOptions(rows: Row[]): ChipOption[] {
   const counts = new Map<string, number>();
@@ -84,9 +60,21 @@ function agencyOptions(rows: Row[]): ChipOption[] {
 
 function summaryLine(result: Result, q: string): string {
   const n = result.rows.length;
-  if (result.mode === "browse") return n >= LIMIT ? `The ${LIMIT} newest open tenders that fit these filters` : `${n} open tender${n === 1 ? "" : "s"} fit these filters, newest first`;
+  if (result.mode === "browse") return n >= SEARCH_LIMIT ? `The ${SEARCH_LIMIT} newest open tenders that fit these filters` : `${n} open tender${n === 1 ? "" : "s"} fit these filters, newest first`;
   if (result.total > n) return `The ${n} closest of ${result.total} open tenders for “${q}”`;
-  return n >= LIMIT ? `The ${n} closest open tenders for “${q}”` : `${n} open tender${n === 1 ? "" : "s"} for “${q}”, closest first`;
+  return n >= SEARCH_LIMIT ? `The ${n} closest open tenders for “${q}”` : `${n} open tender${n === 1 ? "" : "s"} for “${q}”, closest first`;
+}
+
+/** "tenders matching “cleaning”, closing within 7 days": a view's search, read back. */
+function describe(query: SearchQuery): string {
+  const parts = [
+    query.q ? `tenders matching “${query.q}”` : "open tenders",
+    query.category && CATEGORIES.find((c) => c.value === query.category)?.label,
+    query.method,
+    query.closing && WINDOWS.find((w) => w.value === query.closing)?.label.toLowerCase(),
+    query.agency && `from ${query.agency}`,
+  ];
+  return parts.filter(Boolean).join(", ");
 }
 
 function Examples({ onPick }: { onPick: (query: string) => void }) {
@@ -113,39 +101,62 @@ function Examples({ onPick }: { onPick: (query: string) => void }) {
 export function SearchView() {
   const api = useApi();
   const [params, update] = useUrlParams();
-  const q = (params.get("q") ?? "").trim();
-  const filters = readFilters(params);
-  const { category, method, closing, agency } = filters;
+  const query = readSearchQuery(params);
+  const { q, category, method, closing, agency } = query;
   const box = useQueryText(q, update);
   const [attempt, setAttempt] = useState(0);
   const filtered = Boolean(category || method || closing || agency);
   const idle = !q && !filtered;
+  const { views, markSeen, restore } = useViews();
+  const viewId = params.get("view");
+  const view = views.find((v) => v.id === viewId && sameQuery(v.query, query)) ?? null;
 
   const state = useAsync<Result | null>(async () => {
     if (!api || idle) return null;
-    const apiFilters = toApi({ category, method, closing, agency });
     const key = JSON.stringify([q, category, method, closing, agency]);
-    if (q) {
-      const found = await api.search(q, apiFilters, LIMIT);
-      return { key, mode: "search", total: found.total, rows: found.hits };
-    }
-    const list = await api.tenders(apiFilters, LIMIT, 0);
-    return { key, mode: "browse", total: list.length, rows: list.map((notice) => ({ notice })) };
+    return { key, ...(await runSearch(api, { q, category, method, closing, agency })) };
   }, [api, idle, q, category, method, closing, agency, attempt]);
+
+  // Opening a view is reading it: the sidebar's count of new notices starts again from now.
+  const opened = view?.id;
+  useEffect(() => {
+    if (opened && state.status === "ready") markSeen(opened);
+  }, [opened, state.status, markSeen]);
+  // Changing the words or filters leaves the view; the sidebar stops marking it.
+  useEffect(() => {
+    if (viewId && !view) update({ view: null });
+  }, [viewId, view, update]);
 
   // Keep the last answer on screen, dimmed, while the next one is on its way.
   const [shown, setShown] = useState<Result | null>(null);
   if (state.status === "ready" && state.data !== shown) setShown(state.data);
   const loading = state.status === "loading" && !idle;
 
-  const agencies = useMemo(() => {
-    const found = agencyOptions(shown?.rows ?? []);
-    return agency && !found.some((o) => o.value === agency) ? [{ value: agency, label: agency }, ...found] : found;
-  }, [shown, agency]);
+  const found = agencyOptions(shown?.rows ?? []);
+  const agencies = agency && !found.some((o) => o.value === agency) ? [{ value: agency, label: agency }, ...found] : found;
 
   return (
     <>
-      <PageHeader title="Search" description="Every open GeBIZ opportunity, searched by meaning rather than exact words." />
+      <PageHeader
+        title={view ? view.name : "Search"}
+        crumbs={view ? [{ label: "Views" }] : []}
+        description={view ? `A saved view: ${describe(query)}. The sidebar counts what is published after each visit.` : "Every open GeBIZ opportunity, searched by meaning rather than exact words."}
+        actions={
+          !idle && (
+            <SaveView
+              query={query}
+              onSaved={(saved) => {
+                update({ view: saved.id });
+                toast({ title: `Saved “${saved.name}” to Views`, description: "The sidebar counts what is new each time you look.", icon: Layers });
+              }}
+              onRemoved={(removed, index) => {
+                update({ view: null });
+                toast({ title: `Removed “${removed.name}”`, icon: Layers, action: { label: "Undo", onClick: () => restore(removed, index) } });
+              }}
+            />
+          )
+        }
+      />
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3.5">
           <QueryInput

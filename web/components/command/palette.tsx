@@ -9,7 +9,7 @@ import {
   FileText,
   Inbox,
   Keyboard,
-  LayoutGrid,
+  Home,
   Link2,
   Loader2,
   Search,
@@ -58,7 +58,7 @@ const LICENCE_LIMIT = 3;
 const NARROW = "(max-width: 639px)";
 
 const GO_TO_ICONS: Record<string, LucideIcon> = {
-  "/": LayoutGrid,
+  "/": Home,
   "/inbox/": Inbox,
   "/copilot/": Sparkles,
   "/bids/": Briefcase,
@@ -70,7 +70,7 @@ const GO_TO_ICONS: Record<string, LucideIcon> = {
 const shortcut = (label: string) => SHORTCUTS.find((s) => s.label === label && (s.href || s.command))!;
 
 function goItem(s: Shortcut): Item {
-  return { id: `go-${s.href}`, label: s.label, icon: GO_TO_ICONS[s.href!] ?? LayoutGrid, keys: s.keys, href: s.href };
+  return { id: `go-${s.href}`, label: s.label, icon: GO_TO_ICONS[s.href!] ?? Home, keys: s.keys, href: s.href };
 }
 
 /**

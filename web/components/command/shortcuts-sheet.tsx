@@ -57,7 +57,10 @@ export function ShortcutsSheet({ open, onOpenChange }: { open: boolean; onOpenCh
           <Group title="General" />
           <Group title="Search results" />
         </div>
-        <Group title="Go to" />
+        <div className="flex flex-col gap-5">
+          <Group title="Go to" />
+          <Group title="Inbox" />
+        </div>
       </div>
     </CommandDialog>
   );

@@ -4,15 +4,15 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { useApi, useKopi } from "@/components/kopi-provider";
-import { PageHeader } from "@/components/page-header";
+import { useNow } from "@/components/bid/time";
+import { useKopi } from "@/components/kopi-provider";
 import { ResultCard } from "@/components/search/result-card";
 import { useInsights } from "@/components/search/use-insights";
 import { ErrorState, RowsSkeleton } from "@/components/states";
 import { ListCard, TenderRow, tenderHref } from "@/components/tender-row";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { KopiApi, NoticeSummary } from "@/lib/api";
-import { daysUntil, isToday, longToday } from "@/lib/format";
+import { daysUntil, isToday } from "@/lib/format";
 import { profileQuery } from "@/lib/profiles";
 import { useAsync } from "@/lib/use-async";
 
@@ -40,8 +40,8 @@ async function fetchAllOpen(api: KopiApi): Promise<NoticeSummary[]> {
 
 const openCache = new WeakMap<KopiApi, { at: number; promise: Promise<NoticeSummary[]> }>();
 
-/** fetchAllOpen, shared for FRESH_MS: coming back to Overview does not refetch ~750 notices. */
-function allOpen(api: KopiApi): Promise<NoticeSummary[]> {
+/** fetchAllOpen, shared for FRESH_MS: coming back to Home does not refetch ~750 notices. */
+export function allOpen(api: KopiApi): Promise<NoticeSummary[]> {
   const cached = openCache.get(api);
   if (cached && Date.now() - cached.at < FRESH_MS) return cached.promise;
   const promise = fetchAllOpen(api);
@@ -67,20 +67,21 @@ function Stat({ label, short, value, hint }: { label: string; short: string; val
   );
 }
 
-function Stats({ api }: { api: KopiApi }) {
+export function Stats({ api }: { api: KopiApi }) {
   const state = useAsync(() => allOpen(api), [api]);
+  const now = useNow(60_000);
   if (state.status === "error") return <ErrorState error={state.error} />;
   const open = state.data;
   return (
     <div className="grid grid-cols-3 divide-x divide-border/80 rounded-xl border bg-card">
       <Stat label="Open opportunities" short="Open" value={open?.length} hint="Accepting responses on GeBIZ" />
       <Stat label="Published today" short="New today" value={open?.filter((n) => isToday(n.published)).length} hint="New since midnight, Singapore time" />
-      <Stat label="Closing in 7 days" short="Within 7 days" value={open?.filter((n) => daysUntil(n.closing) <= 7).length} hint="Decide on these first" />
+      <Stat label="Closing in 7 days" short="Within 7 days" value={open?.filter((n) => new Date(n.closing).getTime() > now && daysUntil(n.closing, now) <= 7).length} hint="Decide on these first" />
     </div>
   );
 }
 
-function BestMatches({ api }: { api: KopiApi }) {
+export function BestMatches({ api }: { api: KopiApi }) {
   const { profile } = useKopi();
   const router = useRouter();
   const q = profileQuery(profile);
@@ -130,7 +131,7 @@ function BestMatches({ api }: { api: KopiApi }) {
   );
 }
 
-function Newest({ api }: { api: KopiApi }) {
+export function Newest({ api }: { api: KopiApi }) {
   const state = useAsync(() => api.tenders({ status: "open" }, 8, 0), [api]);
   return (
     <ListCard id="newest" title="Newest on GeBIZ">
@@ -142,28 +143,5 @@ function Newest({ api }: { api: KopiApi }) {
       )}
       {state.status === "ready" && state.data.map((notice) => <TenderRow key={notice.doc_no} notice={notice} compact />)}
     </ListCard>
-  );
-}
-
-export function OverviewPage() {
-  const api = useApi();
-  const { profile } = useKopi();
-  return (
-    <>
-      <PageHeader title="Overview" description={`${longToday()}. What is open on GeBIZ, read for ${profile.name}.`} />
-      {api && (
-        <div className="flex flex-col gap-5">
-          <Stats api={api} />
-          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-5">
-            <div className="lg:col-span-3">
-              <BestMatches api={api} />
-            </div>
-            <div className="lg:col-span-2">
-              <Newest api={api} />
-            </div>
-          </div>
-        </div>
-      )}
-    </>
   );
 }

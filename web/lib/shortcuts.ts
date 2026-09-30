@@ -3,7 +3,7 @@
  * with an `href` or a `command`, and the `?` sheet lists all of them. The rest are handled by
  * their own page and are here so the sheet can show them.
  */
-export type ShortcutGroup = "General" | "Go to" | "Search results";
+export type ShortcutGroup = "General" | "Go to" | "Search results" | "Inbox";
 
 export type Shortcut = {
   group: ShortcutGroup;
@@ -31,6 +31,9 @@ export const SHORTCUTS: Shortcut[] = [
   { group: "Search results", label: "Move through results", keys: ["J", "K"] },
   { group: "Search results", label: "Open the selected tender", keys: ["↵"] },
   { group: "Search results", label: "Start a bid on it", keys: ["B"] },
+  { group: "Inbox", label: "Move through the Inbox", keys: ["J", "K"] },
+  { group: "Inbox", label: "Open the selected item", keys: ["↵"] },
+  { group: "Inbox", label: "Mark it done", keys: ["E"] },
 ];
 
 /** How long the second key of a chord may wait after the first. */

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronDown, Pencil } from "lucide-react";
+import { Building2, Check, ChevronDown, Pencil } from "lucide-react";
 import Link from "next/link";
 
 import { useKopi } from "@/components/kopi-provider";
@@ -12,6 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/toast";
 
 function initials(name: string): string {
   return name
@@ -29,7 +30,7 @@ export function ProfileSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex h-8 min-w-0 items-center gap-2 rounded-full pr-2 pl-1 text-left transition-colors outline-none hover:bg-sidebar-hover focus-visible:ring-2 focus-visible:ring-ring/40"
+        className="flex h-8 max-w-full min-w-0 items-center gap-2 rounded-full pr-2 pl-1 text-left transition-colors outline-none hover:bg-sidebar-hover focus-visible:ring-2 focus-visible:ring-ring/40"
         aria-label={`Bidding as ${profile.name}. Switch company`}
       >
         <span className="grid size-6 shrink-0 place-items-center rounded-full bg-kopi text-[10px] font-medium text-white">{initials(profile.name)}</span>
@@ -40,7 +41,15 @@ export function ProfileSwitcher() {
         <DropdownMenuGroup>
           <DropdownMenuLabel>Bid as</DropdownMenuLabel>
           {profiles.map((p) => (
-            <DropdownMenuItem key={p.id} onClick={() => setProfile(p.id)} className="gap-2.5 py-1.5">
+            <DropdownMenuItem
+              key={p.id}
+              onClick={() => {
+                if (p.id === profile.id) return;
+                setProfile(p.id);
+                toast({ title: `Now bidding as ${p.name}`, icon: Building2 });
+              }}
+              className="gap-2.5 py-1.5"
+            >
               <span className="grid size-6 place-items-center rounded-full bg-muted text-[10px] font-medium">{initials(p.name)}</span>
               <span className="flex-1 truncate">{p.name}</span>
               {p.id === profile.id && <Check className="text-kopi" aria-label="Active" />}
