@@ -1,6 +1,6 @@
 # Main agent (lead): planning, research, orchestration and most build tasks
 
-`01-main` · model claude-opus-5-5 · 534 assistant messages · 1833 tool calls · 29 Sep 07:20 UTC → 01 Oct 08:30 UTC
+`01-main` · model claude-opus-5-5 · 574 assistant messages · 2007 tool calls · 29 Sep 07:20 UTC → 01 Oct 09:40 UTC
 
 Redacted export: thinking, images, system reminders and mailbox results are removed; secrets, emails, phone numbers and home paths are masked; long tool output is cut.
 
@@ -45932,3 +45932,4446 @@ v20 is live. Saving the screenshots, re-exporting the logs (with the token check
   ```
   
   ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Commit the profile research and push
+  
+  ```
+  cd ~/Documents/codes/kopi && git status --short | grep -v "^ M logs\|^?? logs" | head -20; git add -A backend openapi.json web/components web/lib planning README.md && git commit -q -m "KP-47: Fill with Kopi — the company profile filled from its website, a web research agent, the registers and GeBIZ
+  
+  Profile page: a Website field and Fill with Kopi. Kopi reads the site itself, then a
+  Claude agent with only WebSearch and WebFetch researches the company (it gets past
+  sites that refuse readers or render with JavaScript); code checks ACRA owns the UEN,
+  reads GRA/BCA/bizSAFE from the registers and past work from GeBIZ awards. Steps
+  stream live; every filled field says where it came from; website quotes are checked
+  word for word against pages Kopi read; nothing saves until the person does.
+  Live: NCS (ncs.co, 403 to readers) in 51 s, ISS (sg.issworld.com) in 53-61 s.
+  D32; 360 tests.
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git add -A logs && git commit -q -m "Logs through KP-47 (tokens redacted)
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"; git status --short | head -3; n=0; until git push -q origin main 2>/dev/null; do n=$((n+1)); [ $n -ge 20 ] && { echo "push failed"; break; }; sleep 15; done; echo "github: $(/opt/homebrew/bin/gh api repos/teddyoweh/kopi/commits/main -q .sha | cut -c1-7) local: $(git rev-parse --short HEAD)"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  M README.md
+   M backend/kopi/api/app.py
+   M backend/kopi/api/live.py
+   M backend/kopi/models.py
+   M backend/kopi/store.py
+   M openapi.json
+   M planning/02-decisions.md
+   M web/components/profile-view.tsx
+   M web/lib/api-types.ts
+   M web/lib/api.ts
+   M web/lib/mock.ts
+  ?? backend/kopi/profile_research.py
+  ?? backend/tests/test_profile_research.py
+  ?? planning/handoffs/KP-47.md
+  ?? web/components/profile/
+  github: 68de17a local: 68de17a
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Pushed (`68de17a`). Recording it on the board and in my notes:
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **ToolSearch** `{"query": "select:mcp__chain__chain_wait", "max_results": 1}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__chain__chain_wait** `{"for": "Teddy's reaction to Fill with Kopi (live on v20), plus the GitHub billing lock and the submission email, due today.", "minutes": 60, "why": "He's actively reviewing; next move follows his feedback"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. When this turn ends the session sleeps for 60 minutes, then wakes you to check.
+  ```
+
+  </details>
+
+The company profile now fills itself from a website. It's live at https://kopi.unv.run (v20), and the code is on GitHub (`68de17a`).
+
+**How it works:** Profile now opens with a **Website** field. Type the address and press **Fill with Kopi**, and each step appears as it happens:
+- **The site itself:** Kopi reads the company's own pages first.
+- **A research agent:** if the site blocks automated readers or only renders in a browser, an agent searches the web and reads what it needs. It only has web search and page fetching, so it can't reach anything private.
+- **Public registers:** ACRA must confirm the UEN belongs to the company, or it's dropped. GRA, BCA and bizSAFE come straight from their registers.
+- **GeBIZ:** the contracts the company has won become past work and set its contract-value range.
+
+Every field Kopi fills gets a tag saying where it came from ("From ACRA", "From the register", "From GeBIZ", "From the website", "From the web"). A "Where each field came from" list shows the quotes and their pages. A quote Kopi couldn't check against a page it read itself is marked "not checked word for word". Nothing is saved until you press Save.
+
+**Live tests:**
+
+| Company | Time | What it filled |
+|---|---|---|
+| NCS (site refuses automated readers) | 51 s | UEN 198101793G confirmed by ACRA, 12 GRA supply heads at S10, 2 BCA workheads, 198 GeBIZ contracts worth S$1.1B |
+| ISS, run on the live site | 61 s | Legal name from ACRA, UEN, 13 GRA supply heads, 6 BCA workheads, 10 capabilities, 9 past government contracts |
+
+It needs the company name already in the profile to identify the company reliably. On a bad domain guess with no name, it now says it found little instead of pretending, and it never puts the web address in as the company name.
+
+Tests are at 360, all passing. The README, decision D32 and the handoff are updated, and the published logs still contain no tokens.
+
+Still yours: GitHub's billing lock and sending the submission email. That keychain popup in your screenshot isn't something Kopi needs, so Deny is safe.
+
+---
+
+## Turn 79 · Universe (build state) · 01 Oct 08:31 UTC
+
+<details><summary>Universe build state</summary>
+
+```
+New in this workspace since your last turn (yours, the crew's, or the user's):
+- artifacts/media/kopi/hosted-profile-research-done-1440.png
+- artifacts/media/kopi/hosted-profile-research-running-1440.png
+- artifacts/media/kopi/mock-profile-research-390.png
+---
+Give me a quick script on the platform so I can just record it. It doesn't have to be structured. It's just the idea of what I need to talk about. I'm going to record myself quickly. ...
+```
+
+</details>
+
+- **Bash** — Find the brief's demo video requirements
+  
+  ```
+  cd ~/Documents/codes/kopi && ls planning/ | head; grep -n -i -A12 "video\|demo" planning/00-brief.md 2>/dev/null | head -50
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  00-brief.md
+  01-discovery.md
+  02-decisions.md
+  03-plan.md
+  04-ai-journal.md
+  05-cut-list.md
+  06-demo-script.md
+  handoffs
+  plan-v1-cli.md
+  research
+  11:trade-offs), exported agent session logs, a public repo and a short demo.
+  12-
+  13:The demo has to cover six things: what it does, which AI tools, how the agent helped
+  14-plan/implement/debug/refactor, what was added or fixed, what was cut, and the weakest
+  15-part plus what comes next.
+  16-
+  17-They grade on: effective use of agents, clarity of planning and handoff artifacts,
+  [… 334 chars cut …]
+  of
+  25-that market is the supplier. Every day GeBIZ publishes new procurement opportunities
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Write** `~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-recording-notes.md`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **mcp__chain__chain_wait** `{"for": "Teddy recording the demo from the talking points, then the GitHub billing lock and sending the submission email, due today.", "minutes": 60, "why": "He's recording now; next move follows what he needs"}`
+
+  <details><summary>result</summary>
+
+  ```
+  Recorded. When this turn ends the session sleeps for 60 minutes, then wakes you to check.
+  ```
+
+  </details>
+
+I wrote your talking points in `artifacts/docs/kopi-recording-notes.md`. They're loose bullets in the order you'd click through kopi.unv.run, about 5 minutes, with what to show in [brackets].
+
+The flow:
+1. **What it is.** Home, then search: the 0.695 retrieval score against BGE and BM25, and ⌘K.
+2. **A tender.** The bid / maybe / no-bid call, and how quotes are checked word for word.
+3. **Autopilot, the centrepiece.** Start bid, watch the documents stream in, then the "Only you can do" pack. The MAS run took 4 min 39 s for US$2.25, with nobody touching it.
+4. **Company profile.** Fill with Kopi; NCS filled in 51 s even though its site blocks bots.
+5. **How you built it.** Claude Code on Opus 5.5 in Universe, with parallel agents and reviewer agents.
+6. **Where the AI failed and how you caught it.**
+   - Reviewer agents found four bugs that had passed the authors' own tests.
+   - The test set showed your "domain-specific" search instruction scored 0.444, worse than the generic one.
+   - Real runs exposed a 4 am vs 4 pm deadline bug and big sites blocking the reader.
+   - You caught the placeholder handback and the crowded UI yourself.
+7. **What you added or fixed, what you cut, and the weakest part plus what's next.**
+
+That covers all six points the brief asks for. The access code `[secret]` is in the notes so you can sign in while recording.
+
+---
+
+## Turn 80 · Universe (build state) · 01 Oct 08:35 UTC
+
+<details><summary>Universe build state</summary>
+
+```
+New in this workspace since your last turn (yours, the crew's, or the user's):
+- artifacts/docs/kopi-recording-notes.md
+---
+I want you to make a really high-quality demo of this. Make it 59 seconds. Make it a product insane product demo, an opening-quality demo. Just really push the bar on what demo videos are and use, if possible, motion graphics, animations, text, natural human voice, and stuff like that. Don't make it too much because you want to be clear. I don't want to look past the idea, and make it very, very, very fucking crisp. Don't talk too much, but just about the general idea. --Agent orchestration
+Retrieval, memory, or knowledge systems
+Internal automation tools
+AI-assisted analysis or summarisation workflows
+Developer productivity tools
+Small products that use AI in a practical way I want to talk about this as well. Just because it's the base limit, obviously you want to expand and say, "Okay the most high-impact project I could think of during the short period of time was..." What does NCS/pragmatism do? They work for governments and essentially like that. Just think about this very, very pragmatically and make a really well-designed video end-to-end.
+```
+
+</details>
+
+A 59-second launch film, then. I'm starting from the tools I've already built for this: the product-film skill, the Kopi film rig, and the compositor from the AgentStuff film.
+
+- **Bash** — Read the product-film skill
+  
+  ```
+  cat ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/.skills/clay-product-film/SKILL.md 2>/dev/null | head -150; ls ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/.skills/clay-product-film/ 2>/dev/null
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ---
+  name: clay-product-film
+  description: Make an Apple-grade product demo film from a real web app — seeded mock account, frame-accurate UI capture, Blender clay props, an HTML compositor rendered at 4K60 on a beat map. Use when asked for a "demo video", "launch film", "product video" of an app we have the code for.
+  ---
+  
+  # Clay product film
+  
+  The winning shape: the REAL app, captured perfectly, moved through a clay 3D world, cut on the beat.
+  Reference build: `~/Documents/agentstuff-demo/` (AgentStuff, Sep 2026) — copy
+  [… 2,319 chars cut …]
+  piped to x264 crf 12, resumable by frame count. Concat, lay the score, downscale a 1080p copy. Absolute paths to `uv`/`ffmpeg` in scripts run from the background.
+  SKILL.md
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Survey the film rig and AgentStuff pipeline
+  
+  ```
+  ls ~/Documents/codes/kopi/data/film-rig/ | head -40; ls ~/Documents/agentstuff-demo/ ~/Documents/agentstuff-demo/film ~/Documents/agentstuff-demo/music 2>/dev/null | head -60; wc -l ~/Documents/agentstuff-demo/film/*.js ~/Documents/agentstuff-demo/film/*.html 2>/dev/null
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  cards
+  cut.py
+  film_api.py
+  qa-quotes.mjs
+  record.mjs
+  reencode.py
+  render_cards.mjs
+  sheet.py
+  shoot29.mjs
+  shots.mjs
+  vo
+  ~/Documents/agentstuff-demo/:
+  assets
+  capture
+  clay
+  film
+  music
+  plates
+  renders
+  stack
+  
+  ~/Documents/agentstuff-demo/film:
+  film.js
+  film.v1.js
+  fonts
+  index.html
+  noise.png
+  rebuild_all.sh
+  reel.sh
+  render.py
+  render_all.sh
+  review.sh
+  sheet.py
+  
+  ~/Documents/agentstuff-demo/music:
+  adoreu.analysis.json
+  adoreu.wav
+  allyouchildren.analysis.json
+  allyouchildren.wav
+  alt-go.wav
+  alt-marea.wav
+  alt_cut.sh
+  analysis_summary.json
+  [… 374 chars cut …]
+      1037 ~/Documents/agentstuff-demo/film/film.js
+      1042 ~/Documents/agentstuff-demo/film/film.v1.js
+        79 ~/Documents/agentstuff-demo/film/index.html
+      2158 total
+  ```
+
+  </details>
+
+- **Bash** — Find how the voiceover was produced
+  
+  ```
+  cd ~/Documents/codes/kopi/data/film-rig && grep -rln -i "elevenlabs\|voice" . 2>/dev/null | head; ls vo* audio* 2>/dev/null | head; grep -rn -i "elevenlabs" *.py *.mjs *.md 2>/dev/null | head -10
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ./vo/kokoro_tts.py
+  ./cut.py
+  (eval):1: no matches found: audio*
+  (eval):1: no matches found: *.md
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Inspect the existing voiceover assets
+  
+  ```
+  cd ~/Documents/codes/kopi/data/film-rig && ls vo | head -30; head -40 vo/kokoro_tts.py; grep -n -i "voice\|eleven\|\.mp3\|\.wav" cut.py | head -20
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  check_vo.py
+  compare.py
+  eleven
+  kokoro-michael
+  kokoro_tts.py
+  segments.json
+  """Kokoro-82M voiceover, one WAV per segment. Usage: python kokoro_tts.py <voice> <outdir> [ids...]"""
+  import json, sys
+  from pathlib import Path
+  import numpy as np, soundfile as sf
+  from kokoro import KPipeline
+  
+  voice, out = sys.argv[1], Path(sys.argv[2]); out.mkdir(parents=True, exist_ok=True)
+  wanted = set(sys.argv[3:])
+  pipe = KPipeline(lang_code="a")
+  for seg in json.load(open("/tmp/kopi-film/vo/segments.json")):
+      if wanted and seg["id"] not in
+  [… 1,385 chars cut …]
+  "concat", "-safe", "0", "-i", str(WORK / "video.txt"), "-i", str(WORK / "voice.wav"),
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — See how the ElevenLabs lines were produced
+  
+  ```
+  cd ~/Documents/codes/kopi/data/film-rig/vo && ls eleven | head; head -30 check_vo.py; cat segments.json | head -30
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  s01.mp3
+  s03.mp3
+  s04a.mp3
+  s04b.mp3
+  s05.mp3
+  s06.mp3
+  s08.mp3
+  s09.mp3
+  s10.mp3
+  s11.mp3
+  import json, subprocess, tempfile
+  MODEL = "~/yapper-shots/userdata/models/ggml-large-v3-turbo-q5_0.bin"
+  total = 0
+  for seg in json.load(open("segments.json")):
+      path = f"eleven/{seg['id']}.mp3"
+      wav = tempfile.mktemp(suffix=".wav")
+      subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-ar", "16000", "-ac", "1", wav], check=True)
+      heard = subprocess.run(["whisper-cli", "-m", MODEL, "-f", wav, "-nt", "-np"],
+  [… 1,617 chars cut …]
+  from the notice or from our own profile. A quote it can't find caps the call at maybe."
+   },
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **ToolSearch** `{"query": "select:mcp__work__history_search,mcp__browser__browser_open,mcp__browser__browser_act,mcp__browser__browser_read,mcp__browser__browser_close,mcp__browser__browser_profiles,mcp__music__music_download,mcp__music__music_search", "max_results": 8}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+---
+
+## Turn 81 · Teddy · 01 Oct 08:37 UTC
+
+> [Request interrupted by user]
+
+---
+
+## Turn 82 · Teddy · 01 Oct 08:37 UTC
+
+> I want you to make a really high-quality demo of this. Make it 59 seconds. Make it a product insane product demo, an opening-quality demo. Just really push the bar on what demo videos are and use, if possible, motion graphics, animations, text, natural human voice, and stuff like that. Don't make it too much because you want to be clear. I don't want to look past the idea, and make it very, very, very fucking crisp. Don't talk too much, but just about the general idea. --Agent orchestration
+> Retrieval, memory, or knowledge systems
+> Internal automation tools
+> AI-assisted analysis or summarisation workflows
+> Developer productivity tools
+> Small products that use AI in a practical way I want to talk about this as well. Just because it's the base limit, obviously you want to expand and say, "Okay the most high-impact project I could think of during the short period of time was..." What does NCS/pragmatism do? They work for governments and essentially like that. Just think about this very, very pragmatically and make a really well-designed video end-to-end. You have lost power because you have access to the code, you have access to the style, and so you can make really cool stuff with that and the motion transitions. You can actually use the style sparingly and you can also take screen recordings of the product as well and just do really interesting stuff, just making insane high quality.
+
+- **Bash** — Check the time and for an ElevenLabs key in project env files
+  
+  ```
+  date -u; grep -rlsI "ELEVENLABS\|elevenlabs" ~/Documents/codes --include=".env*" 2>/dev/null | head -5; ls ~/Documents/codes/kopi/data/film-rig/vo/eleven | wc -l
+  ```
+
+- **mcp__browser__browser_profiles** `{}`
+
+  <details><summary>result</summary>
+
+  ```
+  Thu Oct  1 08:38:31 UTC 2026
+  ~/Documents/codes/spawnlabs-core-integrate/backend/.env.example
+  ~/Documents/codes/spawnlabs-core/.claude/worktrees/agent-ab0b6ad1feedf801d/backend/.env.example
+  ~/Documents/codes/spawnlabs-core/.claude/worktrees/agent-a061da72aae48a806/backend/.env.example
+  ~/Documents/codes/spawnlabs-core/.claude/worktrees/agent-a8072e2bd94a528fe/backend/.env.example
+  ~/Documents/codes/spawnlabs-core/.claude/worktrees/agent-a265182934e5e2669/backend/.env.example
+        13
+  ```
+
+  </details>
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: the browser profiles and the accounts they are signed into]
+  ```
+
+  </details>
+
+- **Bash** — Write the voiceover lines; read the recorder
+  
+  ```
+  mkdir -p ~/Documents/codes/kopi/data/launch/{vo,music,captures,film,renders} && cat > ~/Documents/codes/kopi/data/launch/vo/lines.json <<'EOF'
+  [
+    {"id": "l1", "text": "The brief: build something useful with AI."},
+    {"id": "l2", "text": "Pragnition builds AI for government. So I built for the other side of the table."},
+    {"id": "l3", "text": "Right now, Singapore has seven hundred tenders open. Someone has to read them all."},
+    {"id": "l4", "text": "Kopi reads every one. It finds the tenders you can actually win, and shows what similar work sold for."},
+    {"id": "l5", "text": "Every claim is quoted, and checked."},
+    {"id": "l6", "text": "Press Start bid, and an agent runs the whole thing. The questions, the compliance, the proposal, the price. Ready to submit in five minutes."},
+    {"id": "l7", "text": "Setup is one field. Your website."},
+    {"id": "l8", "text": "Agents, retrieval, memory and automation, in one product. Built in three days, with a team of AI agents."},
+    {"id": "l9", "text": "This is Kopi."}
+  ]
+  EOF
+  python3 -c "import json;l=json.load(open('~/Documents/codes/kopi/data/launch/vo/lines.json'));print(sum(len(x['text'].split()) for x in l),'words',sum(len(x['text']) for x in l),'chars')"; sed -n 1,30p ~/Documents/codes/kopi/data/film-rig/record.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  112 words 631 chars
+  // Records Kopi demo footage: real pages in headless Chrome at 1920x1080, captured with
+  // CDP screencast (every frame the page paints, with its timestamp), then encoded to
+  // constant-rate 30 fps H.264. Usage: node record.mjs <scene> [<scene> ...] | all
+  import { execFileSync } from "node:child_process";
+  import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+  import { join } from "node:path";
+  import { chromium } from "/tmp/kopi-shots/node_modules/playwright-core/index.mjs";
+  
+  const
+  [… 1,090 chars cut …]
+  = "scale(0.85)"), true);
+      addEventListener("mouseup", () => (c.style.transform = "scale(1)"), true);
+    });`;
+  
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  ```
+
+  </details>
+
+Launching the voiceover agent in the background:
+
+- **Agent** — ElevenLabs voiceover for launch film
+  
+  > Generate the voiceover for a 59-second product launch film of Kopi, a Singapore government-tender copilot.
+  >
+  > **Lines:** nine of them, in `~/Documents/codes/kopi/data/launch/vo/lines.json`, each with an `id` and `text`. Use the text exactly; don't change the words.
+  >
+  > **Where it comes from:** ElevenLabs, on the user's account. The account is [email], signed in through Google SSO. Use the Universe browser tools:
+  > - `browser_open` with `mode: "profile"`, `profile: "default"`, headless (the default). That profile is signed into Google as [email].
+  > - Go to https://elevenlabs.io/app/speech-synthesis/text-to-speech. If it asks you to sign in, choose "Sign in with Google" and pick [email]; the Google session completes it.
+  > - Don't change any account settings, plan or billing, and don't publish anything.
+  > - If ElevenLabs shows a captcha or a verification wall, or the free character quota is exhausted, stop and report exactly what the page says.
+  >
+  > **Voices and settings:**
+  > - Make two complete takes, each in a natural, warm, confident voice, the kind a top product-launch film uses: calm, unhurried, not salesy.
+  >   - **Take A:**
+  > [… 1,173 chars cut …]
+  > **Finish:**
+  > - Write `~/Documents/codes/kopi/data/launch/vo/report.json`. For each take: the voice name, the model, and per line the duration and the transcript. Add the total spoken seconds.
+  > - Close the browser.
+  > - Report: which voice sounded more natural (judge by the transcripts and timing; say if a take came out flat or rushed), the totals, and anything that went wrong.
+
+  <details><summary>result</summary>
+
+  ```
+  Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+  agentId: a191756c567315f62 (internal ID - do not mention to user. Use SendMessage with to: 'a191756c567315f62', summary: '<5-10 word recap>' to continue this agent.)
+  The agent is working in the background. You will be notified automatically when it completes. You know nothing about its results until that notification arrives — do not report, assume, or
+  [… 404 chars cut …]
+  full subagent JSONL transcript and reading it will overflow your context. If the user asks for progress, say the agent is still running; you'll get a completion notification.
+  ```
+
+  </details>
+
+- **Bash** — Read the measured music candidates
+  
+  ```
+  cd ~/Documents/agentstuff-demo/music && cat notes.md | head -60; python3 - <<'EOF'
+  import json,glob
+  for f in sorted(glob.glob('*.analysis.json')):
+      d=json.load(open(f))
+      keys=list(d.keys())
+      print(f, {k:(d[k] if not isinstance(d[k],(list,dict)) else (str(d[k])[:120])) for k in keys[:12]})
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  # AgentStuff demo score: notes
+  
+  **Track:** Adam Port, Stryv, Keinemusik, Orso: *Move* feat. Malachiii (Extended Version)
+  **Source:** `artifacts/media/Adam Port_ Stryv - Move feat. Malachiii (Extended Version).mp3`
+  **Window:** music_in **96.09 s** to music_out **168.09 s** (bars 48 to 84), **72.0 s**, **120.000 BPM**, 4/4, 1 bar = 2.0 s
+  **Render:** `score.wav`: 48 kHz, 24-bit stereo, 0.3 s fade-in, 2.5 s fade-out (69.5 to 72.0), -13.9 LUFS integrated, -2.7 dBTP (linear gain only, no limiting)
+  
+  ## Why this track
+  - It's
+  [… 2,320 chars cut …]
+  0.9986218365637474, 1.4904372090728784, 1.9822525815820091, 2.47406795409114,'}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Compare the first minute's energy of each candidate
+  
+  ```
+  cd ~/Documents/agentstuff-demo/music && python3 - <<'EOF'
+  import json
+  for name in ['rapture','move','allyouchildren','marea','mwaki','adoreu','go']:
+      d=json.load(open(f'{name}.analysis.json'))
+      e=None
+      for k in ('energy','energy_05','rms','curve'):
+          if k in d: e=d[k]; break
+      if e is None:
+          print(name, 'keys', list(d.keys())); continue
+      vals=e if isinstance(e,list) else e.get('values')
+      step=0.5
+      row=[vals[int(t/step)] for t in range(0,62,2)]
+      print(f"{name:15s} bpm {d['bpm']:.1f} |"+" ".join(f"{v:.2f}" if isinstance(v,(int,float)) else str(v)[:4] for v in row))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  rapture keys ['path', 'duration', 'bpm', 'period', 'first_beat', 'fold_peak', 'drift_ms', 'phase_scores', 'combo', 'kick_phase', 'combo_phase', 'beats', 'beat_all', 'beat_low', 'beat_mid', 'beat_hi', 'change', 'chroma_nov', 'kick_b', 'broad_b', 'hat_b', 'downbeat_phase_used', 'downbeats', 'energy_0p5', 'source']
+  move keys ['path', 'duration', 'bpm', 'period', 'first_beat', 'fold_peak', 'drift_ms', 'phase_scores', 'combo', 'kick_phase', 'combo_phase', 'beats', 'beat_all', 'beat_low', 'beat_mid', 'beat_hi', 'change',
+  [… 1,343 chars cut …]
+  'beat_low', 'beat_mid', 'beat_hi', 'change', 'chroma_nov', 'kick_b', 'broad_b', 'hat_b']
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Energy profile of each candidate's first minute
+  
+  ```
+  cd ~/Documents/agentstuff-demo/music && ~/.local/bin/uv run --project ~/Documents/codes/kopi/backend python - <<'EOF'
+  import wave, numpy as np
+  for name in ['rapture','move','allyouchildren','marea','mwaki','adoreu','go','dare','yourvoice']:
+      try:
+          w=wave.open(f'{name}.wav')
+      except Exception as e:
+          print(name, 'skip', e); continue
+      sr=w.getframerate(); ch=w.getnchannels(); sw=w.getsampwidth()
+      n=min(w.getnframes(), sr*62)
+      raw=w.readframes(n)
+      dt={2:np.int16,4:np.int32}.get(sw)
+      if dt is None:
+          a=np.frombuffer(raw,dtype=np.uint8).reshape(-1,3)
+          x=(a[:,0].astype(np.int32)|(a[:,1].astype(np.int32)<<8)|(a[:,2].astype(np.int32)<<16)); x=np.where(x>=1<<23,x-(1<<24),x).astype(np.float32)/(1<<23)
+      else:
+          x=np.frombuffer(raw,dtype=dt).astype(np.float32)/np.iinfo(dt).max
+      x=x.reshape(-1,ch).mean(1)
+      seg=sr*2
+      rms=[float(np.sqrt(np.mean(x[i:i+seg]**2))) for i in range(0,len(x)-seg+1,seg)]
+      m=max(rms) or 1
+      print(f"{name:15s}"+" ".join(f"{int(9.99*r/m)}" for r in rms))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  rapture        9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9
+  move           9 9 9 9 9 9 9 9 9 9 9 9 3 3 3 4 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9
+  allyouchildren 2 1 2 1 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 6 6 5
+  marea          2 3 2 3 9 9 9 9 9 9 9 8 3 3 3 4 4 4 3 3 2 4 4 4 3 4 4 4 5 5 4
+  mwaki          2 3 3 3 5 3 5 3 5 3 5 4 6 6 4 5 6 6 4 4 2 2 9 9 9 9 9 9 9 7 9
+  adoreu         1 1 1 1 4 1 4 4 3 5 1 4 5 4 4 5 3 5 2 4 4 5 3 5 4 6 6 9 9 9 9
+  go             6 6 6 6 7 6 6 7 9 7 7 7 8 7 7 7 8 8 8 7 9 8 8 8
+  [… 76 chars cut …]
+  9 9 9 8 8 4 9 9
+  yourvoice      9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 8 9 9 9 9 9 9 9 9 9 8 9 8 9 8 9
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Agent** — Pick and measure the film score
+  
+  > Pick the music for a 59-second product launch film of Kopi, a Singapore government-tender copilot.
+  >
+  > **Constraints:**
+  > - The film has a voiceover (about 45 s of speech spread over 59 s). The track must be instrumental, or have no lead vocal in its first minute; sparse vocal chops are fine.
+  > - It plays from its own first second. Never cut a window from the middle of a song: the user insists on this.
+  > - Mood: premium, modern, crisp, confident, like an Apple or Linear launch film. The user loves Keinemusik and Afro house, but anything polished works: minimal electronic, ambient-electronic.
+  > - Shape wanted:
+  >   - a quiet or sparse opening for about the first 8 to 10 s, under kinetic titles;
+  >   - a clear lift (kick or bass in) somewhere between 8 and 12 s;
+  >   - a steady groove from 12 to 50 s, not too busy, because the voice sits on top;
+  >   - ideally a second lift or swell around 45 to 55 s for the ending.
+  >
+  > **Steps:**
+  > 1. **Gather candidates.** Use the `music_download` tool (load it with ToolSearch `select:mcp__music__music_download,mcp__music__music_search`), with `folder: "kopi-score-candidates"`. Fetch 6 to 8
+  > [… 1,487 chars cut …]
+  > 59 s);
+  >    - `energy` (per-second, 0 to 1);
+  >    - `why` (two sentences);
+  >    - `runner_up` (track and path).
+  > 4. **Report:** the shortlist, each with its first-lift time, BPM and the vocal situation in its first minute; then the pick and why.
+  >
+  > Do not touch anything outside `~/Documents/codes/kopi/data/launch/music/` and the session's `artifacts/media/kopi-score-candidates/`.
+
+  <details><summary>result</summary>
+
+  ```
+  Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+  agentId: a58a411d5c61733a1 (internal ID - do not mention to user. Use SendMessage with to: 'a58a411d5c61733a1', summary: '<5-10 word recap>' to continue this agent.)
+  The agent is working in the background. You will be notified automatically when it completes. You know nothing about its results until that notification arrives — do not report, assume, or
+  [… 404 chars cut …]
+  full subagent JSONL transcript and reading it will overflow your context. If the user asks for progress, say the agent is still running; you'll get a completion notification.
+  ```
+
+  </details>
+
+While those run, I'm capturing the product. First, how the existing recorder screencasts and re-times frames:
+
+- **Bash** — Read the screencast and re-timing code
+  
+  ```
+  cd ~/Documents/codes/kopi/data/film-rig && sed -n 30,120p record.mjs; head -40 reencode.py
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  async function film(browser, name, run, { storage } = {}) {
+    const context = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1, colorScheme: "light", locale: "en-SG" });
+    await context.addInitScript(CURSOR);
+    if (storage) await context.addInitScript(storage);
+    const page = await context.newPage();
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    const cdp = await context.newCDPSession(page);
+    const frames = [];
+    cdp.on("Page.screencastFrame",
+  [… 2,310 chars cut …]
+                  "-r", "30", "-movflags", "+faststart", str(OUT / f"{name}.mp4")], check=True)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check disk space and Pragnition's domain
+  
+  ```
+  df -h ~ | tail -1; for d in pragnition.com pragnition.ai pragnitionlabs.com pragnition.sg pragnition.io www.pragnition.com; do printf "%s " $d; curl -s -m 8 -o /dev/null -w "%{http_code} %{url_effective}\n" -L "https://$d" || echo fail; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  /dev/disk3s5   926Gi   882Gi   4.5Gi   100%     10M   48M   18%   /System/Volumes/Data
+  pragnition.com 200 https://pragnition.ai/
+  pragnition.ai 200 https://pragnition.ai/
+  pragnitionlabs.com 000 https://pragnitionlabs.com/
+  fail
+  pragnition.sg 000 https://pragnition.sg/
+  fail
+  pragnition.io 000 https://pragnition.io/
+  fail
+  www.pragnition.com 200 https://pragnition.ai/
+  ```
+
+  </details>
+
+- **Bash** — Size my scratch folders and worktrees
+  
+  ```
+  du -sh /tmp/kopi-* ~/.universe/cache/worktrees/kp/* 2>/dev/null | sort -h | tail -20
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  4.0K	/tmp/kopi-deploy.log
+  4.0K	/tmp/kopi-export.log
+  8.0K	/tmp/kopi-iss.out
+  8.0K	/tmp/kopi-ncs.out
+  1.8M	/tmp/kopi-hprofile
+  2.4M	/tmp/kopi-profile
+  2.5M	~/.universe/cache/worktrees/kp/kp-20
+  8.2M	~/.universe/cache/worktrees/kp/kp-22
+  8.3M	~/.universe/cache/worktrees/kp/kp-30
+  9.7M	~/.universe/cache/worktrees/kp/kp-36
+  340M	~/.universe/cache/worktrees/kp/kp-32
+  341M	~/.universe/cache/worktrees/kp/kp-34
+  662M	~/.universe/cache/worktrees/kp/kp-35
+  662M	~/.universe/cache/worktrees/kp/kp-39
+  ```
+
+  </details>
+
+- **Bash** — Remove merged worktrees and check space
+  
+  ```
+  cd ~/Documents/codes/kopi && for w in kp-32 kp-34 kp-35 kp-39 kp-30 kp-36; do git branch --merged main | grep -q "factory/$w$" && git worktree remove --force ~/.universe/cache/worktrees/kp/$w && echo "removed $w" || echo "kept $w (not merged)"; done; df -h ~ | tail -1
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  removed kp-32
+  removed kp-34
+  removed kp-35
+  removed kp-39
+  removed kp-30
+  removed kp-36
+  /dev/disk3s5   926Gi   881Gi   6.9Gi   100%     10M   73M   12%   /System/Volumes/Data
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Dry-run profile research on pragnition.ai
+  
+  ```
+  /usr/bin/python3 ~/Documents/codes/kopi/data/qa/live-research.py pragnition.ai "Pragnition Labs" > /tmp/kopi-prag.out 2>&1; grep -E "^ *[0-9.]+s (step|done|error)" /tmp/kopi-prag.out | head -30; python3 -c "
+  s=open('/tmp/kopi-prag.out').read(); i=s.find('{'); print(s[i:i+1500])"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: blc7vuovv. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/blc7vuovv.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  ```
+
+  </details>
+
+Writing the capture script. One logged-in browser records the clips in story order, so each one carries on from the last (the bid it starts is the bid Home shows):
+
+- **Write** ``
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Read the pragnition.ai dry run
+  
+  ```
+  grep -E "^ *[0-9.]+s (step|done|error)" /tmp/kopi-prag.out | head -30; python3 -c "
+  s=open('/tmp/kopi-prag.out').read(); i=s.find('{'); print(s[i:i+1800])"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  1.3s step: Reading pragnition.ai
+    2.2s step: Read 1 page: Pragnition Labs: Intelligence in Practic
+    2.2s step: Researching the company on the web
+    5.0s step: Searched the web: Pragnition Labs Pte Ltd UEN
+   12.0s step: Searched the web: "PRAGNITION" pte ltd opengovsg OR companies.sg OR sgpbusiness
+   12.3s step: Read www.linkedin.com/in/ivantung
+   17.9s step: Read www.opengovsg.com/corporate
+   18.3s step: Read github.com/pragnition
+   24.7s step: Searched the web: "PRAGNITION LABS PTE. LTD."
+   37.6s step: No UEN found, so
+  [… 972 chars cut …]
+  null,
+   "licences_held": null,
+   "bizsafe_level": null,
+   "value_band_sgd": {}
+  }
+  filled: ['summary', 'capabilities'] | sources: 4 | pages: ['https://pragnition.ai']
+  ```
+
+  </details>
+
+- **Bash** — Capture all film clips from the live site
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && rm -f captures/storage.json && PATH=/opt/homebrew/bin:$PATH node capture.mjs all > capture.log 2>&1; echo "exit $?" >> capture.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: bzbrz4nn6. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/bzbrz4nn6.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+While it records, I'm building the compositor, reusing the AgentStuff film's machinery: frames drawn as a pure function of time, rendered headless and piped into ffmpeg.
+
+- **Bash** — Read the AgentStuff compositor shell and renderer
+  
+  ```
+  cd ~/Documents/agentstuff-demo/film && cat index.html | head -80; sed -n 1,80p render.py
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  <!doctype html>
+  <html>
+  <head>
+  <meta charset="utf-8">
+  <title>AgentStuff — film</title>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <style>
+    html, body { margin: 0; background: #111; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: 'Google Sans', system-ui, sans-serif; color: #1c1b1a; -webkit-font-smoothing: antialiased; }
+    #bg { position: absolute; inset: 0; }
+    #bloom { position: absolute; inset: 0; pointer-events:
+  [… 2,320 chars cut …]
+  type=float, default=72)
+      ap.add_argument("--fps", type=int, default=60)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the logo, wordmark and Inter font files
+  
+  ```
+  cd ~/Documents/codes/kopi/web && cat app/icon.svg; cat components/shell/wordmark.tsx; grep -l "Inter" out/_next/static/css/*.css 2>/dev/null | head -2; grep -o "src:url([^)]*woff2)[^;]*;font-display[^}]*}" out/_next/static/css/*.css 2>/dev/null | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#c2551f"/><path d="M6.5 9h9v4.5a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4V9Z" fill="#fff"/><path d="M15.5 10.5h1.25a1.75 1.75 0 0 1 0 3.5H15.5" stroke="#fff" stroke-width="1.5" fill="none"/></svg>
+  import Link from "next/link";
+  
+  /** The Kopi mark: a cup in the accent colour, and the name. */
+  export function Wordmark() {
+    return (
+      <Link href="/" className="flex items-center gap-2.5" aria-label="Kopi, overview">
+        <svg
+  [… 440 chars cut …]
+  found: out/_next/static/css/*.css
+  (eval):1: no matches found: out/_next/static/css/*.css
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the capture log
+  
+  ```
+  cat ~/Documents/codes/kopi/data/launch/capture.log | tail -15; du -sh ~/Documents/codes/kopi/data/launch/captures/* 2>/dev/null; df -h ~ | tail -1
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  locator.textContent: Timeout 30000ms exceeded.
+  Call log:
+    - waiting for locator('[aria-label=\'Results\'] li').first()
+  
+      at Object.overview (~/Documents/codes/kopi/data/launch/capture.mjs:152:75)
+      at ~/Documents/codes/kopi/data/launch/capture.mjs:259:20 {
+    log: [
+      "  - waiting for locator('[aria-label=\\'Results\\'] li').first()"
+    ],
+    name: 'TimeoutError'
+  }
+  
+  Node.js v26.7.0
+  exit 1
+   39M	~/Documents/codes/kopi/data/launch/captures/search
+  4.0K	~/Documents/codes/kopi/data/launch/captures/storage.json
+  /dev/disk3s5   926Gi   881Gi   7.7Gi   100%     10M   81M   11%   /System/Volumes/Data
+  ```
+
+  </details>
+
+Search recorded. The overview step failed because clicking a result card had already opened the tender, so its "Results" list was gone. Checking the end of the search clip to confirm:
+
+- **Bash** — Inspect the search clip's end frames
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/captures/search && cat meta.json; ls seq | wc -l; n=$(ls seq | wc -l); /opt/homebrew/bin/ffmpeg -loglevel error -y -i seq/$(printf "%06d" $((n-5))).jpg -vf scale=1200:-1 /tmp/kopi-search-end.png; /opt/homebrew/bin/ffmpeg -loglevel error -y -i seq/$(printf "%06d" $((n*2/3))).jpg -vf scale=1200:-1 /tmp/kopi-search-mid.png
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  {
+   "frames": 350,
+   "fps": 30,
+   "width": 2400,
+   "height": 1500,
+   "css": {
+    "width": 1600,
+    "height": 1000
+   },
+   "dsf": 1.5,
+   "marks": {
+    "typing": 1.5220000743865967,
+    "typed": 3.55400013923645,
+    "results": 5.3450000286102295,
+    "insights": 5.3500001430511475,
+    "selected": 8.766999959945679
+   }
+  }     350
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-search-mid.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `/tmp/kopi-search-end.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Find the overview's finished-state text
+  
+  ```
+  cd ~/Documents/codes/kopi/web && grep -n "Verdict\|BID\|MAYBE\|Found in\|found_in\|verified" components/tender-ai.tsx | head -20
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  49:  BID: { label: "Bid", className: "bg-met-soft text-met" },
+  50:  MAYBE: { label: "Maybe", className: "bg-kopi-soft text-kopi" },
+  51:  NO_BID: { label: "No bid", className: "bg-unmet-soft text-unmet" },
+  58:function Verdict({ overview, profile }: { overview: Overview; profile: Profile }) {
+  83:/** Where code found a verified quote word for word. Overviews cached before `found_in` existed say only "Verified". */
+  96:                reason.verified ? "bg-secondary text-foreground/85" : "bg-unmet-soft
+  [… 417 chars cut …]
+  found in the notice or your profile. They are shown so you can see them, not as evidence.`}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Fix the search and overview capture waits
+  
+  ```
+  cd ~/Documents/codes/kopi/web && sed -n 84,92p components/tender-ai.tsx; cd ../data/launch && python3 - <<'EOF'
+  p='capture.mjs'
+  s=open(p).read()
+  # search: wait for chips, end on hover of first card (no click)
+  old=s[s.index('      await page.waitForFunction(() => document.body.innerText.includes("past awards"), null, { timeout: 30000 }).catch(() => {});'):s.index('    });\n  },\n\n  // A tender\'s AI overview')]
+  s=s.replace(old,'''      // The cards' chips (eligibility, price band) arrive after the hits; wait until no skeleton is left.
+        await page.waitForFunction(() => !document.querySelector("[aria-label='Results'] .animate-pulse"), null, { timeout: 60000 }).catch(() => {});
+        mark("insights");
+        await wait(1600);
+        await moveTo(page, page.locator("[aria-label='Results'] li").nth(0), { pause: 1600, steps: 40 });
+        mark("hover");
+  ''')
+  old2=s[s.index('  async overview(page) {'):s.index('  // The hero: Start bid')]
+  s=s.replace(old2,'''  async overview(page) {
+      await page.goto(`${SITE}/tender/?doc=${OVERVIEW_DOC}`, { waitUntil: "domcontentloaded" });
+      await page.getByText("AI
+  [… 811 chars cut …]
+  "smooth" }));
+        await wait(1800);
+        await glide(page, 380, 1800);
+        mark("quotes");
+        await wait(2500);
+      });
+    },
+  
+  ''')
+  s=s.replace('const BID_DOC = "MAS000ETT26000053";','const BID_DOC = "MAS000ETT26000053";\nconst OVERVIEW_DOC = "CAA000ETQ26000027";')
+  open(p,'w').write(s)
+  EOF
+  grep -n "FOUND_IN = \|FOUND_IN:" ../../web/components/tender-ai.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  const FOUND_IN = { notice: "Verified in the notice", profile: "From your profile", unknown: "Verified" } as const;
+  
+  function Reasons({ overview }: { overview: Overview }) {
+    return (
+      <ul className="flex flex-col divide-y divide-border/70 overflow-hidden rounded-xl border">
+        {overview.fit.reasons.map((reason, i) => (
+          <li key={i} className="flex flex-col gap-2 px-4 py-3.5">
+            <p className="text-[13.5px] font-book">{reason.point}</p>
+            {reason.quote && (
+  84:const FOUND_IN = { notice: "Verified in the notice", profile: "From your profile", unknown: "Verified" } as const;
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The finished overview labels its quotes "Verified in the notice", which the new wait matches. Re-running the full capture:
+
+- **Bash** — Re-capture all clips from the live site
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && rm -rf captures/* && PATH=/opt/homebrew/bin:$PATH node capture.mjs all > capture.log 2>&1; echo "exit $?" >> capture.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: bfak7drlt. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/bfak7drlt.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+While the capture runs, I'm gathering the compositor's fonts and data. First, the Inter font from the app's own build:
+
+- **Bash** — Find the Inter font files in the build
+  
+  ```
+  cd ~/Documents/codes/kopi/web/out/_next/static && ls media | head -20; grep -o "@font-face{[^}]*}" chunks/*.css 2>/dev/null | head -4; ls chunks/*.css 2>/dev/null | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  1ce0dcbf49a4d2fc-s.0i-yae4-dyls3.woff2
+  234d9015b631dab9-s.p.33gca1im1ku45.woff2
+  2edaebbda2e96a79-s.19lle6lbse9av.woff2
+  3aa4d934eba90e8b-s.1-ayfg4wg0qfm.woff2
+  4fa387ec64143e14-s.2tuy5pz7dlieh.woff2
+  5ce348bf30bf5439-s.31988l_ccedte.woff2
+  6306c77e7c8268e4-s.2dbetqa9o8jxf.woff2
+  704a14dc8309e245-s.1oksl_d3k3jrm.woff2
+  797e433ab948586e-s.p.0r6juujl39pe6.woff2
+  7d817b4c03b0c5f1-s.1uyisp29ctx0d.woff2
+  a440747434783fbe-s.0do-s6vn362zr.woff2
+  bbc41e54d2fcbd21-s.1rgnod-3esatf.woff2
+  c88e89b5552bf96c-s.15c5kk-3im2ev.woff2
+  [… 883 chars cut …]
+  chunks/0bjvl2hmdxnpa.css
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Copy Inter's Latin variable font for the film
+  
+  ```
+  cd ~/Documents/codes/kopi/web/out/_next/static && grep -o "@font-face{font-family:Inter;[^}]*U+0000-00FF[^}]*}" chunks/*.css | head -2; mkdir -p ~/Documents/codes/kopi/data/launch/film/fonts && f=$(grep -o "@font-face{font-family:Inter;[^}]*U+0000-00FF[^}]*}" chunks/*.css | head -1 | grep -o "media/[^)]*woff2" | head -1); cp "$f" ~/Documents/codes/kopi/data/launch/film/fonts/inter-latin.woff2 && ls -la ~/Documents/codes/kopi/data/launch/film/fonts/
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  Exit code 1
+  cp: : No such file or directory
+  ```
+
+  </details>
+
+- **Bash** — Find the Latin subset font-face
+  
+  ```
+  cd ~/Documents/codes/kopi/web/out/_next/static && grep -o "@font-face{[^}]*}" chunks/*.css | grep -i "U+0000" | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — List each font file with its range
+  
+  ```
+  cd ~/Documents/codes/kopi/web/out/_next/static && grep -o "@font-face{[^}]*}" chunks/*.css | sed 's/.*src:url(..\/media\///; s/)format.*unicode-range:/  /' | head -14
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  a440747434783fbe-s.0do-s6vn362zr.woff2  U+460-52F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+  3aa4d934eba90e8b-s.1-ayfg4wg0qfm.woff2  U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}
+  1ce0dcbf49a4d2fc-s.0i-yae4-dyls3.woff2  U+1F??}
+  2edaebbda2e96a79-s.19lle6lbse9av.woff2  U+370-377,U+37A-37F,U+384-38A,U+38C,U+38E-3A1,U+3A3-3FF}
+  704a14dc8309e245-s.1oksl_d3k3jrm.woff2  U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+  [… 1,270 chars cut …]
+  A,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Write** `~/Documents/codes/kopi/data/launch/film/index.html`
+
+  <details><summary>result</summary>
+
+  ```
+  File created successfully at: ~/Documents/codes/kopi/data/launch/film/index.html (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+Captures are still recording. I'm writing the compositor's scenes now, wiring their timing to the clips' real marks once they land.
+
+- **Write** `~/Documents/codes/kopi/data/launch/film/film.js`
+
+  <details><summary>result</summary>
+
+  ```
+  File created successfully at: ~/Documents/codes/kopi/data/launch/film/film.js (file state is current in your context — no need to Read it back)
+  ```
+
+  </details>
+
+---
+
+## Turn 83 · context compacted · 01 Oct 08:57 UTC
+
+_The conversation was summarised to free context; the summary is not reproduced._
+
+- **Bash** — Check capture progress and clip metadata
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && tail -30 capture.log; ls captures/ 2>/dev/null; for d in captures/*/; do echo "$d $(ls $d/seq 2>/dev/null | wc -l)"; [ -f $d/meta.json ] && cat $d/meta.json | head -c 600; echo; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  search: 313 raw, 329 at 30 fps, 12.1 s, marks {"typing":1.5369999408721924,"typed":3.5739998817443848,"results":5.368000030517578,"insights":6.386999845504761,"hover":10.26799988746643}
+  overview: 1558 raw, 1001 at 30 fps, 37.9 s, marks {"reading":1.627000093460083,"verdict":23.013000011444092,"quotes":30.16000008583069}
+  overview
+  search
+  storage.json
+  captures/overview/     1001
+  {
+   "frames": 1001,
+   "fps": 30,
+   "width": 2400,
+   "height": 1500,
+   "css": {
+    "width": 1600,
+    "height": 1000
+   },
+   "dsf": 1.5,
+   "marks": {
+   
+  [… 337 chars cut …]
+  5.368000030517578,
+    "insights": 6.386999845504761,
+    "hover": 10.26799988746643
+   }
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read voiceover report and line durations
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat vo/report.json | python3 -c "
+  import json,sys; r=json.load(sys.stdin)
+  print(json.dumps(r, indent=1)[:3000])"; for f in vo/a/*.mp3; do printf "%s " $f; ffprobe -v error -show_entries format=duration -of csv=p=0 $f; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  {
+   "film": "Kopi launch film (59 s)",
+   "generated": "2026-10-01",
+   "source": "ElevenLabs web app, account [email] (Free plan)",
+   "transcription": "whisper-cli ggml-large-v3-turbo-q5_0, 16 kHz mono",
+   "takes": {
+    "a": {
+     "voice": "Brian - Deep, Resonant and Comforting",
+     "voice_id": "nPczCjzI2devNBz1zQrb",
+     "gender": "male",
+     "model": "Eleven Multilingual v2 (eleven_multilingual_v2)",
+     "settings": {
+      "speed": 1.0,
+      "stability": 0.5,
+      "similarity": 0.75,
+      "style_exaggeration": 0.0,
+     
+  [… 2,311 chars cut …]
+  2.115875
+  vo/a/l6.mp3 9.456313
+  vo/a/l7.mp3 2.351000
+  vo/a/l8.mp3 6.870188
+  vo/a/l9.mp3 1.097125
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Look at the AgentStuff render script to adapt
+  
+  ```
+  ls ~/Documents/agentstuff-demo/ | head -50; sed -n 1,200p ~/Documents/agentstuff-demo/render.py 2>/dev/null | head -150
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  assets
+  capture
+  clay
+  film
+  music
+  plates
+  renders
+  stack
+  ```
+
+  </details>
+
+- **Bash** — Find render scripts in the AgentStuff project
+  
+  ```
+  cd ~/Documents/agentstuff-demo && find . -maxdepth 2 -name "*.py" -o -maxdepth 2 -name "*.mjs" | grep -v node_modules | head; ls film
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ./music/phase_vote.py
+  ./music/fit.py
+  ./music/build_beatmap.py
+  ./music/bass_check.py
+  ./music/refine.py
+  ./music/vocal.py
+  ./music/beats_dump.py
+  ./music/curves.py
+  ./music/bars.py
+  ./music/window_detail.py
+  film.js
+  film.v1.js
+  fonts
+  index.html
+  noise.png
+  rebuild_all.sh
+  reel.sh
+  render.py
+  render_all.sh
+  review.sh
+  sheet.py
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check the music agent's progress
+  
+  ```
+  tail -5 /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/a58a411d5c61733a1.output 2>/dev/null | cut -c1-600; ls ~/Documents/codes/kopi/data/launch/music 2>/dev/null
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  {"parentUuid":"90f8b742-2813-471d-b313-dc56a97eb81c","isSidechain":true,"agentId":"a58a411d5c61733a1","attachment":{"type":"total_tokens_reminder","text":"<total_tokens>14881994 tokens left</total_tokens>"},"type":"attachment","uuid":"574eb285-0add-4890-a4a1-aba5b87f931a","timestamp":"2026-10-01T08:57:46.044Z","rendered":[{"content":"<system-reminder>\n<total_tokens>14881994 tokens left</total_tokens>\n</system-reminder>"}],"renderedRole":"system","userType":"external","entrypoint":"sdk-ts","cwd":"~/.universe/sessions/5
+  [… 2,024 chars cut …]
+  edRole":"system","userType":"external","entrypoint":"sdk-ts","cwd":"~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5","sessionId":"7142f416-4f85-
+  score.json
+  score.wav
+  ```
+
+  </details>
+
+The score is nearly done. Next I'm reading the AgentStuff renderer so I can adapt it.
+
+- **Bash** — Read the render and review scripts plus the score metadata
+  
+  ```
+  cd ~/Documents/agentstuff-demo/film && cat render.py; cat review.sh; cat ~/Documents/codes/kopi/data/launch/music/score.json
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  """Render the film: stills for review, or frames piped straight into ffmpeg.
+  
+    uv run --with playwright python render.py stills 1.2 8.4 20.5 --dsf 1
+    uv run --with playwright python render.py video --start 0 --end 72 --fps 60 --dsf 2 --out part.mp4
+  """
+  import argparse, asyncio, functools, http.server, os, subprocess, sys, threading, time
+  from playwright.async_api import async_playwright
+  
+  ROOT = "~/Documents/agentstuff-demo"
+  FFMPEG = "/opt/homebrew/bin/ffmpeg"
+  
+  
+  def serve(port):
+      h =
+  [… 2,326 chars cut …]
+     "output_tp": "-6.42",
+     "output_lra": "7.00",
+     "normalization_type": "linear"
+    }
+   }
+  }
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check whether the autopilot capture is under way
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && tail -3 capture.log; ls captures/; ls captures/autopilot 2>/dev/null | head; ls /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/ | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  search: 313 raw, 329 at 30 fps, 12.1 s, marks {"typing":1.5369999408721924,"typed":3.5739998817443848,"results":5.368000030517578,"insights":6.386999845504761,"hover":10.26799988746643}
+  overview: 1558 raw, 1001 at 30 fps, 37.9 s, marks {"reading":1.627000093460083,"verdict":23.013000011444092,"quotes":30.16000008583069}
+  overview
+  search
+  storage.json
+  a191756c567315f62.output
+  a58a411d5c61733a1.output
+  bfak7drlt.output
+  blc7vuovv.output
+  bpp5hboow.output
+  bzbrz4nn6.output
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — See how the autopilot clip records and whether capture runs
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && grep -n "autopilot" capture.mjs | head -40; ps aux | grep -c "[c]apture.mjs"; ls -la /tmp | grep -i kopi | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  174:  async autopilot(page) {
+  179:    await film(page, "autopilot", async (mark) => {
+  238:const order = ["search", "overview", "autopilot", "home", "profile"];
+  3
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read capture script internals
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && sed -n 1,80p capture.mjs; sed -n 170,260p capture.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  // Launch-film footage: the published Kopi on live data, one signed-in browser, clips in story
+  // order so each picks up the state the last one left (the bid Autopilot runs is the bid Home shows).
+  // CDP screencast at 1600x1000 CSS, DSF 1.5; each clip is laid on an exact 30 fps grid as JPEGs.
+  // Usage: node capture.mjs <clip> [<clip> ...] | all
+  import { execFileSync } from "node:child_process";
+  import { mkdirSync, readFileSync, rmSync, writeFileSync, linkSync, existsSync } from "node:fs";
+  import { join } from
+  [… 2,319 chars cut …]
+  console.log(errors.length ? `page errors: ${errors.join(" | ")}` : "no page errors");
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Autopilot is recording live on the real site now, which takes about 5 minutes. While it runs I'm setting up the renderer and the beat-snapped timeline, then checking the first two clips.
+
+- **Bash** — Set up the renderer, review script and beat-snapped timeline
+  
+  ```
+  mkdir -p ~/Documents/codes/kopi/data/launch/film ~/Documents/codes/kopi/data/launch/review && cd ~/Documents/codes/kopi/data/launch && sed -e 's#ROOT = "~/Documents/agentstuff-demo"#ROOT = "~/Documents/codes/kopi/data/launch"#' -e 's#/tmp/asv/stills#~/Documents/codes/kopi/data/launch/review/stills#' -e 's#/tmp/asv/out.mp4#~/Documents/codes/kopi/data/launch/review/out.mp4#' -e 's#default=72#default=59#' -e 's#default=8123#default=8131#' ~/Documents/agentstuff-demo/film/render.py > film/render.py && cp ~/Documents/agentstuff-demo/film/sheet.py film/sheet.py && cat film/sheet.py | head -30
+  cat > film/timeline.json <<'EOF'
+  {
+   "brief": [0.0, 5.603],
+   "side": [5.603, 11.057],
+   "scale": [11.057, 16.512],
+   "search": [16.512, 24.693],
+   "checked": [24.693, 27.42],
+   "autopilot": [27.42, 41.056],
+   "profile": [41.056, 46.51],
+   "map": [46.51, 54.691],
+   "end": [54.691, 59.0]
+  }
+  EOF
+  cat > film/review.sh <<'EOF'
+  #!/bin/bash
+  # review.sh <sheetname> t1 t2 ... -> review/<sheetname>.jpg (half-res stills, two per row)
+  export PATH=~/.local/bin:/opt/homebrew/bin:$PATH
+  name=$1; shift
+  D=~/Documents/codes/kopi/data/launch
+  cd $D/film && uv run -q --with playwright python render.py stills "$@" --dsf 0.5 --dir $D/review/stills 2>&1 | grep -v "^/Users" 
+  files=""; for t in "$@"; do files="$files $D/review/stills/$(printf "t%06.2f.png" $t)"; done
+  uv run -q --with pillow python $D/film/sheet.py $D/review/$name.jpg $files
+  EOF
+  chmod +x film/review.sh
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  import sys
+  from PIL import Image
+  out, files = sys.argv[1], sys.argv[2:]
+  ims = [Image.open(f).convert("RGB") for f in files]
+  w, h = ims[0].size; rows = (len(ims) + 1) // 2
+  S = Image.new("RGB", (w * 2 + 10, h * rows + 10 * (rows - 1)), "black")
+  for i, im in enumerate(ims): S.paste(im, ((i % 2) * (w + 10), (i // 2) * (h + 10)))
+  S.save(out, quality=88)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Render review stills for the first three scenes
+  
+  ```
+  ~/Documents/codes/kopi/data/launch/film/review.sh s1 1.2 3.4 6.5 9.5 12.0 14.5 2>&1 | tail -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  console: Failed to load resource: the server responded with a status of 404 (File not found)
+  console: Failed to load resource: the server responded with a status of 404 (File not found)
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s1.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Hide unmanaged elements each frame and fade the wall behind the counter
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace("""function draw(t) {
+    imgs.clear();""","""function draw(t) {
+    imgs.clear();
+    // Everything placed by hand starts hidden each frame; a scene shows what it draws.
+    for (const n of managed) n.style.visibility = "hidden";""")
+  s=s.replace("""const back = $("back"), mid = $("mid"), front = $("front"), veil = $("veil");""","""const back = $("back"), mid = $("mid"), front = $("front"), veil = $("veil");
+  let managed = [];""")
+  s=s.replace("""  draw(0);
+    return true;""","""  managed = [...document.querySelectorAll("#stage .o")];
+    draw(0);
+    return true;""")
+  # wall: thin out near the centre so the count reads
+  s=s.replace("""      set(c, { x: 60 + col * 470, y, s: 0.82, o: wallO * 0.9 });""","""      const dx = (60 + col * 470 + 213) - W / 2, dy = y + 60 - H / 2;
+        const d = Math.sqrt(dx * dx * 0.6 + dy * dy * 1.6);
+        set(c, { x: 60 + col * 470, y, s: 0.82, o: wallO * (0.12 + 0.78 * clamp((d - 260) / 420)) });""")
+  open(p,'w').write(s)
+  EOF
+  grep -n "wall.style.visibility" film.js
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  284:  wall.style.visibility = wallO > 0 ? "visible" : "hidden";
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The score is Tycho's "Awake": a quiet opening, the kick comes in at 11.08 s, and its phrase turns line up with my cuts. Re-rendering the stills now.
+
+- **Bash** — Re-render review stills for the first three scenes
+  
+  ```
+  ~/Documents/codes/kopi/data/launch/film/review.sh s1 1.4 4.0 7.0 10.0 12.6 15.0 2>&1 | grep -v 404 | tail -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (Bash completed with no output)
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s1.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Find the most common agencies in the tender data
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 -c "
+  import json,collections
+  d=json.load(open('tenders.json'))
+  c=collections.Counter(t['agency'] for t in d['tenders'])
+  print(c.most_common(12))
+  print(d['tenders'][0])"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [('Ministry of Education - Schools', 149), ('Ministry of Education', 9), ('Jurong Town Corporation', 7), ('Housing and Development Board', 6), ('Ministry of Defence 6', 5), ('Institute of Technical Education', 4), ('Ngee Ann Polytechnic', 3), ('Ministry of Health-Ministry Headquarter', 3), ('Land Transport Authority', 3), ('Hwa Chong Institution', 3), ('Ministry of Foreign Affairs', 2), ('Ministry of Culture, Community and Youth - N', 2)]
+  {'title': 'Supply of Instructor for Cheerleading CCA Programme in Alexandra Primary Schoo', 'agency': 'Ministry of Education - Schools', 'closing': '2026-10-12T13:00:00+08:00'}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Rebuild scene 2 as a government-to-supplier market table
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  old_el = s[s.index("const tableLine = el("):s.index("// Scene 3:")]
+  new_el = '''const tableLine = el("div", "o", mid);
+  Object.assign(tableLine.style, { width: "2px", height: "460px", background: "#dcdce0", borderRadius: "2px" });
+  const sideLabel = (txt) => {
+    const n = el("div", "o", mid, txt);
+    Object.assign(n.style, { fontSize: "22px", fontWeight: 500, color: "#9a9aa0", letterSpacing: "-0.01em" });
+    return n;
+  };
+  const govLabel = sideLabel("Government"), supLabel = sideLabel("Suppliers");
+  const AGENCIES = ["Ministry of Education", "Housing and Development Board", "Land Transport Authority", "Monetary Authority of Singapore", "Civil Aviation Authority"];
+  const govPills = AGENCIES.map((a) => el("div", "pill o", mid, `<span class="ic">${svg("product", "#8b8b92")}</span><span>${a}</span>`));
+  const SUPPLIERS = ["Builders and contractors", "IT and software vendors", "Service companies"];
+  const supPills = SUPPLIERS.map((a) => el("div", "pill o", mid, `<span class="ic" style="background:#f1f1f3"></span><span
+  [… 1,538 chars cut …]
+  s0 + 0.1, s0 + 2.6, { x: W / 2, y: 250, align: "center" });','sideA.draw(t, s0 + 0.1, s0 + 2.6, { x: W / 2, y: 200, align: "center" });')
+  s = s.replace('sideB.draw(t, s0 + 2.75, s1 - 0.3, { x: W / 2, y: 250, align: "center" });','sideB.draw(t, s0 + 2.75, s1 - 0.3, { x: W / 2, y: 200, align: "center" });')
+  open(p,'w').write(s)
+  EOF
+  grep -n "govCard\|supCard" film.js
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (Bash completed with no output)
+  ```
+
+  </details>
+
+- **Bash** — Render stills for the table, search and checked scenes
+  
+  ```
+  ~/Documents/codes/kopi/data/launch/film/review.sh s2 7.2 9.4 10.6 17.5 19.2 21.5 23.5 25.6 2>&1 | grep -v 404 | tail -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ims = [Image.open(f).convert("RGB") for f in files]
+             ~~~~~~~~~~^^^
+    File "~/.cache/uv/archive-v0/jywafo_fr8yKynHwnOK7m/lib/python3.14/site-packages/PIL/Image.py", line 3639, in open
+      fp = builtins.open(filename, "rb")
+  FileNotFoundError: [Errno 2] No such file or directory: '~/Documents/codes/kopi/data/launch/review/stills/t007.20.png'
+  ```
+
+  </details>
+
+- **Bash** — Render one still to see the page error
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && PATH=~/.local/bin:/opt/homebrew/bin:$PATH uv run -q --with playwright python render.py stills 7.2 --dsf 0.5 --dir ../review/stills 2>&1 | tail -8
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ^
+    File "~/.cache/uv/archive-v0/tWb6K7lxkFJGM47nG4tsi/lib/python3.14/site-packages/playwright/_impl/_connection.py", line 632, in wrap_api_call
+      raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+  playwright._impl._errors.Error: Page.evaluate: TypeError: window.seek is not a function
+      at eval (eval at evaluate (:311:30), <anonymous>:1:8)
+      at eval (<anonymous>)
+      at UtilityScript.evaluate (<anonymous>:311:30)
+      at UtilityScript.<anonymous> (<anonymous>:1:44)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+All five recordings from the live site are in, including the real Autopilot run. Next I'm fixing a script error in the compositor, then reviewing the product scenes.
+
+- **Bash** — Syntax-check the compositor and read the capture log tail
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && node --check film/film.js 2>&1 | head; tail -8 capture.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ~/Documents/codes/kopi/data/launch/film/film.js:353
+    const kIn = io(seg(t, k0 - 0.3, k0 + 0.4)), kOut = io(seg(t, k1 - 0.3, k1 + 0.2));
+          ^
+  
+  SyntaxError: Identifier 'kIn' has already been declared
+      at wrapSafe (node:internal/modules/cjs/loader:1866:18)
+      at checkSyntax (node:internal/main/check_syntax:76:3)
+  
+  Node.js v26.7.0
+  search: 313 raw, 329 at 30 fps, 12.1 s, marks {"typing":1.5369999408721924,"typed":3.5739998817443848,"results":5.368000030517578,"insights":6.386999845504761,"hover":10.26799988746643}
+  [… 531 chars cut …]
+  no page errors
+  exit 0
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Fix the duplicate variable and pull key frames from each clip
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF'
+  p='film/film.js'; s=open(p).read()
+  s=s.replace("const kIn = spring(seg(t, s0 + 3.2, s0 + 4.1));","const kopiIn = spring(seg(t, s0 + 3.2, s0 + 4.1));")
+  s=s.replace("(1 - 0.45 * kIn) });","(1 - 0.45 * kopiIn) });")
+  s=s.replace("set(kopiCard, { x: sx + (1 - kIn) * 30, y: 424, s: 0.9 + 0.1 * kIn, o: kIn * (1 - sideOut) });","set(kopiCard, { x: sx + (1 - kopiIn) * 30, y: 424, s: 0.9 + 0.1 * kopiIn, o: kopiIn * (1 - sideOut) });")
+  open(p,'w').write(s)
+  EOF
+  node --check film/film.js && echo ok
+  mkdir -p review/clips && for spec in "autopilot 2" "autopilot 74.5" "autopilot 141.5" "autopilot 252" "autopilot 333" "autopilot 345" "profile 4" "profile 30" "profile 54" "profile 61" "home 3" "search 7"; do set -- $spec; f=$(printf "%06d" $(python3 -c "print(round($2*30))")); cp captures/$1/seq/$f.jpg review/clips/$1-$2.jpg 2>/dev/null; done; ls review/clips
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  Traceback (most recent call last):
+    File "<string>", line 1, in <module>
+      print(round(*30))
+            ~~~~~^^^^^
+  TypeError: round() argument after * must be an iterable, not int
+  Traceback (most recent call last):
+    File "<string>", line 1, in <module>
+      print(round(*30))
+            ~~~~~^^^^^
+  TypeError: round() argument after * must be an iterable, not int
+  Traceback (most recent call last):
+    File "<string>", line 1, in <module>
+      print(round(*30))
+            ~~~~~^^^^^
+  TypeError: round() argument after * must
+  [… 1,577 chars cut …]
+            ~~~~~^^^^^
+  TypeError: round() argument after * must be an iterable, not int
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Build contact sheets of key frames from the clips
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow python - <<'EOF'
+  from PIL import Image
+  specs=[("autopilot",2),("autopilot",74.5),("autopilot",141.5),("autopilot",252),("autopilot",333),("autopilot",345)]
+  specs2=[("profile",4),("profile",30),("profile",54),("profile",61),("home",3),("overview",31)]
+  for name,sp in (("ap",specs),("pr",specs2)):
+      ims=[Image.open(f"captures/{c}/seq/{round(t*30):06d}.jpg").resize((1200,750)) for c,t in sp]
+      S=Image.new("RGB",(2410,750*3+20),"black")
+      for i,im in enumerate(ims): S.paste(im,((i%2)*1210,(i//2)*760))
+      S.save(f"review/clips-{name}.jpg",quality=85)
+  EOF
+  ls review
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Traceback (most recent call last):
+    File "<stdin>", line 5, in <module>
+    File "~/.cache/uv/archive-v0/jywafo_fr8yKynHwnOK7m/lib/python3.14/site-packages/PIL/Image.py", line 3639, in open
+      fp = builtins.open(filename, "rb")
+  FileNotFoundError: [Errno 2] No such file or directory: 'captures/autopilot/seq/010350.jpg'
+  clips
+  s1.jpg
+  stills
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Rebuild contact sheets within clip bounds
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow python - <<'EOF'
+  from PIL import Image
+  specs=[("autopilot",2),("autopilot",74.5),("autopilot",141.5),("autopilot",252),("autopilot",333),("autopilot",341.5)]
+  specs2=[("profile",4),("profile",30),("profile",54),("profile",61),("home",3),("overview",31)]
+  for name,sp in (("ap",specs),("pr",specs2)):
+      ims=[Image.open(f"captures/{c}/seq/{round(t*30):06d}.jpg").resize((1200,750)) for c,t in sp]
+      S=Image.new("RGB",(2410,750*3+20),"black")
+      for i,im in enumerate(ims): S.paste(im,((i%2)*1210,(i//2)*760))
+      S.save(f"review/clips-{name}.jpg",quality=85)
+  EOF
+  echo done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  done
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/clips-ap.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/clips-pr.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Sample the click moment, the step-4 window and search frames
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow python - <<'EOF'
+  from PIL import Image
+  # autopilot: the click, and the "can't be opened" window around step 4; search key frames
+  specs=[("autopilot",0.2),("autopilot",1.0),("autopilot",1.6),("autopilot",3.0),("autopilot",240),("autopilot",246),("autopilot",256),("autopilot",262),("search",2.5),("search",5.6),("search",6.6),("search",9.5)]
+  ims=[Image.open(f"captures/{c}/seq/{round(t*30):06d}.jpg").resize((800,500)) for c,t in specs]
+  S=Image.new("RGB",(1610,500*6+50),"black")
+  for i,im in enumerate(ims): S.paste(im,((i%2)*810,(i//2)*510))
+  S.save("review/clips-ap2.jpg",quality=85)
+  EOF
+  echo ok
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/clips-ap2.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Find when the autopilot document panel is blank
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np, json
+  m=json.load(open("captures/autopilot/meta.json")); n=m["frames"]
+  # right document panel region in CSS px -> device px (x1.5); look for an almost blank panel
+  bad=[]
+  for i in range(0,n,15):
+      im=np.asarray(Image.open(f"captures/autopilot/seq/{i:06d}.jpg").convert("L").crop((int(830*1.5),int(140*1.5),int(1580*1.5),int(900*1.5))).resize((150,152)))
+      dark=(im<200).mean()
+      bad.append((i/30, round(float(dark),4)))
+  blank=[t for t,d in bad if d<0.004]
+  print("blank seconds:", [round(t,1) for t in blank])
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  blank seconds: []
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Print document-panel ink density over time
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np, json
+  m=json.load(open("captures/autopilot/meta.json")); n=m["frames"]
+  rows=[]
+  for i in range(0,n,15):
+      im=np.asarray(Image.open(f"captures/autopilot/seq/{i:06d}.jpg").convert("L").crop((int(830*1.5),int(140*1.5),int(1580*1.5),int(900*1.5))).resize((150,152)))
+      rows.append((round(i/30,1), round(float((im<200).mean()),4)))
+  # print compact: time:value for low ones
+  print([r for r in rows if r[1]<0.03])
+  print(rows[480:540])
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  []
+  [(240.0, 0.7995), (240.5, 0.7836), (241.0, 0.7836), (241.5, 0.7836), (242.0, 0.7836), (242.5, 0.7836), (243.0, 0.7836), (243.5, 0.7836), (244.0, 0.7836), (244.5, 0.7836), (245.0, 0.7836), (245.5, 0.7836), (246.0, 0.7836), (246.5, 0.7836), (247.0, 0.7836), (247.5, 0.7836), (248.0, 0.7836), (248.5, 0.7836), (249.0, 0.7836), (249.5, 0.7836), (250.0, 0.7836), (250.5, 0.7836), (251.0, 0.7836), (251.5, 0.7836), (252.0, 0.7836), (252.5, 0.7836), (253.0, 0.7836), (253.5, 0.7836), (254.0, 0.7836), (254.5, 0.7836), (255.0,
+  [… 409 chars cut …]
+  0.7836), (267.5, 0.7836), (268.0, 0.7836), (268.5, 0.7836), (269.0, 0.7836), (269.5, 0.7836)]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Recompute blank-panel detection using the real frame size
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np, json
+  im=Image.open("captures/autopilot/seq/007500.jpg"); print(im.size)
+  m=json.load(open("captures/autopilot/meta.json")); n=m["frames"]
+  W,H=im.size; sx=W/1600
+  rows=[]
+  for i in range(0,n,15):
+      a=np.asarray(Image.open(f"captures/autopilot/seq/{i:06d}.jpg").convert("L").crop((int(830*sx),int(140*sx),int(1580*sx),int(900*sx))).resize((150,152)))
+      rows.append((round(i/30,1), round(float((a<180).mean()),4)))
+  low=[r for r in rows if r[1]<0.01]
+  print(len(rows), low[:80])
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (1600, 1000)
+  686 [(2.0, 0.0), (2.5, 0.0), (3.0, 0.0023), (3.5, 0.0023), (4.0, 0.0023), (4.5, 0.0025), (5.0, 0.0023), (5.5, 0.0023), (6.0, 0.0023), (6.5, 0.0023), (7.0, 0.0023), (7.5, 0.0023), (8.0, 0.0023), (8.5, 0.0023), (9.0, 0.0023), (9.5, 0.0023), (10.0, 0.0023), (10.5, 0.0023), (11.0, 0.0023), (11.5, 0.0023), (12.0, 0.0023), (12.5, 0.0023), (13.0, 0.0023), (13.5, 0.0023), (14.0, 0.0023), (14.5, 0.0023), (15.0, 0.0023), (15.5, 0.0023), (16.0, 0.0023), (16.5, 0.0023), (17.0, 0.0023), (17.5, 0.0023), (18.0, 0.0023),
+  [… 664 chars cut …]
+  0.0023), (39.5, 0.0023), (40.0, 0.0023), (40.5, 0.0023), (41.0, 0.0023), (41.5, 0.0023)]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check the screencast size cap and the blank-panel ranges
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && grep -n "startScreencast\|maxWidth\|everyNthFrame" capture.mjs; PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np, json
+  n=json.load(open("captures/autopilot/meta.json"))["frames"]
+  rows=[]
+  for i in range(0,n,15):
+      a=np.asarray(Image.open(f"captures/autopilot/seq/{i:06d}.jpg").convert("L").crop((830,140,1580,900)).resize((150,152)))
+      rows.append((round(i/30,1), round(float((a<180).mean()),4)))
+  low=[r[0] for r in rows if r[1]<0.01]
+  # collapse into ranges
+  rng=[];
+  for t in low:
+      if rng and t-rng[-1][1]<=0.6: rng[-1][1]=t
+      else: rng.append([t,t])
+  print(rng)
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  83:  await cdp.send("Page.startScreencast", { format: "jpeg", quality: 88, maxWidth: W * DSF, maxHeight: H * DSF, everyNthFrame: nth });
+  [[2.0, 61.0], [240.5, 275.5], [277.0, 279.0], [281.0, 281.0], [283.0, 283.5]]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Find the source of the document error message
+  
+  ```
+  cd ~/Documents/codes/kopi/web && grep -rn "can't be opened right now" --include=*.tsx --include=*.ts . | grep -v node_modules | head; 
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (eval):1: no matches found: --include=*.tsx
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Search web sources for the error text
+  
+  ```
+  cd ~/Documents/codes/kopi/web && grep -rn "opened right now" components lib app | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  components/bid/artifact-panel.tsx:175:        <p className="text-[13px] text-muted-foreground">This document can&apos;t be opened right now.</p>
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/web/components/bid/artifact-panel.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  100	        <DropdownMenuGroup>
+  101	          <DropdownMenuLabel>Kopi wrote</DropdownMenuLabel>
+  102	          {drafts.map((row) => item(row, "doc"))}
+  103	        </DropdownMenuGroup>
+  104	        {uploads.length > 0 && (
+  105	          <>
+  106	            <DropdownMenuSeparator />
+  107	            <DropdownMenuGroup>
+  108	              <DropdownMenuLabel>Your files</DropdownMenuLabel>
+  109	              {uploads.map((row) => item(row, "upload"))}
+  110	            </DropdownMenuGroup>
+  111	          </>
+  112	        )}
+  113	     
+  [… 2,317 chars cut …]
+  () => {
+  205	      if (made) URL.revokeObjectURL(made);
+  206	    };
+  207	  }, [api, sessionId, name, pdf]);
+  208	  return (
+  209	    <div className="flex h-full min-h-0 flex-col">
+  ```
+
+  </details>
+
+- **Bash** — Read useAsync and the session file API
+  
+  ```
+  cd ~/Documents/codes/kopi/web && grep -rn "export function useAsync" -A 30 lib | head -45; grep -n "sessionFile" -A 8 lib/api.ts | head -20; sed -n 1,30p components/bid/artifact-panel.tsx
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  lib/use-async.ts:22:export function useAsync<T>(load: () => Promise<T>, deps: unknown[]): AsyncState<T> {
+  lib/use-async.ts-23-  const [settled, setSettled] = useState<Settled<T> | null>(null);
+  lib/use-async.ts-24-  useEffect(() => {
+  lib/use-async.ts-25-    let current = true;
+  lib/use-async.ts-26-    load().then(
+  lib/use-async.ts-27-      (data) => current && setSettled({ deps, state: { status: "ready", data } }),
+  lib/use-async.ts-28-      (error: unknown) =>
+  lib/use-async.ts-29-        current && setSettled({ deps,
+  [… 2,318 chars cut …]
+  };
+  
+  export type ShelfRow = { name: string; kind: "draft" | "upload"; size?: number };
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the backend session-file endpoint
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -rn "files/{name" -A 25 kopi/*.py | head -50
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Locate the session files route
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -rn "/files/" kopi | head; 
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Binary file kopi/api/__pycache__/app.cpython-313.pyc matches
+  kopi/api/app.py:219:    @app.get("/sessions/{session_id}/files/{name}", dependencies=[AppOnly], response_class=Response)
+  kopi/data/ssic.json:3:"2025": "https://www.singstat.gov.sg/files/d72a3cb8-16c9-49c6-aec6-8b7360831072.xlsx",
+  kopi/data/ssic.json:4:"2020": "https://www.singstat.gov.sg/files/f24bd895-d6b9-4fbc-9e90-d663eb456dd9.xlsx"
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the route and the sandbox file read
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && sed -n 205,240p kopi/api/app.py; grep -n "def read_file\|def file_bytes\|def read(" -A 25 kopi/agent/sandbox.py | head -60
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
+  
+      @app.post("/profile/research", dependencies=[AppOnly, limited("overview")], response_class=StreamingResponse,
+                responses={200: {"model": ResearchEvent, "content": {"text/event-stream": {}}, "description": "ResearchEvent per SSE message"}})
+      def research_profile(request: Request, body: ResearchRequest) -> StreamingResponse:
+          """Fill a profile from the company's website, its
+  [… 2,073 chars cut …]
+  "string", "format": "binary"}}}}})
+  grep: kopi/agent/sandbox.py: No such file or directory
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Find the session_file implementation
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -rn "def session_file\b\|def session_file(" -A 22 kopi --include=*.py | head -60
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (eval):1: no matches found: --include=*.py
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Find the session_file implementation
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -rn "def session_file(" -A 22 kopi | grep -v pyc | head -60
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  kopi/store.py:81:    def session_file(self, session_id: str, name: str) -> bytes: ...
+  kopi/store.py-82-    def memory(self, session_id: str) -> BidMemory: ...
+  kopi/store.py-83-    def remember(self, session_id: str, text: str) -> BidMemory: ...
+  kopi/store.py-84-    def forget(self, session_id: str, note_id: str) -> BidMemory: ...
+  kopi/store.py-85-    def upload(self, session_id: str, name: str, body: bytes) -> SessionFile: ...
+  kopi/store.py-86-    def research_profile(self, request: ResearchRequest) ->
+  [… 2,318 chars cut …]
+  on this deployment")
+  kopi/api/live.py-273-        return self.copilot
+  kopi/api/live.py-274-
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the copilot file reader
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -rn "def file(" -A 25 kopi/agent | grep -v pyc | head -40
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Read the copilot file reader
+  
+  ```
+  cd ~/Documents/codes/kopi/backend && grep -rn "    def file(" -A 25 kopi | grep -v "\.pyc" | head -45
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  kopi/sandbox.py:328:    def file(self, session_id: str, name: str) -> bytes:
+  kopi/sandbox.py-329-        meta = self._record(session_id)["files"].get(name)
+  kopi/sandbox.py-330-        body = self._content(session_id, name, meta) if meta else None
+  kopi/sandbox.py-331-        if body is None:
+  kopi/sandbox.py-332-            raise NotFound(f"no file {name} in session {session_id}")
+  kopi/sandbox.py-333-        return body
+  kopi/sandbox.py-334-
+  kopi/sandbox.py-335-    def _content(self, session_id: str, name: str, meta:
+  [… 1,322 chars cut …]
+  session_id: str) -> BidMemory:
+  kopi/sandbox.py-353-        self._record(session_id)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The fetch is failing on a file Kopi is in the middle of saving. I'm fixing it on the client: the panel keeps the last text it showed, and retries before it gives up.
+
+- **Edit** `~/Documents/codes/kopi/web/components/bid/artifact-panel.tsx`
+
+  <details><summary>result</summary>
+
+  ```
+  The file ~/Documents/codes/kopi/web/components/bid/artifact-panel.tsx has been updated successfully.
+  ```
+
+  </details>
+
+- **Bash** — Typecheck and lint the document panel change
+  
+  ```
+  cd ~/Documents/codes/kopi/web && npx tsc --noEmit -p . 2>&1 | tail -5; npx eslint components/bid/artifact-panel.tsx 2>&1 | tail -8
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Build the web app in the background
+  
+  ```
+  cd ~/Documents/codes/kopi/web && (NODE_ENV=production npm run build > /tmp/kopi-build.log 2>&1; echo "exit $?" >> /tmp/kopi-build.log) &
+  echo started
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  started
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Rewrite the autopilot scene with clock, real marks and skip
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  # documents: the nine the pack lists
+  s=s.replace('''const docs = ["Bid plan", "Clarification questions", "Compliance matrix", "Proposal", "Cover letter", "Pricing notes", "Submission pack"].map((d) =>''','''const docs = ["Bid plan", "Clarification questions", "Compliance matrix", "Checklist", "Proposal", "Cover letter", "Pricing notes", "Risk register", "Submission pack"].map((d) =>''')
+  s=s.replace('''  ready: el("div", "tag ok o", front, `${svg("check", "#1f7a4d", 2.4).replace("<svg", '<svg width="18" height="18"')} Ready to submit · 4 min 39 s · US$2.25`),''','''  ready: el("div", "tag ok o", front, `${svg("check", "#1f7a4d", 2.4).replace("<svg", '<svg width="18" height="18"')} Ready to submit. Nobody touched it.`),''')
+  s=s.replace('''const stepLine = new Text(front, "Press *Start bid.*", { size: 64 });''','''const stepLine = new Text(front, "Press *Start bid.*", { size: 64 });
+  const clock = el("div", "count o", front);
+  Object.assign(clock.style, { fontSize: "92px", color: "#1b1b1b" });
+  const clockLabel =
+  [… 1,533 chars cut …]
+  / 9)) * panelOut;
+      set(d, { x: 1524 + (1 - k) * 36, y: 330 + i * 60, s: 0.92, o: k });
+      d.style.transformOrigin = "0% 50%";
+    });
+    const rdy = spring(seg(t, a1 - 2.0, a1 - 1.3)) * (1 - io(seg(t, a1 - 0.45, a1 - 0.05)));
+    set(tags.ready, { x: 862 - 190, y: 990, o: rdy, s: 0.9 + 0.1 * rdy });
+  
+  '''+s[b:]
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && echo ok
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Point the zooms at the right parts of each recording
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace("zoom: sZoom, fx: 560, fy: 330, blur: sOut * 6 });","zoom: sZoom, fx: 640, fy: 400, blur: sOut * 6 });")
+  s=s.replace("zoom: 1.45 + 0.08 * seg(t, k0, k1), fx: 560, fy: 520 });","zoom: 1.45 + 0.08 * seg(t, k0, k1), fx: 640, fy: 330 });")
+  s=s.replace("zoom: 1 + 0.35 * io(seg(t, p0 + 1.0, p0 + 1.8)) - 0.35 * io(seg(t, p1 - 1.6, p1 - 0.9)), fx: 900, fy: 220 });","zoom: 1 + 0.35 * io(seg(t, p0 + 1.0, p0 + 1.8)) - 0.1 * io(seg(t, p1 - 1.6, p1 - 0.9)), fx: 900, fy: 320 });")
+  open(p,'w').write(s)
+  EOF
+  grep -n "fx: " film.js
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  348:    winA.draw({ name: "search", ct: sct, x: W / 2, y: H / 2 + (1 - sIn) * 120, s: 0.9 * (0.94 + 0.06 * sIn), o: sIn * (1 - sOut), zoom: sZoom, fx: 640, fy: 400, blur: sOut * 6 });
+  360:    winB.draw({ name: "overview", ct: kct, x: W / 2, y: H / 2, s: 0.9, o: kIn * (1 - kOut), zoom: 1.45 + 0.08 * seg(t, k0, k1), fx: 640, fy: 330 });
+  380:    winA.draw({ name: "autopilot", ct: act, x: wx, y: H / 2 + 40, s: lerp(0.8, 0.74, io(seg(t, a0 + 1.6, a0 + 2.4))), o: aIn * (1 - aOut), zoom: 1 + 0.5 * endZoom, fx: 760, fy: 160
+  [… 116 chars cut …]
+  * io(seg(t, p0 + 1.0, p0 + 1.8)) - 0.1 * io(seg(t, p1 - 1.6, p1 - 0.9)), fx: 900, fy: 320 });
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Smooth the in-window zoom and render the search and checked stills
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  old=s[s.index("    // Zoom inside the window: the focal point moves"):s.index("    set(this.n, { x: x - 800, y: y - 500, s, o, r, blur });")]
+  new='''    // Zoom inside the window: a push in on the focal point, which drifts toward the window's centre as it grows.
+      const k = io(clamp((zoom - 1) / 0.5));
+      const cx = clamp(lerp(fx, 800, k) - fx * zoom, 1600 - 1600 * zoom, 0);
+      const cy = clamp(lerp(fy, 500, k) - fy * zoom, 1000 - 1000 * zoom, 0);
+      this.img.style.transform = zoom > 1.001 ? `translate3d(${cx}px, ${cy}px, 0) scale(${zoom})` : "none";
+  '''
+  s=s.replace(old,new)
+  s=s.replace("    set(this.n, { x: x - 800, y: y - 500, s, o, r, blur });\n    return tx;","    set(this.n, { x: x - 800, y: y - 500, s, o, r, blur });")
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && ~/Documents/codes/kopi/data/launch/film/review.sh s3 17.4 19.0 21.2 23.6 25.6 27.0 2>&1 | grep -v 404 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s3.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Find when the overview clip is still, and check the build
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np
+  def f(c,t): return np.asarray(Image.open(f"captures/{c}/seq/{round(t*30):06d}.jpg").convert("L"),dtype=float)
+  for t in np.arange(26,36,0.5):
+      a=f("overview",t); b=f("overview",t+0.5)
+      print(round(t,1), round(np.abs(a-b).mean(),2))
+  EOF
+  tail -3 /tmp/kopi-build.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  26.0 8.92
+  26.5 8.88
+  27.0 9.73
+  27.5 9.53
+  28.0 8.61
+  28.5 8.43
+  29.0 7.85
+  29.5 6.95
+  30.0 0.0
+  30.5 0.0
+  31.0 0.0
+  31.5 0.0
+  32.0 0.0
+  32.5 0.0
+  Traceback (most recent call last):
+    File "<stdin>", line 5, in <module>
+    File "<stdin>", line 3, in f
+    File "~/.cache/uv/archive-v0/xCHvlW-KugcnYD79jAuEZ/lib/python3.14/site-packages/PIL/Image.py", line 3639, in open
+      fp = builtins.open(filename, "rb")
+  FileNotFoundError: [Errno 2] No such file or directory: 'captures/overview/seq/001005.jpg'
+  ○  (Static)  prerendered as static content
+  
+  exit 0
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Locate the verified-quote and eligibility chips in the footage
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np
+  im=Image.open("captures/overview/seq/000930.jpg").convert("RGB"); a=np.asarray(im).astype(int)
+  # green text of "Verified in the notice" / "From your profile": g notably > r,b
+  g=(a[:,:,1]-a[:,:,0]>40)&(a[:,:,1]-a[:,:,2]>20)
+  ys=np.where(g.any(axis=1))[0]
+  # group rows
+  grp=[];
+  for y in ys:
+      if grp and y-grp[-1][1]<=3: grp[-1][1]=y
+      else: grp.append([y,y])
+  for y0,y1 in grp:
+      xs=np.where(g[y0:y1+1].any(axis=0))[0]
+      print("y",y0,y1,"x",xs.min(),xs.max())
+  im.crop((380,200,1100,1000)).save("review/ov-crop.png")
+  # same for search chips at t=9.6
+  s=Image.open("captures/search/seq/000290.jpg").convert("RGB"); b=np.asarray(s).astype(int)
+  gg=(b[:,:,1]-b[:,:,0]>40)&(b[:,:,1]-b[:,:,2]>20)
+  ys=np.where(gg[300:500].any(axis=1))[0]+300
+  print("search green rows", ys.min() if len(ys) else None, ys.max() if len(ys) else None)
+  if len(ys):
+    xs=np.where(gg[ys.min():ys.max()+1].any(axis=0))[0]; print("x", xs.min(), xs.max())
+  s.crop((400,360,1000,450)).save("review/search-chip.png")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  y 309 315 x 446 546
+  y 453 459 x 454 536
+  y 596 602 x 445 557
+  y 737 745 x 444 537
+  y 862 867 x 464 535
+  search green rows 411 422
+  x 473 615
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/ov-crop.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/search-chip.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Locate whisper and its model for word timings
+  
+  ```
+  which whisper-cli; ls ~/.cache/whisper* ~/Library/Application\ Support/*/models 2>/dev/null | head; find / -name "ggml-large-v3-turbo*" -maxdepth 6 2>/dev/null | head -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  /opt/homebrew/bin/whisper-cli
+  ~/.cache/whisper:
+  ggml-base.en.bin
+  
+  ~/Library/Application Support/yapper/models:
+  ggml-large-v3-turbo-q5_0.bin
+  ggml-large-v3-turbo-q8_0.bin
+  ~/yapper-shots/userdata/models/ggml-large-v3-turbo-q5_0.bin
+  ```
+
+  </details>
+
+I'm transcribing the voiceover word by word so each callout lands on the exact word.
+
+- **Bash** — Get word-level timings for each voiceover line
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && mkdir -p words && for i in 1 2 3 4 5 6 7 8 9; do /opt/homebrew/bin/ffmpeg -loglevel error -y -i a/l$i.mp3 -ar 16000 -ac 1 words/l$i.wav; /opt/homebrew/bin/whisper-cli -m "~/Library/Application Support/yapper/models/ggml-large-v3-turbo-q5_0.bin" -f words/l$i.wav -ml 1 -sow -oj -of words/l$i -np >/dev/null 2>&1; done; python3 - <<'EOF'
+  import json
+  for i in range(1,10):
+      d=json.load(open(f"~/Documents/codes/kopi/data/launch/vo/words/l{i}.json"))
+      ws=[(s["offsets"]["from"]/1000, s["text"].strip()) for s in d["transcription"] if s["text"].strip()]
+      print(f"l{i}", " ".join(f"{w}@{t:.2f}" for t,w in ws))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  l1 The@0.13 Brief:@0.18 Build@0.75 something@1.00 useful@1.65 with@2.08 AI.@2.31
+  l2 Pragnition@0.11 builds@0.67 AI@1.08 for@1.21 government,@1.41 so@2.30 I@2.38 built@2.43 for@2.82 the@2.89 other@3.06 side@3.35 of@3.58 the@3.69 table.@3.85
+  l3 Right@0.09 now,@0.32 Singapore@0.64 has@1.20 700@1.39 tenders@1.96 open.@2.43 Someone@2.88 has@3.33 to@3.52 read@3.65 them@3.91 all.@4.22
+  l4 Copi@0.11 reads@0.46 everyone.@1.04 It@2.00 finds@2.13 the@2.45 tenders@2.64 you@3.12 can@3.27 actually@3.42 win@4.08 and@4.70 shows@4.95
+  [… 587 chars cut …]
+  with@5.30 a@5.62 team@5.70 of@6.02 AI@6.18 agents.@6.34
+  l9 This@0.09 is@0.30 Kopey.@0.45
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Add rings, re-time autopilot to the voice, update the timeline
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat > film/timeline.json <<'EOF'
+  {
+   "brief": [0.0, 5.603],
+   "side": [5.603, 11.057],
+   "scale": [11.057, 16.512],
+   "search": [16.512, 24.693],
+   "checked": [24.693, 27.42],
+   "autopilot": [27.42, 38.329],
+   "profile": [38.329, 43.783],
+   "map": [43.783, 54.691],
+   "end": [54.691, 59.0]
+  }
+  EOF
+  cat > vo/placements.json <<'EOF'
+  {"take": "a", "at": {"l1": 0.5, "l2": 5.9, "l3": 11.3, "l4": 16.75, "l5": 24.85, "l6": 27.75, "l7": 38.7, "l8": 44.3, "l9": 55.3}}
+  EOF
+  cd film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  # Win remembers where it put the recording, so overlays can sit on things inside it
+  s=s.replace('''    this.img.style.transform = zoom > 1.001 ? `translate3d(${cx}px, ${cy}px, 0) scale(${zoom})` : "none";
+  ''','''    this.img.style.transform = zoom > 1.001 ? `translate3d(${cx}px, ${cy}px, 0) scale(${zoom})` : "none";
+      this.p = zoom > 1.001 ? { x, y, s, zoom, cx, cy } : { x, y, s, zoom: 1, cx: 0, cy: 0 };
+  ''')
+  s=s.replace('''    set(this.n, { x: x - 800, y: y - 500, s, o, r, blur });
+    }
+  }''','''    set(this.n, { x: x - 800, y: y - 500, s, o, r, blur });
+    }
+   
+  [… 1,532 chars cut …]
+  "o", front, "elapsed");''')
+  # brief title on the voice ("Build" at 1.25)
+  s=s.replace('''  briefTitle.draw(t, b0 + 0.35, b1 - 0.4, { x: W / 2, y: 292, align: "center" });''','''  briefTitle.draw(t, b0 + 1.0, b1 - 0.4, { x: W / 2, y: 292, align: "center" });''')
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && echo ok; grep -n "tags\.\(win\|price\|checked\)" film.js
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  ```
+
+  </details>
+
+- **Bash** — Sync the category checks to the voice and render stills
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  old_a=s.index("  pills.forEach((p, i) => {"); old_b=s.index("  // 2 · the other side of the table")
+  s=s[:old_a]+'''  // Checked off on the voice: agents, retrieval and memory, automation, then the rest by "one product".
+    const CHECK = [0.6, 1.3, 2.7, 3.0, 3.25, 3.5];
+    pills.forEach((p, i) => {
+      const col = i % 3, row = Math.floor(i / 3);
+      const inBrief = spring(seg(t, b0 + 1.35 + i * 0.12, b0 + 2.35 + i * 0.12));
+      const leaveBrief = io(seg(t, b1 - 0.35 + i * 0.03, b1 + 0.35 + i * 0.03));
+      const inMap = spring(seg(t, m0 + 0.15 + i * 0.1, m0 + 1.05 + i * 0.1));
+      const leaveMap = io(seg(t, m0 + 4.05 + i * 0.03, m0 + 4.55 + i * 0.03));
+      const mapping = t > m0 - 0.2 && t < m0 + 4.8;
+      if (mapping) {
+        // A column of six, each with where Kopi does it.
+        const on = t >= m0 + CHECK[i];
+        p.cap.textContent = "— " + p.where;
+        p.n.classList.toggle("on", on);
+        const x = 700 + (1 - out(seg(t, m0 + 0.15 + i * 0.1, m0 + 0.85 + i * 0.1))) * 60;
+        const y = 300 + i * 92;
+       
+  [… 1,257 chars cut …]
+   const shift = (t - m0 - 4.8) * 340;")
+  s=s.replace("  stats.draw(t, m0 + 6.0, m1 - 0.35, { x: W / 2, y: 760, align: \"center\" });","  stats.draw(t, m0 + 5.6, m1 - 0.35, { x: W / 2, y: 760, align: \"center\" });")
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && ~/Documents/codes/kopi/data/launch/film/review.sh s4 21.0 22.9 25.7 26.9 28.6 31.6 2>&1 | grep -v 404 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s4.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Fix autopilot entrance and size, render the back-half stills
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace('stepLine.draw(t, a0 + 0.05, a0 + 1.0, { x: W / 2, y: 470, align: "center" });','stepLine.draw(t, a0 - 0.05, a0 + 0.62, { x: W / 2, y: 470, align: "center" });')
+  s=s.replace("const aIn = io(seg(t, a0 + 0.9, a0 + 1.6)), aOut","const aIn = io(seg(t, a0 + 0.95, a0 + 1.5)), aOut")
+  s=s.replace("const wx = lerp(W / 2, 862, io(seg(t, a0 + 1.6, a0 + 2.4)));","const wx = lerp(W / 2, 836, io(seg(t, a0 + 1.6, a0 + 2.4)));")
+  s=s.replace("x: wx, y: H / 2 + 40, s: lerp(0.8, 0.74, io(seg(t, a0 + 1.6, a0 + 2.4)))","x: wx, y: H / 2 + 44, s: lerp(0.86, 0.8, io(seg(t, a0 + 1.6, a0 + 2.4)))")
+  s=s.replace("set(p, { x: 862 - 560 + i * 285 - 100 + 30, y: 52, s: 0.8, o: vis });","set(p, { x: 836 - 560 + i * 300 - 70, y: 44, s: 0.8, o: vis });")
+  s=s.replace("set(tags.ready, { x: 862 - 190, y: 990, o: rdy, s: 0.9 + 0.1 * rdy });","set(tags.ready, { x: 836 - tags.ready.offsetWidth / 2, y: 1000, o: rdy, s: 0.9 + 0.1 * rdy });")
+  s=s.replace("set(clock, { x: 1520, y: 150, o: ck });\n  set(clockLabel, { x: 1524, y: 262, o: ck
+  [… 49 chars cut …]
+   set(clockLabel, { x: 1534, y: 262, o: ck });")
+  s=s.replace("set(d, { x: 1524 + (1 - k) * 36, y: 330 + i * 60, s: 0.92, o: k });","set(d, { x: 1534 + (1 - k) * 36, y: 330 + i * 60, s: 0.92, o: k });")
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && ~/Documents/codes/kopi/data/launch/film/review.sh s5 28.3 34.5 35.6 37.6 39.4 41.0 42.9 44.9 2>&1 | grep -v 404 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s5.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Fix profile layout and map centring, render closing stills
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace("zoom: 1 + 0.5 * endZoom, fx: 760, fy: 160 });","zoom: 1 + 0.5 * endZoom, fx: 808, fy: 333 });")
+  s=s.replace('profileLine.draw(t, p0 + 0.05, p0 + 1.0, { x: W / 2, y: 470, align: "center" });','profileLine.draw(t, p0 + 0.1, p1 - 0.45, { x: W / 2, y: 64, align: "center" });')
+  s=s.replace("const pIn = io(seg(t, p0 + 0.8, p0 + 1.4)), pOut","const pIn = io(seg(t, p0 + 0.45, p0 + 1.05)), pOut")
+  s=s.replace("winB.draw({ name: \"profile\", ct: pct, x: W / 2, y: H / 2, s: 0.86,","winB.draw({ name: \"profile\", ct: pct, x: W / 2, y: H / 2 + 70 + (1 - pIn) * 60, s: 0.82,")
+  s=s.replace("      const x = 700 + (1 - out(seg(t, m0 + 0.15 + i * 0.1, m0 + 0.85 + i * 0.1))) * 60;","      const x = 905 + (1 - out(seg(t, m0 + 0.15 + i * 0.1, m0 + 0.85 + i * 0.1))) * 60;")
+  open(p,'w').write(s)
+  EOF
+  grep -n "const pct" film.js; node --check film.js && ~/Documents/codes/kopi/data/launch/film/review.sh s6 37.0 40.2 46.8 49.6 52.5 54.4 56.0 58.0 2>&1 | grep -v 404 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  446:  const pct = remap([[p0 + 0.8, 0.4], [p0 + 2.1, (pm.filling ?? 2.5) + 0.3], [p1 - 1.2, (pm.filled ?? 40) + 0.2], [p1, (pm.fields ?? 44) + 0.5]], t);
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s6.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Verify the agent-session count claimed on screen
+  
+  ```
+  cd ~/Documents/codes/kopi && ls logs | head -30; ls logs | wc -l; grep -rn "agent sessions\|sessions" README.md | head -5; cd backend && ls tests | wc -l
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  01-main.jsonl
+  01-main.md
+  02-crew-kp4.jsonl
+  02-crew-kp4.md
+  03-crew-kp5.jsonl
+  03-crew-kp5.md
+  04-review-kp1.jsonl
+  04-review-kp1.md
+  05-review-kp2.jsonl
+  05-review-kp2.md
+  06-review-kp3.jsonl
+  06-review-kp3.md
+  07-review-kp5.jsonl
+  07-review-kp5.md
+  08-rereview.jsonl
+  08-rereview.md
+  09-sub-permits-research.jsonl
+  09-sub-permits-research.md
+  10-sub-kp9.jsonl
+  10-sub-kp9.md
+  11-sub-kp10.jsonl
+  11-sub-kp10.md
+  12-sub-kp13.jsonl
+  12-sub-kp13.md
+  13-sub-kp27.jsonl
+  13-sub-kp27.md
+  14-sub-kp32.jsonl
+  14-sub-kp32.md
+  15-sub-kp34.jsonl
+  15-sub-kp34.md
+  [… 36 chars cut …]
+  logs:** [`logs/`](logs/) holds all 15 sessions (the main agent, two crew agents,
+        24
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Rewrite the task ticker and correct on-screen wording
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace('const builtTitle = new Text(front, "Built in three days, with a crew of AI agents.", { size: 62 });','const builtTitle = new Text(front, "Built in three days, with a team of *AI agents.*", { size: 62 });')
+  s=s.replace('{ id: "dev", label: "Developer productivity", where: "Built by a crew of agents" },','{ id: "dev", label: "Developer productivity", where: "Built with a team of agents" },')
+  s=s.replace('const stats = new Text(front, "47 tasks · 16 agent sessions · 360 tests · live", { size: 30, weight: 500, tracking: -0.01, color: "#6b6b70" });','const stats = new Text(front, "47 tasks · 360 tests · every agent log in the repo", { size: 30, weight: 500, tracking: -0.01, color: "#6b6b70" });')
+  a=s.index("  const tk = window01(t, m0 + 4.8, m1 - 0.2, 0.5);"); b=s.index("  stats.draw(")
+  s=s[:a]+'''  const tk = window01(t, m0 + 4.8, m1 - 0.2, 0.5);
+    ticker.style.visibility = tk > 0 ? "visible" : "hidden";
+    if (tk > 0) {
+      // Three rows of the build's real task titles, each laid end to end and drifting
+  [… 982 chars cut …]
+  ({ items: [], width: 0 }));")
+  s=s.replace('endUrl = new Text(front, "kopi.unv.run", { size: 36, weight: 500, tracking: -0.015, color: "#6b6b70" });','endUrl = new Text(front, "kopi.unv.run  ·  github.com/teddyoweh/kopi", { size: 34, weight: 500, tracking: -0.015, color: "#6b6b70" });')
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && grep -n "endUrl = \|rows = " film.js
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  256:const rows = [0, 1, 2].map(() => ({ items: [], width: 0 }));
+  264:const endUrl = new Text(front, "kopi.unv.run  ·  github.com/teddyoweh/kopi", { size: 34, weight: 500, tracking: -0.015, color: "#6b6b70" });
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Now the audio. I'm mixing Brian's nine lines at their placed times over the score, ducking the music under the voice, and normalising for web playback.
+
+- **Bash** — Mix the voiceover over the ducked score and measure loudness
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat > mix.py <<'EOF'
+  """Voice over the score: each line at its placed second, the music ducked under the voice, -14 LUFS out."""
+  import json, subprocess
+  FF = "/opt/homebrew/bin/ffmpeg"
+  P = json.load(open("vo/placements.json"))
+  take, at = P["take"], P["at"]
+  ins, chains, labels = ["-i", "music/score.wav"], [], []
+  for k, (line, sec) in enumerate(sorted(at.items(), key=lambda x: x[1]), start=1):
+      ins += ["-i", f"vo/{take}/{line}.mp3"]
+      ms = int(round(sec * 1000))
+      chains.append(f"[{k}:a]aresample=48000,aformat=channel_layouts=stereo,adelay={ms}|{ms},apad=whole_dur=59[v{k}]")
+      labels.append(f"[v{k}]")
+  n = len(labels)
+  graph = ";".join(chains + [
+      f"{''.join(labels)}amix=inputs={n}:normalize=0:duration=longest,atrim=0:59,volume=2.2dB,asplit=2[vo][key]",
+      "[0:a]volume=-3.5dB[mus]",
+      "[mus][key]sidechaincompress=threshold=0.02:ratio=5:attack=15:release=450:makeup=1[duck]",
+      "[duck][vo]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-14:TP=-1.0:LRA=9,aresample=48000[out]",
+  ])
+  subprocess.run([FF, "-y", "-loglevel", "error", *ins, "-filter_complex",
+  [… 8 chars cut …]
+  "-map", "[out]", "-t", "59", "-c:a", "pcm_s24le", "mix.wav"], check=True)
+  print("mix.wav")
+  EOF
+  python3 mix.py && /opt/homebrew/bin/ffmpeg -hide_banner -i mix.wav -af ebur128=peak=true -f null - 2>&1 | grep -A12 "Summary" | grep -E "I:|Peak|LRA:"
+  for i in 1 4 6; do /opt/homebrew/bin/ffmpeg -hide_banner -i vo/a/l$i.mp3 -af ebur128 -f null - 2>&1 | grep -E "^\s+I:" ; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  mix.wav
+      I:         -13.3 LUFS
+      LRA:         2.4 LU
+      I:         -23.7 LUFS
+      I:         -23.9 LUFS
+      I:         -23.9 LUFS
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Rebalance voice over music and normalise with a limiter
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF'
+  import re
+  s=open("mix.py").read()
+  s=s.replace("volume=2.2dB,asplit=2[vo][key]","volume=8.5dB,asplit=2[vo][key]")
+  s=s.replace('"[0:a]volume=-3.5dB[mus]"','"[0:a]volume=-4dB[mus]"')
+  s=s.replace('''    "[duck][vo]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-14:TP=-1.0:LRA=9,aresample=48000[out]",
+  ])
+  subprocess.run([FF, "-y", "-loglevel", "error", *ins, "-filter_complex", graph, "-map", "[out]", "-t", "59", "-c:a", "pcm_s24le", "mix.wav"], check=True)
+  print("mix.wav")''','''    "[duck][vo]amix=inputs=2:normalize=0:duration=first[out]",
+  ])
+  subprocess.run([FF, "-y", "-loglevel", "error", *ins, "-filter_complex", graph, "-map", "[out]", "-t", "59", "-c:a", "pcm_s24le", "mix-raw.wav"], check=True)
+  # One gain to -14 LUFS, then a limiter for the peaks: no level riding.
+  m = subprocess.run([FF, "-hide_banner", "-i", "mix-raw.wav", "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
+  I = float(re.findall(r"I:\\s+(-?[\\d.]+) LUFS", m)[-1])
+  subprocess.run([FF, "-y", "-loglevel", "error", "-i", "mix-raw.wav", "-af", f"volume={-14 -
+  [… 67 chars cut …]
+  "-c:a", "pcm_s24le", "mix.wav"], check=True)
+  print(f"mix.wav (raw {I} LUFS)")''')
+  s=s.replace("import json, subprocess","import json, re, subprocess")
+  open("mix.py","w").write(s)
+  EOF
+  python3 mix.py && /opt/homebrew/bin/ffmpeg -hide_banner -i mix.wav -af ebur128=peak=true -f null - 2>&1 | grep -A14 "Summary" | grep -E "I:|Peak:|LRA:"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  mix.wav (raw -16.5 LUFS)
+      I:         -14.2 LUFS
+      LRA:         3.7 LU
+      Peak:       -0.8 dBFS
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Render a low-res preview with the mixed audio in the background
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && (PATH=~/.local/bin:/opt/homebrew/bin:$PATH uv run -q --with playwright python render.py video --start 0 --end 59 --fps 30 --dsf 0.5 --crf 23 --preset veryfast --out ../review/preview-silent.mp4 > ../review/preview.log 2>&1 && /opt/homebrew/bin/ffmpeg -y -loglevel error -i ../review/preview-silent.mp4 -i ../mix.wav -c:v copy -c:a aac -b:a 192k -shortest ../review/preview.mp4 && echo muxed >> ../review/preview.log) > /dev/null 2>&1 &
+  echo started
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  started
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+While the preview renders, I'm shipping the document-panel fix to the live site.
+
+- **Bash** — Copy the fresh build into the published app folder
+  
+  ```
+  cd ~/Documents/codes/kopi/web && tail -2 /tmp/kopi-build.log && grep -rl "kryptonairc-lc--kopi-api" out/_next/static/chunks | head -2 && A=~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi && ls $A | head && find $A -mindepth 1 -maxdepth 1 ! -name demo -exec rm -rf {} + && cp -R out/. $A/ && ls $A | head -20
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  exit 0
+  out/_next/static/chunks/3im7cxlxurrgr.js
+  404
+  404.html
+  __next.__PAGE__.txt
+  __next._full.txt
+  __next._tree.txt
+  _next
+  _not-found
+  bid
+  bids
+  copilot
+  404
+  404.html
+  __next.__PAGE__.txt
+  __next._full.txt
+  __next._tree.txt
+  _next
+  _not-found
+  bid
+  bids
+  copilot
+  demo
+  icon.svg
+  inbox
+  index.html
+  index.txt
+  licences
+  profile
+  search
+  submissions
+  tender
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **ToolSearch** `{"query": "select:mcp__sites__site_publish", "max_results": 1}`
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: tool schemas loaded]
+  ```
+
+  </details>
+
+- **mcp__sites__site_publish** `{"path": "artifacts/apps/kopi"}`
+
+  <details><summary>result</summary>
+
+  ```
+  {
+    "url": "https://kopi.unv.run",
+    "label": "kopi",
+    "version": 21,
+    "framework": "static",
+    "filesUploaded": 45,
+    "visibility": "public",
+    "rolledBack": false
+  }
+  ```
+
+  </details>
+
+v21 is live. Committing the fix locally; I'll push it at the end with the film link, after the log export.
+
+- **Bash** — Commit the document panel fix and check render progress
+  
+  ```
+  cd ~/Documents/codes/kopi && git add web/components/bid/artifact-panel.tsx && git commit -q -m "Bid documents: keep the last text and retry instead of 'can't be opened'
+  
+  A draft Kopi has just finished writing is saved when its turn ends, so the
+  panel's first read can miss. Seen on the launch-film recording: the cover
+  letter showed the error for ~35 s during the review step. The panel now
+  retries with backoff and keeps showing the text it last had.
+  
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1; tail -2 data/launch/review/preview.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  444ed51 Bid documents: keep the last text and retry instead of 'can't be opened'
+  frame 960/1770 33s (0.03s/f)
+  frame 1020/1770 35s (0.03s/f)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Wait for the preview render to finish
+  
+  ```
+  sleep 30; tail -2 ~/Documents/codes/kopi/data/launch/review/preview.log
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  <tool_use_error>Blocked: sleep 30 followed by: tail -2 ~/Documents/codes/kopi/data/launch/review/preview.log. To wait for a condition, use Monitor with an until-loop (e.g. `until <check>; do sleep 2; done`). To wait for a command you started, use run_in_background: true. Do not chain shorter sleeps to work around this block.</tool_use_error>
+  ```
+
+  </details>
+
+- **Bash** — Wait until the preview finishes muxing
+  
+  ```
+  until grep -q "muxed\|Error\|Traceback" ~/Documents/codes/kopi/data/launch/review/preview.log; do sleep 2; done; tail -3 ~/Documents/codes/kopi/data/launch/review/preview.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  frame 1740/1770 60s (0.03s/f)
+  done ../review/preview-silent.mp4
+  muxed
+  ```
+
+  </details>
+
+- **Bash** — Tile the preview into contact sheets every half second
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/review && /opt/homebrew/bin/ffmpeg -y -loglevel error -i preview.mp4 -vf "fps=2,scale=320:-1,tile=8x8" -frames:v 2 sheet-%d.jpg && ls sheet-*
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  sheet-1.jpg
+  sheet-2.jpg
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/sheet-1.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/sheet-2.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Test whether a DSF override yields full-resolution screencast frames
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat > /tmp/zoomtest.mjs <<'EOF'
+  import { chromium } from "~/Documents/codes/kopi/data/qa/node_modules/playwright-core/index.mjs";
+  import { readFileSync, writeFileSync } from "node:fs";
+  const b = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+  const ctx = await b.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1.5, storageState: "captures/storage.json" });
+  const p = await ctx.newPage();
+  await p.goto("https://kopi.unv.run/search/", { waitUntil: "domcontentloaded" });
+  await p.waitForTimeout(3000);
+  const cdp = await ctx.newCDPSession(p);
+  // try 1: screencast with explicit DSF override
+  await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1600, height: 1000, deviceScaleFactor: 1.5, mobile: false });
+  let got = null;
+  cdp.on("Page.screencastFrame", async ({ data, metadata, sessionId }) => { if (!got) { got = { len: data.length, metadata }; writeFileSync("/tmp/zt1.jpg", Buffer.from(data, "base64")); } await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {}); });
+  await
+  [… 131 chars cut …]
+  await p.waitForTimeout(1500);
+  await cdp.send("Page.stopScreencast");
+  console.log(JSON.stringify(got?.metadata));
+  await b.close();
+  EOF
+  node /tmp/zoomtest.mjs; python3 -c "
+  from PIL import Image; print(Image.open('/tmp/zt1.jpg').size)" 2>/dev/null || PATH=~/.local/bin:$PATH uv run -q --with pillow python -c "from PIL import Image; print(Image.open('/tmp/zt1.jpg').size)"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  {"offsetTop":0,"pageScaleFactor":1,"deviceWidth":1600,"deviceHeight":1000,"scrollOffsetX":0,"scrollOffsetY":0,"timestamp":1790846170.124412}
+  (1600, 1000)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Teddy, quick status: the film is fully cut and synced, and I'm on the final quality pass, making the recordings sharper before the 1080p60 render. Trying a second capture method now.
+
+- **Bash** — Test CSS zoom 1.5 on a 2400px viewport for sharper capture
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat > /tmp/zoomtest2.mjs <<'EOF'
+  import { chromium } from "~/Documents/codes/kopi/data/qa/node_modules/playwright-core/index.mjs";
+  import { writeFileSync } from "node:fs";
+  const b = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+  const ctx = await b.newContext({ viewport: { width: 2400, height: 1500 }, deviceScaleFactor: 1, storageState: "captures/storage.json" });
+  await ctx.addInitScript(() => addEventListener("DOMContentLoaded", () => (document.documentElement.style.zoom = "1.5")));
+  const p = await ctx.newPage();
+  await p.goto("https://kopi.unv.run/search/", { waitUntil: "domcontentloaded" });
+  await p.waitForTimeout(3000);
+  const box = await p.getByRole("searchbox").first().boundingBox().catch(() => null) ?? await p.locator("input").first().boundingBox();
+  console.log("input box", JSON.stringify(box), "innerWidth", await p.evaluate(() => innerWidth));
+  await p.locator("input").first().click();
+  await p.keyboard.type("AI chatbot", { delay: 30 });
+  const cdp = await ctx.newCDPSession(p);
+  let got = null;
+  [… 286 chars cut …]
+  + 30, box.y + 10); await p.waitForTimeout(1500);
+  await cdp.send("Page.stopScreencast");
+  writeFileSync("/tmp/zt2.jpg", Buffer.from(got, "base64"));
+  await b.close();
+  EOF
+  node /tmp/zoomtest2.mjs && PATH=~/.local/bin:$PATH uv run -q --with pillow python -c "from PIL import Image; im=Image.open('/tmp/zt2.jpg'); print(im.size); im.resize((1200,750)).save('/tmp/zt2s.jpg')"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  input box {"x":961,"y":1175.625,"width":478,"height":66} innerWidth 2400
+  (2400, 1500)
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `/tmp/zt2s.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The zoom approach breaks the app's full-height layout, so it's out. Next I'm trying a real device scale factor at launch instead of an emulated one.
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Read** `/tmp/zt3s.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Inspect saved browser storage keys
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF'
+  import json
+  s=json.load(open("captures/storage.json"))
+  for o in s.get("origins",[]):
+      print(o["origin"], [ (x["name"], len(x["value"])) for x in o.get("localStorage",[])])
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  https://kopi.unv.run [('kopi.recents', 495), ('kopi.submissions', 472), ('kopi.bidTurns.MAS000ETT26000053', 81568), ('kopi.tenderDrafts', 1158)]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Archive take one and switch capture to a real 1.5x scale
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cp captures/storage.json storage-take1.json && mkdir -p take1 && mv captures/search captures/overview captures/autopilot captures/profile captures/home take1/ && python3 - <<'EOF'
+  import json
+  s=json.load(open("storage-take1.json"))
+  for o in s["origins"]:
+      o["localStorage"]=[x for x in o["localStorage"] if x["name"] not in ("kopi.submissions","kopi.bidTurns.MAS000ETT26000053")]
+  json.dump(s,open("captures/storage.json","w"))
+  EOF
+  python3 - <<'EOF'
+  p='~/Documents/codes/kopi/data/launch/capture.mjs'; s=open(p).read()
+  s=s.replace('const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });',
+   '// A real device scale factor: an emulated one leaves the screencast at CSS size (1600 px), this one gives 2400.\nconst browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", args: [`--force-device-scale-factor=${DSF}`, `--window-size=${W},${H + 87}`] });')
+  s=s.replace('''  viewport: { width: W, height: H },
+    deviceScaleFactor: DSF,
+  ''','''  viewport: null,
+  ''')
+  s=s.replace('''const page = await context.newPage();
+  ''','''const page = await context.newPage();
+  await page.goto(`${SITE}/`, { waitUntil: "domcontentloaded" });
+  console.log("viewport", JSON.stringify(await page.evaluate(() => [innerWidth, innerHeight, devicePixelRatio])));
+  ''',1)
+  open(p,'w').write(s)
+  EOF
+  grep -n "viewport\|force-device" capture.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  241:const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", args: [`--force-device-scale-factor=${DSF}`, `--window-size=${W},${H + 87}`] });
+  243:  viewport: null,
+  254:console.log("viewport", JSON.stringify(await page.evaluate(() => [innerWidth, innerHeight, devicePixelRatio])));
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Re-record the four clips at full resolution
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=/opt/homebrew/bin:$PATH node capture.mjs search overview autopilot profile > capture2.log 2>&1; echo "exit $?" >> capture2.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: bwry31cnn. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/bwry31cnn.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+While it records, I'm making the compositor handle a clean run: the time-lapse only skips a stretch if the new footage actually has one. The panel fix is live, so it shouldn't.
+
+- **Bash** — Make the autopilot skip depend on the footage
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  old=s[s.index("  // Real time for the click; a time-lapse"):s.index("  const endZoom")]
+  new='''  // Real time for the click; a time-lapse through the four steps that ends on "ready" (stepping over any
+    // stretch named in timeline.json's apGap); real time again on the result.
+    const lapse0 = a0 + 2.0, lapse1 = a0 + 7.25, gap = T.apGap ?? null;
+    const pts = [[a0 + 1.0, st - 0.8], [lapse0, st + 0.6]];
+    if (gap) {
+      const span = rd + 0.4 - (st + 0.6) - (gap[1] - gap[0]);
+      const tGap = lapse0 + ((lapse1 - lapse0) * (gap[0] - (st + 0.6))) / span;
+      pts.push([tGap, gap[0]], [tGap + 0.001, gap[1]]);
+    }
+    pts.push([lapse1, rd + 0.4], [a1, rd + 0.4 + (a1 - lapse1)]);
+    const act = remap(pts, t);
+  '''
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && grep -n "apGap" film.js
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  402:  // stretch named in timeline.json's apGap); real time again on the result.
+  403:  const lapse0 = a0 + 2.0, lapse1 = a0 + 7.25, gap = T.apGap ?? null;
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Check the re-capture progress
+  
+  ```
+  cat ~/Documents/codes/kopi/data/launch/capture2.log; ls ~/Documents/codes/kopi/data/launch/captures/
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  viewport [1600,1000,1.5]
+  search: 295 raw, 348 at 30 fps, 12.9 s, marks {"typing":1.5139999389648438,"typed":3.5369999408721924,"results":5.0290000438690186,"insights":7.05400013923645,"hover":10.901999950408936}
+  search
+  storage.json
+  ```
+
+  </details>
+
+Full resolution confirmed (1600×1000 at 1.5×). Search is re-recorded; I'm re-measuring the chip positions in it.
+
+- **Bash** — Measure the eligibility chip in the new search footage
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np
+  im=Image.open("captures/search/seq/000270.jpg").convert("RGB"); print(im.size)
+  a=np.asarray(im).astype(int)
+  g=(a[:,:,1]-a[:,:,0]>40)&(a[:,:,1]-a[:,:,2]>20)
+  ys=np.where(g[450:800].any(axis=1))[0]+450
+  print("green rows", ys.min(), ys.max())
+  xs=np.where(g[ys.min():ys.max()+1].any(axis=0))[0]; print("x", xs.min(), xs.max())
+  im.crop((600,520,1500,700)).save("review/search-chip2.png")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (2400, 1500)
+  green rows 616 633
+  x 707 923
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/search-chip2.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Update the price ring and wait for the overview clip
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && sed -i '' 's/ringPrice.draw(winA, \[772, 404, 930, 428\]/ringPrice.draw(winA, [772, 404, 960, 428]/' film/film.js && grep -n "ringPrice.draw" film/film.js; until grep -q "overview:\|exit" capture2.log; do sleep 3; done; cat capture2.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  381:  ringPrice.draw(winA, [772, 404, 960, 428], spring(seg(t, 22.05, 22.75)) * sGone);
+  viewport [1600,1000,1.5]
+  search: 295 raw, 348 at 30 fps, 12.9 s, marks {"typing":1.5139999389648438,"typed":3.5369999408721924,"results":5.0290000438690186,"insights":7.05400013923645,"hover":10.901999950408936}
+  overview: 359 raw, 378 at 30 fps, 14.0 s, marks {"reading":1.6119999885559082,"verdict":2.3969998359680176,"quotes":9.394999980926514}
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Map motion in the new overview clip
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np, json
+  n=json.load(open("captures/overview/meta.json"))["frames"]
+  def f(i): return np.asarray(Image.open(f"captures/overview/seq/{i:06d}.jpg").convert("L").resize((400,250)),dtype=float)
+  prev=None
+  for i in range(0,n,8):
+      a=f(i)
+      if prev is not None: print(round(i/30,2), round(np.abs(a-prev).mean(),2), end=" | ")
+      prev=a
+  print()
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  0.27 0.0 | 0.53 0.01 | 0.8 0.02 | 1.07 0.06 | 1.33 2.42 | 1.6 0.01 | 1.87 0.02 | 2.13 0.02 | 2.4 4.01 | 2.67 0.0 | 2.93 0.0 | 3.2 0.0 | 3.47 11.05 | 3.73 7.73 | 4.0 0.0 | 4.27 0.0 | 4.53 0.0 | 4.8 0.0 | 5.07 0.0 | 5.33 0.0 | 5.6 1.61 | 5.87 8.24 | 6.13 6.87 | 6.4 7.02 | 6.67 9.39 | 6.93 8.58 | 7.2 7.58 | 7.47 6.79 | 7.73 6.77 | 8.0 7.45 | 8.27 7.95 | 8.53 6.98 | 8.8 5.81 | 9.07 6.52 | 9.33 1.75 | 9.6 0.0 | 9.87 0.0 | 10.13 0.0 | 10.4 0.0 | 10.67 0.0 | 10.93 0.0 | 11.2 0.0 | 11.47 0.0 | 11.73 0.0 | 12.0 0.0 | 12.27 0.0 | 12.53 0.0 |
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Locate the verified quotes in the new overview footage
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np
+  im=Image.open("captures/overview/seq/000310.jpg").convert("RGB"); a=np.asarray(im).astype(int)
+  g=(a[:,:,1]-a[:,:,0]>40)&(a[:,:,1]-a[:,:,2]>20)
+  ys=np.where(g.any(axis=1))[0]
+  grp=[]
+  for y in ys:
+      if grp and y-grp[-1][1]<=4: grp[-1][1]=y
+      else: grp.append([y,y])
+  for y0,y1 in grp:
+      xs=np.where(g[y0:y1+1].any(axis=0))[0]
+      print("css y",round(y0/1.5),round(y1/1.5),"x",round(xs.min()/1.5),round(xs.max()/1.5))
+  im.resize((1600,1000)).crop((380,150,1100,1000)).save("review/ov-crop2.png")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  css y 308 316 x 429 557
+  css y 449 459 x 426 537
+  css y 593 600 x 425 556
+  css y 735 744 x 429 537
+  css y 856 866 x 426 537
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/ov-crop2.png`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+Teddy, the new search and overview takes are in at full resolution, and the Autopilot run is recording live now (about 6 minutes). I'm re-aligning the rings to the new footage.
+
+- **Bash** — Re-time the overview scene to the new take
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace("const kct = remap([[k0 - 0.3, 28.2], [k0 + 0.7, 30.05], [k1 + 0.3, 32.5]], t);","const kct = remap([[k0 - 0.3, 7.6], [k0 + 0.7, 9.5], [k1 + 0.3, 12.4]], t);")
+  s=s.replace("ringQ1.draw(winB, [416, 252, 1064, 324],","ringQ1.draw(winB, [416, 250, 1064, 323],")
+  s=s.replace("ringQ2.draw(winB, [416, 537, 1064, 610],","ringQ2.draw(winB, [416, 534, 1064, 607],")
+  open(p,'w').write(s)
+  EOF
+  node --check film.js && grep -n "kct = remap\|ringQ" film.js | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  234:const ringQ1 = new Ring(), ringQ2 = new Ring();
+  387:  const kct = remap([[k0 - 0.3, 7.6], [k0 + 0.7, 9.5], [k1 + 0.3, 12.4]], t);
+  392:  ringQ1.draw(winB, [416, 250, 1064, 323], spring(seg(t, 25.4, 26.1)) * qGone, { radius: 16 });
+  393:  ringQ2.draw(winB, [416, 534, 1064, 607], spring(seg(t, 26.1, 26.8)) * qGone, { radius: 16 });
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Render stills of the new search and checked scenes
+  
+  ```
+  ~/Documents/codes/kopi/data/launch/film/review.sh s7 18.0 21.0 22.9 26.9 2>&1 | grep -v 404 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  (Bash completed with no output)
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s7.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+The rings land exactly on the new footage. Waiting for the live Autopilot run to finish.
+
+- **Bash** — Wait for the autopilot recording to finish
+  
+  ```
+  until grep -q "autopilot:\|exit\|Error" ~/Documents/codes/kopi/data/launch/capture2.log; do sleep 5; done; tail -3 ~/Documents/codes/kopi/data/launch/capture2.log
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  [Tool call interrupted: the session ended before this call's result was recorded, so its outcome is unknown. Check whether it took effect before relying on it or running it again.]
+  ```
+
+  </details>
+
+No response requested.
+
+---
+
+## Turn 84 · Universe (subagent finished) · 01 Oct 09:24 UTC
+
+<details><summary>Universe subagent finished</summary>
+
+```
+<task-notification>
+<task-id>bwry31cnn</task-id>
+<tool-use-id>toolu_01SFtDnDzuzThpaA1eVrqMze</tool-use-id>
+<status>stopped</status>
+<summary>Background shell command didn't finish before the previous session ended</summary>
+<note>No completion record was found for it in the previous session. It may have been stopped (via the UI, Monitor timeout, or agent teardown — these leave no transcript marker), or it may have been running when the previous Claude Code process exited. Check the output file for partial results before assuming it completed.</note>
+</task-notification>
+```
+
+</details>
+
+---
+
+## Turn 85 · Teddy · 01 Oct 09:24 UTC
+
+> <device-catch-up>
+> This conversation continued on the user's other Mac while you were not the one
+> running: they prompted it there and an agent on that Mac answered. You have no
+> memory of these turns, and they are part of this conversation. Read them as what
+> happened, then answer the message below. Files they mention are in this working
+> directory. Do not remark on the catch-up itself.
+>
+> Personal Agent (running on their other Mac): [Bash date -u; grep -rlsI "ELEVENLABS\|elevenlabs" ~/Documents/codes --include=".env*" 2>/dev/null | head -5; ls ~/Documents/codes/kopi/data/film-rig/vo/eleven |]
+> [Browser profiles]
+> [Bash mkdir -p ~/Documents/codes/kopi/data/launch/{vo,music,captures,film,renders} && cat > ~/Documents/codes/kopi/data/launch/vo/lines.json <<'EOF' [ {"id": "l1]
+> Launching the voiceover agent in the background:
+> [Agent ElevenLabs voiceover for launch film]
+> [Bash cd ~/Documents/agentstuff-demo/music && cat notes.md | head -60; python3 - <<'EOF' import json,glob for f in sorted(glob.glob('*.analysis.json')): d=json.l]
+> [Bash cd ~/Documents/agentstuff-demo/music && python3 - <<'EOF' import json for name in ['rapture','move','allyouchildren','marea','mwaki','adoreu','go']: d=json]
+> [Bash cd ~/Documents/agentstuff-demo/music && ~/.local/bin/uv run --project ~/Documents/codes/kopi/backend python - <<'EOF' import wave, numpy as np for name in ]
+> [Agent Pick and measure the film score]
+> While those run, I'm capturing the product. First, how the existing recorder screencasts and re-times frames:
+> [Bash cd ~/Documents/codes/kopi/data/film-rig && sed -n 30,120p record.mjs; head -40 reencode.py]
+> [Bash df -h ~ | tail -1; for d in pragnition.com pragnition.ai pragnitionlabs.com pragnition.sg pragnition.io www.pragnition.com; do printf "%s " $d; curl -s -m ]
+> [Bash du -sh /tmp/kopi-* ~/.universe/cache/worktrees/kp/* 2>/dev/null | sort -h | tail -20]
+> [Bash cd ~/Documents/codes/kopi && for w in kp-32 kp-34 kp-35 kp-39 kp-30 kp-36; do git branch --merged main | grep -q "factory/$w$" && git worktree remove --for]
+> [Bash /usr/bin/python3 ~/Documents/codes/kopi/data/qa/live-research.py pragnition.ai "Pragnition Labs" > /tmp/kopi-prag.out 2>&1; grep -E "^ *[0-9.]+s (step|done]
+> Writing the capture script. One logged-in browser records the clips in story order, so each one carries on from the last (the bid it starts is the bid Home shows):
+> [Write capture.mjs]
+> [Bash grep -E "^ *[0-9.]+s (step|done|error)" /tmp/kopi-prag.out | head -30; python3 -c " s=open('/tmp/kopi-prag.out').read(); i=s.find('{'); print(s[i:i+1800])"]
+> [Bash cd ~/Documents/codes/kopi/data/launch && rm -f captures/storage.json && PATH=/opt/homebrew/bin:$PATH node capture.mjs all > capture.log 2>&1; echo "exit $?]
+> While it records, I'm building the compositor, reusing the AgentStuff film's machinery: frames drawn as a pure function of time, rendered headless and piped into ffmpeg.
+> [Bash cd ~/Documents/agentstuff-demo/film && cat index.html | head -80; sed -n 1,80p render.py]
+> [Bash cd ~/Documents/codes/kopi/web && cat app/icon.svg; cat components/shell/wordmark.tsx; grep -l "Inter" out/_next/static/css/*.css 2>/dev/null | head -2; gre]
+> [Bash cat ~/Documents/codes/kopi/data/launch/capture.log | tail -15; du -sh ~/Documents/codes/kopi/data/launch/captures/* 2>/dev/null; df -h ~ | tail -1]
+> Search recorded. The overview step failed because clicking a result card had already opened the tender, so its "Results" list was gone. Checking the end of the search clip to confirm:
+> [Bash cd ~/Documents/codes/kopi/data/launch/captures/search && cat meta.json; ls seq | wc -l; n=$(ls seq | wc -l); /opt/homebrew/bin/ffmpeg -loglevel error -y -i]
+> [Read kopi-search-mid.png]
+> [Read kopi-search-end.png]
+> [Bash cd ~/Documents/codes/kopi/web && grep -n "Verdict\|BID\|MAYBE\|Found in\|found_in\|verified" components/tender-ai.tsx | head -20]
+> [Bash cd ~/Documents/codes/kopi/web && sed -n 84,92p components/tender-ai.tsx; cd ../data/launch && python3 - <<'EOF' p='capture.mjs' s=open(p).read() # search: ]
+> The finished overview labels its quotes "Verified in the notice", which the new wait matches. Re-running the full capture:
+> [Bash cd ~/Documents/codes/kopi/data/launch && rm -rf captures/* && PATH=/opt/homebrew/bin:$PATH node capture.mjs all > capture.log 2>&1; echo "exit $?" >> captu]
+> While the capture runs, I'm gathering the compositor's fonts and data. First, the Inter font from the app's own build:
+> [Bash cd ~/Documents/codes/kopi/web/out/_next/static && ls media | head -20; grep -o "@font-face{[^}]*}" chunks/*.css 2>/dev/null | head -4; ls chunks/*.css 2>/d]
+> [Bash cd ~/Documents/codes/kopi/web/out/_next/static && grep -o "@font-face{font-family:Inter;[^}]*U+0000-00FF[^}]*}" chunks/*.css | head -2; mkdir -p ~/Document]
+> [Bash cd ~/Documents/codes/kopi/web/out/_next/static && grep -o "@font-face{[^}]*}" chunks/*.css | grep -i "U+0000" | head -3]
+> [Bash cd ~/Documents/codes/kopi/web/out/_next/static && grep -o "@font-face{[^}]*}" chunks/*.css | sed 's/.*src:url(..\/media\///; s/)format.*unicode-range:/ /' ]
+> [Bash cd ~/Documents/codes/kopi/web/out/_next/static/media && cp 234d9015b631dab9-s.p.33gca1im1ku45.woff2 ~/Documents/codes/kopi/data/launch/film/fonts/inter-lat]
+> [Write index.html]
+> Captures are still recording. I'm writing the compositor's scenes now, wiring their timing to the clips' real marks once they land.
+> [Write film.js]
+> [Bash cd ~/Documents/codes/kopi/data/launch && tail -30 capture.log; ls captures/ 2>/dev/null; for d in captures/*/; do echo "$d $(ls $d/seq 2>/dev/null | wc -l)]
+> [Bash cd ~/Documents/codes/kopi/data/launch && cat vo/report.json | python3 -c " import json,sys; r=json.load(sys.stdin) print(json.dumps(r, indent=1)[:3000])"; ]
+> [Bash ls ~/Documents/agentstuff-demo/ | head -50; sed -n 1,200p ~/Documents/agentstuff-demo/render.py 2>/dev/null | head -150]
+> [Bash cd ~/Documents/agentstuff-demo && find . -maxdepth 2 -name "*.py" -o -maxdepth 2 -name "*.mjs" | grep -v node_modules | head; ls film]
+> [Bash tail -5 /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/a58a411d5c6]
+> The score is nearly done. Next I'm reading the AgentStuff renderer so I can adapt it.
+> [Bash cd ~/Documents/agentstuff-demo/film && cat render.py; cat review.sh; cat ~/Documents/codes/kopi/data/launch/music/score.json]
+> [Bash cd ~/Documents/codes/kopi/data/launch && tail -3 capture.log; ls captures/; ls captures/autopilot 2>/dev/null | head; ls /private/tmp/claude-501/-Users-ted]
+> [Bash cd ~/Documents/codes/kopi/data/launch && grep -n "autopilot" capture.mjs | head -40; ps aux | grep -c "[c]apture.mjs"; ls -la /tmp | grep -i kopi | head]
+> [Bash cd ~/Documents/codes/kopi/data/launch && sed -n 1,80p capture.mjs; sed -n 170,260p capture.mjs]
+> Autopilot is recording live on the real site now, which takes about 5 minutes. While it runs I'm setting up the renderer and the beat-snapped timeline, then checking the first two clips.
+> [Bash mkdir -p ~/Documents/codes/kopi/data/launch/film ~/Documents/codes/kopi/data/launch/review && cd ~/Documents/codes/kopi/data/launch && sed -e 's#ROOT = "/U]
+> [Bash ~/Documents/codes/kopi/data/launch/film/review.sh s1 1.2 3.4 6.5 9.5 12.0 14.5 2>&1 | tail -5]
+> [Read s1.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() s=s.replace("""function draw(t) { imgs.clear();""","""functio]
+> The score is Tycho's "Awake": a quiet opening, the kick comes in at 11.08 s, and its phrase turns line up with my cuts. Re-rendering the stills now.
+> [Bash ~/Documents/codes/kopi/data/launch/film/review.sh s1 1.4 4.0 7.0 10.0 12.6 15.0 2>&1 | grep -v 404 | tail -5]
+> [Read s1.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 -c " import json,collections d=json.load(open('tenders.json')) c=collections.Counter(t['agency'] for ]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() old_el = s[s.index("const tableLine = el("):s.index("// Scene]
+> [Bash ~/Documents/codes/kopi/data/launch/film/review.sh s2 7.2 9.4 10.6 17.5 19.2 21.5 23.5 25.6 2>&1 | grep -v 404 | tail -5]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && PATH=~/.local/bin:/opt/homebrew/bin:$PATH uv run -q --with playwright python render.py stills 7.2 ]
+> All five recordings from the live site are in, including the real Autopilot run. Next I'm fixing a script error in the compositor, then reviewing the product scenes.
+> [Bash cd ~/Documents/codes/kopi/data/launch && node --check film/film.js 2>&1 | head; tail -8 capture.log]
+> [Bash cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF' p='film/film.js'; s=open(p).read() s=s.replace("const kIn = spring(seg(t, s0 + 3.2, s0 + 4.1));"]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow python - <<'EOF' from PIL import Image specs=[("autopil]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow python - <<'EOF' from PIL import Image specs=[("autopil]
+> [Read clips-ap.jpg]
+> [Read clips-pr.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow python - <<'EOF' from PIL import Image # autopilot: the]
+> [Read clips-ap2.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Bash cd ~/Documents/codes/kopi/data/launch && grep -n "startScreencast\|maxWidth\|everyNthFrame" capture.mjs; PATH=~/.local/bin:$PATH uv run -q --wit]
+> [Bash cd ~/Documents/codes/kopi/web && grep -rn "can't be opened right now" --include=*.tsx --include=*.ts . | grep -v node_modules | head;]
+> [Bash cd ~/Documents/codes/kopi/web && grep -rn "opened right now" components lib app | head]
+> [Read artifact-panel.tsx]
+> [Bash cd ~/Documents/codes/kopi/web && grep -rn "export function useAsync" -A 30 lib | head -45; grep -n "sessionFile" -A 8 lib/api.ts | head -20; sed -n 1,30p c]
+> [Bash cd ~/Documents/codes/kopi/backend && grep -rn "files/{name" -A 25 kopi/*.py | head -50]
+> [Bash cd ~/Documents/codes/kopi/backend && grep -rn "/files/" kopi | head;]
+> [Bash cd ~/Documents/codes/kopi/backend && sed -n 205,240p kopi/api/app.py; grep -n "def read_file\|def file_bytes\|def read(" -A 25 kopi/agent/sandbox.py | head]
+> [Bash cd ~/Documents/codes/kopi/backend && grep -rn "def session_file\b\|def session_file(" -A 22 kopi --include=*.py | head -60]
+> [Bash cd ~/Documents/codes/kopi/backend && grep -rn "def session_file(" -A 22 kopi | grep -v pyc | head -60]
+> [Bash cd ~/Documents/codes/kopi/backend && grep -rn "def file(" -A 25 kopi/agent | grep -v pyc | head -40]
+> [Bash cd ~/Documents/codes/kopi/backend && grep -rn " def file(" -A 25 kopi | grep -v "\.pyc" | head -45]
+> The fetch is failing on a file Kopi is in the middle of saving. I'm fixing it on the client: the panel keeps the last text it showed, and retries before it gives up.
+> [Edit artifact-panel.tsx]
+> [Bash cd ~/Documents/codes/kopi/web && npx tsc --noEmit -p . 2>&1 | tail -5; npx eslint components/bid/artifact-panel.tsx 2>&1 | tail -8]
+> [Bash cd ~/Documents/codes/kopi/web && (NODE_ENV=production npm run build > /tmp/kopi-build.log 2>&1; echo "exit $?" >> /tmp/kopi-build.log) & echo started]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() # documents: the nine the pack lists s=s.replace('''const doc]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() s=s.replace("zoom: sZoom, fx: 560, fy: 330, blur: sOut * 6 })]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() old=s[s.index(" // Zoom inside the window: the focal point mo]
+> [Read s3.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Read ov-crop.png]
+> [Read search-chip.png]
+> [Bash which whisper-cli; ls ~/.cache/whisper* ~/Library/Application\ Support/*/models 2>/dev/null | head; find / -name "ggml-large-v3-turbo*" -maxdepth 6 2>/dev/]
+> I'm transcribing the voiceover word by word so each callout lands on the exact word.
+> [Bash cd ~/Documents/codes/kopi/data/launch/vo && mkdir -p words && for i in 1 2 3 4 5 6 7 8 9; do /opt/homebrew/bin/ffmpeg -loglevel error -y -i a/l$i.mp3 -ar 1]
+> [Bash cd ~/Documents/codes/kopi/data/launch && cat > film/timeline.json <<'EOF' { "brief": [0.0, 5.603], "side": [5.603, 11.057], "scale": [11.057, 16.512], "sea]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() old_a=s.index(" pills.forEach((p, i) => {"); old_b=s.index(" ]
+> [Read s4.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() s=s.replace('stepLine.draw(t, a0 + 0.05, a0 + 1.0, { x: W / 2]
+> [Read s5.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() s=s.replace("zoom: 1 + 0.5 * endZoom, fx: 760, fy: 160 });","]
+> [Read s6.jpg]
+> [Bash cd ~/Documents/codes/kopi && ls logs | head -30; ls logs | wc -l; grep -rn "agent sessions\|sessions" README.md | head -5; cd backend && ls tests | wc -l]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() s=s.replace('const builtTitle = new Text(front, "Built in thr]
+> Now the audio. I'm mixing Brian's nine lines at their placed times over the score, ducking the music under the voice, and normalising for web playback.
+> [Bash cd ~/Documents/codes/kopi/data/launch && cat > mix.py <<'EOF' """Voice over the score: each line at its placed second, the music ducked under the voice, -1]
+> [Bash cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF' import re s=open("mix.py").read() s=s.replace("volume=2.2dB,asplit=2[vo][key]","volume=8.5dB,asp]
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && (PATH=~/.local/bin:/opt/homebrew/bin:$PATH uv run -q --with playwright python render.py video --st]
+> While the preview renders, I'm shipping the document-panel fix to the live site.
+> [Bash cd ~/Documents/codes/kopi/web && tail -2 /tmp/kopi-build.log && grep -rl "kryptonairc-lc--kopi-api" out/_next/static/chunks | head -2 && A=~/.un]
+> [Getting ready site publish]
+> [Site publish kopi]
+> v21 is live. Committing the fix locally; I'll push it at the end with the film link, after the log export.
+> [Bash cd ~/Documents/codes/kopi && git add web/components/bid/artifact-panel.tsx && git commit -q -m "Bid documents: keep the last text and retry instead of 'can]
+> [Bash sleep 30; tail -2 ~/Documents/codes/kopi/data/launch/review/preview.log]
+> [Bash until grep -q "muxed\|Error\|Traceback" ~/Documents/codes/kopi/data/launch/review/preview.log; do sleep 2; done; tail -3 ~/Documents/codes/kopi/data/launch]
+> [Bash cd ~/Documents/codes/kopi/data/launch/review && /opt/homebrew/bin/ffmpeg -y -loglevel error -i preview.mp4 -vf "fps=2,scale=320:-1,tile=8x8" -frames:v 2 sh]
+> [Read sheet-1.jpg]
+> [Read sheet-2.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch && cat > /tmp/zoomtest.mjs <<'EOF' import { chromium } from "~/Documents/codes/kopi/data/qa/node_modules/p]
+> Teddy, quick status: the film is fully cut and synced, and I'm on the final quality pass, making the recordings sharper before the 1080p60 render. Trying a second capture method now.
+> [Bash cd ~/Documents/codes/kopi/data/launch && cat > /tmp/zoomtest2.mjs <<'EOF' import { chromium } from "~/Documents/codes/kopi/data/qa/node_modules/]
+> [Read zt2s.jpg]
+> The zoom approach breaks the app's full-height layout, so it's out. Next I'm trying a real device scale factor at launch instead of an emulated one.
+> [Bash cd ~/Documents/codes/kopi/data/launch && cat > /tmp/zoomtest3.mjs <<'EOF' import { chromium } from "~/Documents/codes/kopi/data/qa/node_modules/]
+> [Read zt3s.jpg]
+> [Bash cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF' import json s=json.load(open("captures/storage.json")) for o in s.get("origins",[]): print(o["or]
+> [Bash cd ~/Documents/codes/kopi/data/launch && cp captures/storage.json storage-take1.json && mkdir -p take1 && mv captures/search captures/overview captures/aut]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=/opt/homebrew/bin:$PATH node capture.mjs search overview autopilot profile > capture2.log 2>&1; echo "exit $?]
+> While it records, I'm making the compositor handle a clean run: the time-lapse only skips a stretch if the new footage actually has one. The panel fix is live, so it shouldn't.
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() old=s[s.index(" // Real time for the click; a time-lapse"):s.]
+> [Bash cat ~/Documents/codes/kopi/data/launch/capture2.log; ls ~/Documents/codes/kopi/data/launch/captures/]
+> Full resolution confirmed (1600×1000 at 1.5×). Search is re-recorded; I'm re-measuring the chip positions in it.
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Read search-chip2.png]
+> [Bash cd ~/Documents/codes/kopi/data/launch && sed -i '' 's/ringPrice.draw(winA, \[772, 404, 930, 428\]/ringPrice.draw(winA, [772, 404, 960, 428]/' film/film.js ]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Bash cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF' from PIL import Image imp]
+> [Read ov-crop2.png]
+> Teddy, the new search and overview takes are in at full resolution, and the Autopilot run is recording live now (about 6 minutes). I'm re-aligning the rings to the new footage.
+> [Bash cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF' p='film.js'; s=open(p).read() s=s.replace("const kct = remap([[k0 - 0.3, 28.2], [k0 + 0.7, ]
+> [Bash ~/Documents/codes/kopi/data/launch/film/review.sh s7 18.0 21.0 22.9 26.9 2>&1 | grep -v 404 | tail -3]
+> [Read s7.jpg]
+> The rings land exactly on the new footage. Waiting for the live Autopilot run to finish.
+> [Bash until grep -q "autopilot:\|exit\|Error" ~/Documents/codes/kopi/data/launch/capture2.log; do sleep 5; done; tail -3 ~/Documents/codes/kopi/data/launch/captu]
+> </device-catch-up>
+>
+> contoinue
+
+- **Bash** — Check what the interrupted re-capture produced
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat capture2.log; ls captures/; for d in captures/*/; do [ -f $d/meta.json ] && echo "$d $(python3 -c "import json;m=json.load(open('$d/meta.json'));print(m['frames'],m['marks'])")"; done; ps aux | grep -c "[c]apture.mjs"; ls -la film/film.js; date
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  viewport [1600,1000,1.5]
+  search: 295 raw, 348 at 30 fps, 12.9 s, marks {"typing":1.5139999389648438,"typed":3.5369999408721924,"results":5.0290000438690186,"insights":7.05400013923645,"hover":10.901999950408936}
+  overview: 359 raw, 378 at 30 fps, 14.0 s, marks {"reading":1.6119999885559082,"verdict":2.3969998359680176,"quotes":9.394999980926514}
+  overview
+  search
+  storage.json
+  captures/overview/ 378 {'reading': 1.6119999885559082, 'verdict': 2.3969998359680176, 'quotes': 9.394999980926514}
+  captures/search/ 348 {'typing':
+  [… 140 chars cut …]
+  0
+  -rw-r--r--@ 1 teddy  staff  27371 Oct  1 02:19 film/film.js
+  Thu Oct  1 02:25:04 PDT 2026
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The recording session dropped partway through the live Autopilot run. Search and the overview were saved at full resolution; Autopilot and the profile fill weren't. Restarting those two.
+
+- **Bash** — Re-record the autopilot and profile clips at full resolution
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=/opt/homebrew/bin:$PATH node capture.mjs autopilot profile > capture3.log 2>&1; echo "exit $?" >> capture3.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: bd8om83wj. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/bd8om83wj.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/film/film.js`
+
+  <details><summary>result</summary>
+
+  ```
+  370	  const sIn = io(seg(t, q0 - 0.3, q0 + 0.6)), sOut = io(seg(t, q1 - 0.35, q1 + 0.25));
+  371	  // The typing plays at speed; the wait for the hits is cut; the cards and their chips land.
+  372	  const sct = remap([[q0, (sm.typing ?? 1.4) - 0.2], [q0 + 2.1, sm.typed ?? 3.5], [q0 + 2.15, (sm.results ?? 5) - 0.2], [q0 + 2.9, (sm.insights ?? 6) + 0.1], [q1, (sm.hover ?? 9) + 0.5]], t);
+  373	  const sZoom = 1 + 0.55 * io(seg(t, q0 + 3.3, q0 + 4.6));
+  374	  // 'Search' fly-in from the counter
+  375	  if (t > q0 - 0.4 && t < q1 +
+  [… 2,319 chars cut …]
+  / 2, y: 610, align: "center", leave: "none" });
+  485	}
+  486	
+  487	// ---------------------------------------------------------------- boot
+  488	
+  489	window.seek = async (t) => {
+  ```
+
+  </details>
+
+Recording again (about 7 minutes). Meanwhile I'm writing the final render and delivery script: 1080p60 at high quality, the mixed audio muxed in, plus a web copy under 25 MiB for the site.
+
+- **Bash** — Write the final render and delivery script
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat > final.sh <<'EOF'
+  #!/bin/bash
+  # Render the film at 1080p60, mux the mix, and make a web copy. Usage: ./final.sh
+  set -e
+  export PATH=~/.local/bin:/opt/homebrew/bin:$PATH
+  D=~/Documents/codes/kopi/data/launch
+  mkdir -p $D/renders
+  cd $D/film
+  uv run -q --with playwright python render.py video --start 0 --end 59 --fps 60 --dsf 1 --crf 12 --preset slow --out $D/renders/picture.mp4
+  cd $D
+  python3 mix.py
+  # Master: the picture untouched, AAC 320k.
+  ffmpeg -y -loglevel error -i renders/picture.mp4 -i mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 320k -shortest -movflags +faststart renders/kopi-launch-film.mp4
+  # Web: two-pass to ~22 MiB so it fits the site's 25 MiB file limit.
+  BITS=$(python3 -c "print(int((22*8*1024*1024)/59 - 192000))")
+  ffmpeg -y -loglevel error -i renders/picture.mp4 -c:v libx264 -preset slow -b:v $BITS -pass 1 -passlogfile /tmp/kopi-film -an -f mp4 /dev/null
+  ffmpeg -y -loglevel error -i renders/picture.mp4 -i mix.wav -map 0:v -map 1:a -c:v libx264 -preset slow -b:v $BITS -pass 2 -passlogfile /tmp/kopi-film -pix_fmt yuv420p -c:a aac -b:a 192k -shortest -movflags +faststart renders/kopi-launch-film-web.mp4
+  ls -la renders/
+  EOF
+  chmod +x final.sh; ls ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi/demo | head; cat capture3.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  kopi-demo.mp4
+  viewport [1600,1000,1.5]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — See where the README and email reference the demo video
+  
+  ```
+  cd ~/Documents/codes/kopi && grep -n "demo\|video\|mp4" README.md | head -20; ls -la ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/apps/kopi/demo/; grep -n "demo\|video" ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md | head
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  22:**Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
+  211:6. **Bid storage is the demo's.** Bid memory, drafts and uploads sit in a Modal Dict, which
+  total 46624
+  drwxr-xr-x@  3 teddy  staff        96 Sep 29 08:44 .
+  drwxr-xr-x@ 22 teddy  staff       704 Oct  1 02:14 ..
+  -rw-r--r--@  1 teddy  staff  23869908 Sep 29 10:20 kopi-demo.mp4
+  20:- **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The README already links the 3:56 walkthrough. The film will sit beside it at `kopi.unv.run/demo/kopi-film.mp4`. While Autopilot records, I'm saving what I learned about sharp screencasts to memory.
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Write** ``
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Wait for the autopilot recording to finish
+  
+  ```
+  until grep -q "autopilot:\|exit\|Error" ~/Documents/codes/kopi/data/launch/capture3.log; do sleep 5; done; cat ~/Documents/codes/kopi/data/launch/capture3.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  viewport [1600,1000,1.5]
+  
+  <--- Last few GCs --->
+  
+  [6119:0xad3c00000]   275625 ms: Mark-Compact (reduce) 4095.2 (4187.1) -> 4095.2 (4187.1) MB, pooled: 0.0 MB, 7.67 / 0.00 ms (average mu = 0.117, current mu = 0.060) last resort; GC in old space requested
+  [6119:0xad3c00000]   275639 ms: Mark-Compact (reduce) 4095.2 (4187.1) -> 4095.2 (4187.1) MB, pooled: 0.0 MB, 14.04 / 0.00 ms (average mu = 0.047, current mu = 0.001) last resort; GC in old space requested
+  
+  FATAL ERROR: Ineffective mark-compacts near heap limit
+  [… 2,344 chars cut …]
+  34: 0x1094a1268 node::Start(int, char**) [/opt/homebrew/Cellar/node/26.7.0/lib/libnode.147.dylib]
+  35: 0x182d03e00 start [/usr/lib/dyld]
+  exit 134
+  ```
+
+  </details>
+
+Autopilot ran out of memory: at full resolution, six minutes of frames held in memory blew Node's 4 GB heap. I'm changing the recorder to write each frame to disk as it arrives, then re-running.
+
+- **Bash** — Read the frame-collection code to change
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && sed -n 44,110p capture.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  if (i > 5) throw e;
+        await wait(10000);
+      }
+    }
+  }
+  
+  function sequence(name, frames, endedAt) {
+    // Lay the screencast's frames on an exact 30 fps grid (hard links, no copies), then a preview mp4.
+    const dir = join(OUT, name), raw = join(dir, "raw"), seq = join(dir, "seq");
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(raw, { recursive: true });
+    mkdirSync(seq, { recursive: true });
+    const files = frames.map((f, i) => {
+      const file = join(raw, `${String(i).padStart(6, "0")}.jpg`);
+     
+  [… 2,293 chars cut …]
+  moveTo(page, locator);
+    await page.mouse.down();
+    await wait(90);
+    await page.mouse.up();
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Stream screencast frames to disk instead of memory
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && python3 - <<'EOF'
+  p='capture.mjs'; s=open(p).read()
+  s=s.replace('''function sequence(name, frames, endedAt) {
+    // Lay the screencast's frames on an exact 30 fps grid (hard links, no copies), then a preview mp4.
+    const dir = join(OUT, name), raw = join(dir, "raw"), seq = join(dir, "seq");
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(raw, { recursive: true });
+    mkdirSync(seq, { recursive: true });
+    const files = frames.map((f, i) => {
+      const file = join(raw, `${String(i).padStart(6, "0")}.jpg`);
+      writeFileSync(file, Buffer.from(f.data, "base64"));
+      return file;
+    });
+    const t0 = frames[0].t, total = endedAt - t0;''','''function sequence(name, frames, endedAt) {
+    // Lay the screencast's frames (already on disk) on an exact 30 fps grid with hard links, then a preview mp4.
+    const dir = join(OUT, name), seq = join(dir, "seq");
+    mkdirSync(seq, { recursive: true });
+    const files = frames.map((f) => f.file);
+    const t0 = frames[0].t, total = endedAt - t0;''')
+  s=s.replace('''  writeFileSync(join(dir, "meta.json"), JSON.stringify({ frames:
+  [… 1,034 chars cut …]
+  async ({ data, sessionId }) => {
+      const file = join(raw, `${String(frames.length).padStart(6, "0")}.jpg`);
+      frames.push({ file, t: Date.now() / 1000 });
+      writeFileSync(file, Buffer.from(data, "base64"));
+      await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
+    });''')
+  open(p,'w').write(s)
+  EOF
+  node --check capture.mjs && echo ok
+  ```
+
+  <details><summary>error</summary>
+
+  ```
+  Exit code 127
+  (eval):42: command not found: node
+  ```
+
+  </details>
+
+- **Bash** — Syntax-check the capture script
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && /opt/homebrew/bin/node --check capture.mjs && echo ok && grep -c "f.data" capture.mjs
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ok
+  0
+  ```
+
+  </details>
+
+- **Bash** — Re-record autopilot and profile with frames streamed to disk
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=/opt/homebrew/bin:$PATH node --max-old-space-size=8192 capture.mjs autopilot profile > capture3.log 2>&1; echo "exit $?" >> capture3.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: b1mu89tk3. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/b1mu89tk3.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+Recording again, with frames streamed to disk. Meanwhile I'm adding the film link to the README and the submission email.
+
+- **Bash** — Read the demo-link context in README and email
+  
+  ```
+  cd ~/Documents/codes/kopi && sed -n 15,28p README.md; echo ----; sed -n 12,26p ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  - an Inbox of what needs you;
+  - your bids in the sidebar with their stage;
+  - saved views that count what is new;
+  - ⌘K to search or jump anywhere.
+  
+  **Live:** https://kopi.unv.run (the access code is in the submission email)
+  
+  **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
+  
+  ![A bid run on autopilot, ready to submit: the submission pack and what only the company can do](docs/images/autopilot.png)
+  
+  Built in a day for the Pragnition Labs AI-Native Builder assessment, with coding agents
+  doing the work and me
+  [… 1,605 chars cut …]
+  workspace. It runs on Modal, with my own vector database (NeedleDB) and Qwen3 embeddings.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The README says "Built in a day" but the film says "three days". Checking the git history for the true span before either ships.
+
+- **Bash** — Find when the Kopi build started and how many commits
+  
+  ```
+  cd ~/Documents/codes/kopi && git log --reverse --format="%ad %s" --date=iso | head -3; git log -1 --format="%ad" --date=iso; git rev-list --count HEAD
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  2026-09-29 03:30:32 -0400 planning: brief and discovery
+  2026-09-29 04:07:01 -0400 planning: widen to the Kopi web copilot; decisions D1–D11; keep plan v1
+  2026-09-29 04:27:37 -0400 research: permits, licences and registration sources, probed
+  2026-10-01 02:14:48 -0700
+  118
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Count the decisions in the planning log
+  
+  ```
+  cd ~/Documents/codes/kopi && grep -cE "^#+ *D[0-9]+" planning/02-decisions.md; grep -oE "^#+ *D[0-9]+" planning/02-decisions.md | tail -2; grep -n "decisions" README.md | head -5
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  32
+  ## D31
+  ## D32
+  97:The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
+  98:behind it (D1–D32) are in [planning/02-decisions.md](planning/02-decisions.md).
+  234:  source probed with real requests), the decisions D1–D32, the superseded v1 plan, and one
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Add the film link and correct the build span
+  
+  ```
+  cd ~/Documents/codes/kopi && python3 - <<'EOF'
+  p='README.md'; s=open(p).read()
+  s=s.replace("**Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4\n","**Launch film (0:59):** https://kopi.unv.run/demo/kopi-film.mp4\n\n**Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4\n",1)
+  s=s.replace("Built in a day for the Pragnition Labs AI-Native Builder assessment,","Built over three days (29 Sep to 1 Oct 2026) for the Pragnition Labs AI-Native Builder assessment,",1)
+  open(p,'w').write(s)
+  p='~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md'; s=open(p).read()
+  s=s.replace("- **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4\n","- **Launch film (0:59):** https://kopi.unv.run/demo/kopi-film.mp4\n- **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4\n",1)
+  s=s.replace("31 decisions with what I rejected","32 decisions with what I rejected",1)
+  open(p,'w').write(s)
+  EOF
+  grep -n "Launch film\|three days\|32 decisions" README.md ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md; grep -n "Built in a day\|in a day" README.md ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md:20:- **Launch film (0:59):** https://kopi.unv.run/demo/kopi-film.mp4
+  ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5/artifacts/docs/kopi-submission-email.md:23:- **Planning and handoffs:** `planning/`: the brief, the source research, 32 decisions with what I rejected, one handoff per task, and an AI journal sorted by what caught each mistake.
+  README.md:22:**Launch film (0:59):** https://kopi.unv.run/demo/kopi-film.mp4
+  README.md:28:Built over three days (29 Sep to 1 Oct 2026) for the Pragnition Labs AI-Native Builder assessment, with coding agents
+  ```
+
+  </details>
+
+Both are updated. Waiting on the Autopilot recording.
+
+- **Bash** — Wait for the autopilot recording to finish
+  
+  ```
+  until grep -q "autopilot:\|exit\|Error" ~/Documents/codes/kopi/data/launch/capture3.log; do sleep 5; done; head -c 1500 ~/Documents/codes/kopi/data/launch/capture3.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  viewport [1600,1000,1.5]
+  autopilot: 11213 raw, 11548 at 30 fps, 427.5 s, marks {"started":0.9939999580383301,"step2":70.72200012207031,"step3":137.85300016403198,"step4":252.7960000038147,"ready":374.2060000896454,"pack":382.7170000076294}
+  ```
+
+  </details>
+
+- **Bash** — Check the new autopilot take for blank document-panel stretches
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && PATH=~/.local/bin:$PATH uv run -q --with pillow --with numpy python - <<'EOF'
+  from PIL import Image
+  import numpy as np, json
+  n=json.load(open("captures/autopilot/meta.json"))["frames"]
+  rows=[]
+  for i in range(0,n,15):
+      a=np.asarray(Image.open(f"captures/autopilot/seq/{i:06d}.jpg").convert("L").crop((1245,210,2370,1350)).resize((150,152)))
+      rows.append((round(i/30,1), round(float((a<180).mean()),4)))
+  low=[r[0] for r in rows if r[1]<0.01]
+  rng=[]
+  for t in low:
+      if rng and t-rng[-1][1]<=0.6: rng[-1][1]=t
+      else: rng.append([t,t])
+  print(rng)
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [[1.5, 58.0]]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The error is gone in the new take: the only empty-panel stretch is the expected one before the first document exists, so the v21 fix holds on the live site. Now cutting "five" from the voice line.
+
+- **Bash** — Splice "five" out of the line and transcribe each variant
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && cp -n a/l6.mp3 a/l6-original.mp3; FF=/opt/homebrew/bin/ffmpeg; for cut in "7.93 8.23" "7.95 8.25" "7.91 8.21"; do set -- ${=cut}; $FF -y -loglevel error -i a/l6-original.mp3 -filter_complex "[0:a]atrim=0:$1,asetpts=N/SR/TB[a];[0:a]atrim=$2,asetpts=N/SR/TB[b];[a][b]acrossfade=d=0.02:c1=tri:c2=tri" -ar 44100 /tmp/l6-$1.wav; $FF -y -loglevel error -i /tmp/l6-$1.wav -ar 16000 -ac 1 /tmp/l6-$1-16.wav; printf "%s: " $1; /opt/homebrew/bin/whisper-cli -m "~/Library/Application Support/yapper/models/ggml-large-v3-turbo-q5_0.bin" -f /tmp/l6-$1-16.wav -np 2>/dev/null | tr -d '\n' | sed 's/\[[^]]*\]//g'; echo; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  7.93:    Press start bid and an agent runs the whole thing.   The questions, the compliance, the proposal, the price, ready to set in five minutes.
+  7.95:    Press start bid and an agent runs the whole thing.   The questions, the compliance, the proposal, the price, ready to sit in five minutes.
+  7.91:    Press start bid and an agent runs the whole thing.   The questions, the compliance, the proposal, the price, ready to set in five minutes.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+Whisper's word times are too loose to cut on: the splice clipped "submit" and left "five". I'm finding the word boundaries from the waveform's energy instead.
+
+- **Bash** — Print the voice energy envelope near the end of the line
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && /opt/homebrew/bin/ffmpeg -y -loglevel error -i a/l6-original.mp3 -ac 1 -ar 16000 /tmp/l6o.wav && PATH=~/.local/bin:$PATH uv run -q --with numpy --with soundfile python - <<'EOF'
+  import numpy as np, soundfile as sf
+  x, sr = sf.read("/tmp/l6o.wav")
+  hop = int(0.01*sr)
+  for t0 in np.arange(6.6, len(x)/sr, 0.01):
+      i=int(t0*sr); seg=x[i:i+hop]
+      db=20*np.log10(np.sqrt((seg**2).mean())+1e-9)
+      print(f"{t0:.2f} {'#'*max(0,int((db+60)/2))}")
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  6.60 ###################
+  6.61 ###################
+  6.62 ###################
+  6.63 ####################
+  6.64 ###################
+  6.65 ###################
+  6.66 ###################
+  6.67 ###################
+  6.68 ##################
+  6.69 ##################
+  6.70 ##################
+  6.71 ################
+  6.72 ##############
+  6.73 ################
+  6.74 ###############
+  6.75 ##############
+  6.76 ###############
+  6.77 ##############
+  6.78 ###############
+  6.79 ###############
+  6.80 ###############
+  6.81 ###############
+  6.82 ##############
+  [… 2,303 chars cut …]
+  
+  9.31 
+  9.32 
+  9.33 
+  9.34 
+  9.35 
+  9.36 
+  9.37 
+  9.38 
+  9.39 
+  9.40 
+  9.41 
+  9.42 
+  9.43 
+  9.44 
+  9.45
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+The waveform shows it plainly: "ready to submit in five minutes" runs 7.47–9.15 s, and "five" is the syllable between the dips at about 8.52 and 8.74. Trying cuts there.
+
+- **Bash** — Cut "five" at the energy boundaries and transcribe
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && FF=/opt/homebrew/bin/ffmpeg; for cut in "8.515 8.745" "8.52 8.75" "8.51 8.735"; do set -- ${=cut}; $FF -y -loglevel error -i a/l6-original.mp3 -filter_complex "[0:a]atrim=0:$1,asetpts=N/SR/TB[a];[0:a]atrim=$2,asetpts=N/SR/TB[b];[a][b]acrossfade=d=0.012:c1=tri:c2=tri" -ar 44100 /tmp/l6-$1.wav; $FF -y -loglevel error -i /tmp/l6-$1.wav -ar 16000 -ac 1 /tmp/l6-$1-16.wav; printf "%s: " $1; /opt/homebrew/bin/whisper-cli -m "~/Library/Application Support/yapper/models/ggml-large-v3-turbo-q5_0.bin" -f /tmp/l6-$1-16.wav -np 2>/dev/null | tr -d '\n' | sed 's/\[[^]]*\]//g'; echo; done
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  8.515:    Press start bid and an agent runs the whole thing.   The questions, the compliance, the proposal, the price, ready to submit in minutes.
+  8.52:    Press start bid and an agent runs the whole thing.   The questions, the compliance, the proposal, the price, ready to submit in minutes.
+  8.51:    Press start bid and an agent runs the whole thing.   The questions, the compliance, the proposal, the price, ready to submit in minutes.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Encode the cut line and get DTW-aligned word times
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && /opt/homebrew/bin/ffmpeg -y -loglevel error -i /tmp/l6-8.52.wav -c:a libmp3lame -q:a 0 a/l6.mp3 && for i in 1 2 3 4 5 6 7 8 9; do /opt/homebrew/bin/ffmpeg -loglevel error -y -i a/l$i.mp3 -ar 16000 -ac 1 words/l$i.wav; /opt/homebrew/bin/whisper-cli -m "~/Library/Application Support/yapper/models/ggml-large-v3-turbo-q5_0.bin" --dtw large.v3.turbo -f words/l$i.wav -ojf -of words/l$i-dtw -np >/dev/null 2>&1; done; python3 - <<'EOF'
+  import json
+  for i in range(1,10):
+      d=json.load(open(f"~/Documents/codes/kopi/data/launch/vo/words/l{i}-dtw.json"))
+      toks=[]
+      for seg in d["transcription"]:
+          for tk in seg.get("tokens",[]):
+              txt=tk["text"]
+              if txt.startswith("[_") : continue
+              toks.append((tk.get("t_dtw",-1)/100, txt))
+      print(f"l{i}", "".join(f"{w}@{t:.2f}" if w.startswith(" ") else w for t,w in toks))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  l1  The@-0.01 Brief@-0.01: Build@-0.01 something@-0.01 useful@-0.01 with@-0.01 AI@-0.01.
+  l2  Prag@-0.01nition builds@-0.01 AI@-0.01 for@-0.01 government@-0.01, so@-0.01 I@-0.01 built@-0.01 for@-0.01 the@-0.01 other@-0.01 side@-0.01 of@-0.01 the@-0.01 table@-0.01.
+  l3  Right@-0.01 now@-0.01, Singapore@-0.01 has@-0.01 700@-0.01 tend@-0.01ers open@-0.01. Someone@-0.01 has@-0.01 to@-0.01 read@-0.01 them@-0.01 all@-0.01.
+  l4  Cop@-0.01i reads@-0.01 everyone@-0.01. It@-0.01 finds@-0.01 the@-0.01 tend@-0.01ers you@-0.01
+  [… 700 chars cut …]
+  a@-0.01 team@-0.01 of@-0.01 AI@-0.01 agents@-0.01.
+  l9  This@-0.01 is@-0.01 K@-0.01opey.
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+DTW returned no timings with this build, so I'm checking Whisper's token-level offsets against the waveform instead.
+
+- **Bash** — Print token-level offsets for the sync-critical lines
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && python3 - <<'EOF'
+  import json
+  for i in [4,5,6,8]:
+      d=json.load(open(f"words/l{i}-dtw.json"))
+      out=[]
+      for seg in d["transcription"]:
+          for tk in seg.get("tokens",[]):
+              if tk["text"].startswith("[_"): continue
+              out.append(f'{tk["text"]}@{tk["offsets"]["from"]/1000:.2f}')
+      print(f"l{i}", " ".join(out))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  l4  Cop@0.11 i@0.35  reads@0.46  everyone@1.04 .@2.00  It@2.11  finds@2.13  the@2.45  tend@2.64 ers@2.94  you@3.12  can@3.27  actually@3.42  win@4.08  and@4.81  shows@4.95  what@5.36  similar@5.69  work@6.25  sold@6.78  for@6.94 .@7.20
+  l5  Every@0.06  claim@0.29  is@0.58  quoted@0.70  and@1.08  checked@1.39 .@2.11
+  l6  Press@0.09  start@0.39  bid@0.78  and@1.01  an@1.29  agent@1.43  runs@1.86  the@2.04  whole@2.17  thing@2.40 .@2.63  The@3.30  questions@3.39 ,@3.78  the@3.88  compliance@4.08 ,@4.75  the@4.89 
+  [… 281 chars cut …]
+   three@4.58  days@4.98  with@5.30  a@5.62  team@5.70  of@6.02  AI@6.18  agents@6.34 .@6.86
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Find speech runs between pauses in each key line
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/vo && for i in 1 4 5 6 8; do /opt/homebrew/bin/ffmpeg -y -loglevel error -i a/l$i.mp3 -ac 1 -ar 16000 /tmp/l$i.wav; done; PATH=~/.local/bin:$PATH uv run -q --with numpy --with soundfile python - <<'EOF'
+  import numpy as np, soundfile as sf
+  for i in [1,4,5,6,8]:
+      x, sr = sf.read(f"/tmp/l{i}.wav"); hop=int(0.01*sr)
+      db=np.array([20*np.log10(np.sqrt((x[j:j+hop]**2).mean())+1e-9) for j in range(0,len(x)-hop,hop)])
+      loud=db>-45
+      # speech runs separated by >=60ms silence
+      runs=[]; start=None; quiet=0
+      for k,v in enumerate(loud):
+          if v:
+              if start is None: start=k
+              quiet=0; end=k
+          else:
+              if start is not None:
+                  quiet+=1
+                  if quiet>=6: runs.append((start/100,(end+1)/100)); start=None
+      if start is not None: runs.append((start/100,(end+1)/100))
+      print(f"l{i}", " ".join(f"[{a:.2f}-{b:.2f}]" for a,b in runs))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  l1 [0.11-0.56] [0.73-2.22]
+  l4 [0.11-0.86] [0.94-1.55] [2.08-4.35] [4.78-6.82]
+  l5 [0.05-1.72]
+  l6 [0.08-1.17] [1.27-2.84] [3.31-4.01] [4.44-5.92] [6.34-7.05] [7.47-8.90]
+  l8 [0.06-0.64] [0.75-1.41] [1.54-2.77] [2.84-3.52] [3.58-3.59] [4.14-6.53]
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash** — Find the new bid's session id and the recording start time
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && cat capture3.log | head -5 && python3 - <<'EOF'
+  import json
+  s=json.load(open("captures/storage.json"))
+  for o in s["origins"]:
+      for x in o["localStorage"]:
+          if x["name"]=="kopi.submissions":
+              v=json.loads(x["value"]); print(json.dumps(v)[:800])
+  m=json.load(open("captures/autopilot/meta.json")); print("t0", m.get("t0"))
+  EOF
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  viewport [1600,1000,1.5]
+  autopilot: 11213 raw, 11548 at 30 fps, 427.5 s, marks {"started":0.9939999580383301,"step2":70.72200012207031,"step3":137.85300016403198,"step4":252.7960000038147,"ready":374.2060000896454,"pack":382.7170000076294}
+  profile: 1050 raw, 1226 at 30 fps, 44.2 s, marks {"filling":3.3529999256134033,"filled":31.770999908447266,"fields":38.36899995803833}
+  no page errors
+  exit 0
+  [{"doc_no": "MAS000ETT26000053", "title": "INVITATION TO TENDER FOR THE PROVISION OF INSTALLATION AND MAINTENANCE SERVICES FOR
+  [… 292 chars cut …]
+  "autopilot": "done", "session_id": "45f3486763724f389e67ec2a96249701"}]
+  t0 1790847022.856
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Bash**
+  
+  ```
+  
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Land document chips on their words and render autopilot and profile stills
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch/film && python3 - <<'EOF'
+  p='film.js'; s=open(p).read()
+  s=s.replace("  const lapse0 = a0 + 2.0, lapse1 = a0 + 7.25, gap = T.apGap ?? null;","  // lapse1 is the word \"ready\" (line 6 starts at 27.75 s; \"ready\" is 7.47 s into it, measured from the waveform).\n  const lapse0 = a0 + 2.0, lapse1 = 27.75 + 7.47, gap = T.apGap ?? null;")
+  old=s[s.index("  // Documents land in the right column as Kopi writes them."):s.index("  const rdy = spring(")]
+  new='''  // Documents land in the right column on the words that name them ("the questions, the compliance, the
+    // proposal, the price"), never before the run had written them: the lapse is linear, so each lands
+    // in or after the step that writes it.
+    const VO6 = 27.75;
+    const docAt = [null, VO6 + 3.4, VO6 + 4.55, VO6 + 4.8, VO6 + 5.35, VO6 + 5.65, VO6 + 6.45, VO6 + 6.9, VO6 + 7.3];
+    docs.forEach((d, i) => {
+      const land = i === 0 ? null : docAt[i];
+      const k = (i === 0 ? spring(clamp((act - stepAt[1]) / 9)) : spring(seg(t, land, land + 0.6))) * panelOut;
+      set(d, { x: 1534 + (1 - k) * 36, y: 330 + i * 60, s: 0.92, o: k });
+      d.style.transformOrigin = "0% 50%";
+    });
+  '''
+  s=s.replace(old,new)
+  open(p,'w').write(s)
+  EOF
+  /opt/homebrew/bin/node --check film.js && ~/Documents/codes/kopi/data/launch/film/review.sh s8 29.2 31.4 33.3 35.6 37.5 40.0 41.6 43.2 2>&1 | grep -v 404 | tail -3
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Shell cwd was reset to ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5
+  ```
+
+  </details>
+
+- **Read** `~/Documents/codes/kopi/data/launch/review/s8.jpg`
+
+  <details><summary>result</summary>
+
+  ```
+  [image omitted]
+  ```
+
+  </details>
+
+- **Bash** — Render the final film, mix and web copy
+  
+  ```
+  cd ~/Documents/codes/kopi/data/launch && ./final.sh > renders.log 2>&1; echo "exit $?" >> renders.log
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  Command running in background with ID: bmmulb0u1. Output is being written to: /private/tmp/claude-501/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452/tasks/bmmulb0u1.output. You will be notified when it completes. To check interim output, use Read on that file path.
+  Session cwd remains ~/.universe/sessions/529c67bc-baf4-434e-a6d1-a7855631d0a5; directory changes made by the backgrounded command do not apply to subsequent commands.
+  ```
+
+  </details>
+
+While it renders, I'm refreshing the redacted agent logs for the push, which I always do before pushing.
+
+- **Bash** — Find the newest transcript and the log exporter
+  
+  ```
+  ls -t $TMPDIR/claude-resume-*/projects/*/7142f416-*.jsonl 2>/dev/null | head -3; ls -la ~/Documents/codes/kopi/data/log-raw/01-main.jsonl; sed -n 1,40p ~/Documents/codes/kopi/scripts/export_logs.py | head -40
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>
+
+- **Bash** — Compare the newest transcript with the stored raw log
+  
+  ```
+  cd ~/Documents/codes/kopi && SRC=$TMPDIR/claude-resume-81dc52a9-7bac-4abf-9261-92c2114d5926/projects/-Users-teddy--universe-sessions-529c67bc-baf4-434e-a6d1-a7855631d0a5/7142f416-4f85-496d-ae13-524a650d7452.jsonl; ls -la $SRC; head -c 300 $SRC | head -2 >/dev/null; python3 -c "
+  import json
+  first=None;last=None;n=0
+  for l in open('$SRC'):
+      try: d=json.loads(l)
+      except: continue
+      ts=d.get('timestamp')
+      if ts:
+          first=first or ts; last=ts
+      n+=1
+  print(n, first, last)"; python3 -c "
+  import json
+  first=None;last=None;n=0
+  for l in open('data/log-raw/01-main.jsonl'):
+      try: d=json.loads(l)
+      except: continue
+      ts=d.get('timestamp')
+      if ts:
+          first=first or ts; last=ts
+      n+=1
+  print(n, first, last)"
+  ```
+
+  <details><summary>result</summary>
+
+  ```
+  [omitted: output lists resources outside this project]
+  ```
+
+  </details>

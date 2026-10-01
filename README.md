@@ -19,11 +19,13 @@ Around it is a workspace:
 
 **Live:** https://kopi.unv.run (the access code is in the submission email)
 
+**Launch film (0:59):** https://kopi.unv.run/demo/kopi-film.mp4
+
 **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
 
 ![A bid run on autopilot, ready to submit: the submission pack and what only the company can do](docs/images/autopilot.png)
 
-Built in a day for the Pragnition Labs AI-Native Builder assessment, with coding agents
+Built over three days (29 Sep to 1 Oct 2026) for the Pragnition Labs AI-Native Builder assessment, with coding agents
 doing the work and me directing it. How that went, mistakes included, is in
 [`planning/`](planning/) and [`logs/`](logs/).
 
@@ -236,6 +238,6 @@ behind it (D1–D32) are in [planning/02-decisions.md](planning/02-decisions.md)
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the
   fakes had hidden it), screenshots, and once the copilot itself.
-- **Session logs:** [`logs/`](logs/) holds all 15 sessions (the main agent, two crew agents,
-  five reviewers, seven subagents), redacted by [`scripts/export_logs.py`](scripts/export_logs.py).
+- **Session logs:** [`logs/`](logs/) holds all 16 sessions (the main agent, two crew agents,
+  five reviewers, eight subagents), redacted by [`scripts/export_logs.py`](scripts/export_logs.py).
   [`logs/INDEX.md`](logs/INDEX.md) lists them and says what was removed.
