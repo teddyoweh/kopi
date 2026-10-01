@@ -157,11 +157,30 @@ function TabButton({
   );
 }
 
+/** The last text each draft showed, so a reload that misses never blanks a document Kopi already wrote. */
+const shown = new Map<string, string>();
+
 /** A draft, from what Kopi is writing right now or from the saved file. */
 function DocView({ sessionId, name, version, live, writing }: { sessionId: string | null; name: string; version: number; live?: string; writing: boolean }) {
   const api = useApi();
-  const saved = useAsync(async () => (api && sessionId && live === undefined ? api.sessionFile(sessionId, name) : null), [api, sessionId, name, version, live === undefined]);
-  const text = live ?? saved.data ?? undefined;
+  const key = `${sessionId}/${name}`;
+  const saved = useAsync(async () => {
+    if (!api || !sessionId || live !== undefined) return null;
+    // A draft Kopi has just finished writing is saved when its turn ends, so the first read can miss: try again.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await api.sessionFile(sessionId, name);
+      } catch (error) {
+        if (attempt >= 3) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 2500 * (attempt + 1)));
+      }
+    }
+  }, [api, sessionId, name, version, live === undefined]);
+  useEffect(() => {
+    const latest = live ?? saved.data;
+    if (latest != null) shown.set(key, latest);
+  }, [key, live, saved.data]);
+  const text = live ?? saved.data ?? shown.get(key) ?? undefined;
   return (
     <article className="mx-auto flex w-full max-w-[46rem] flex-col gap-5 px-6 pt-7 pb-16 sm:px-10">
       {writing && (
