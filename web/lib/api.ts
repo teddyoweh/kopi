@@ -11,7 +11,7 @@ export type MarketContext = Schemas["MarketContext"];
 export type Licence = Schemas["Licence"];
 export type Profile = Schemas["Profile"];
 /** `bid` has a server default (false); openapi-typescript marks defaulted fields required, so it is optional here. */
-export type ChatRequest = Omit<Schemas["ChatRequest"], "bid"> & { bid?: boolean };
+export type ChatRequest = Omit<Schemas["ChatRequest"], "bid" | "autopilot"> & { bid?: boolean; autopilot?: boolean };
 export type SessionFile = Schemas["SessionFile"];
 export type AuthResponse = Schemas["AuthResponse"];
 export type ChecklistItem = Schemas["ChecklistItem"];

@@ -36,6 +36,8 @@ const SHORT: Record<string, string> = {
   "compliance matrix": "Matrix",
   checklist: "Checklist",
   "proposal outline": "Outline",
+  proposal: "Proposal",
+  "submission pack": "Pack",
   "cover letter": "Cover letter",
   "pricing notes": "Pricing",
   "risk register": "Risks",
@@ -46,7 +48,7 @@ const tabName = (file: string, doc: string) => {
 };
 
 /** The order a bid team reads its documents in; anything else follows. */
-const ORDER = ["bid plan", "clarification questions", "compliance matrix", "checklist", "proposal outline"];
+const ORDER = ["submission pack", "bid plan", "clarification questions", "compliance matrix", "proposal", "cover letter", "pricing notes", "checklist", "risk register", "proposal outline"];
 export const rank = (kind: string) => {
   const i = ORDER.indexOf(kind.toLowerCase());
   return i === -1 ? ORDER.length : i;

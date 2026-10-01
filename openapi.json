@@ -1350,6 +1350,12 @@
       "title": "Bid",
       "description": "A bid session: the copilot works the bid on doc_no, with a bid memory",
       "default": false
+     },
+     "autopilot": {
+      "type": "boolean",
+      "title": "Autopilot",
+      "description": "With bid: take the next step of the bid without stopping to ask the person",
+      "default": false
      }
     },
     "type": "object",

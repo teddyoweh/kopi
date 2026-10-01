@@ -105,7 +105,8 @@ decisions to make, documents to upload, facts only the company knows.
 Drafting:
 - Write each document as a markdown file with the Write tool at the absolute path \
 {drafts}/{doc_no}-<kind>.md, where kind is one of bid-plan, clarification-questions, \
-compliance-matrix, checklist, proposal-outline, cover-letter, pricing-notes or risk-register. \
+compliance-matrix, checklist, proposal-outline, proposal, cover-letter, pricing-notes, \
+risk-register or submission-pack. \
 You cannot write anywhere else. When a document exists already, update it rather than start over.
 - The first line is a '# ' title naming the document and the tender.
 - Ground every line in the notice, the uploaded documents or the company profile, and leave a \
@@ -121,9 +122,44 @@ Where the bid stands, from the bid memory and the workspace as this turn starts:
 """
 
 
-def bid_prompt(profile: Profile, today: datetime, workspace: Path, doc_no: str, memory: BidMemory, documents: list[tuple[str, int]]) -> str:
+AUTOPILOT = """
+Autopilot is on. The person asked Kopi to run this bid end to end, so do the work rather than \
+hand it back. This overrides playbook step 5 and the placeholder rule above.
+- Never end a turn asking the person to decide something you can decide. Make the call, give the \
+reason in one line, and carry on; the person can overrule you later.
+- The bid runs in four steps, one step per turn. Each turn does the next step for the stage in the \
+memory, finishes it completely, moves the stage, and ends with one line on what comes next.
+  1. Qualify (no stage yet, or qualify): playbook steps 1 to 3, then make the go / no-go call \
+yourself. Go when the company can plausibly deliver the work and no rule blocks it outright; a gap \
+it can close before closing (a registration to apply for, a partner to bring in) is a risk to plan \
+for, not a reason to stop. On go, set_bid_stage clarify. On a hard no-go (the work is outside what \
+the company does, or a rule blocks it and cannot be fixed before closing): write the bid plan with \
+the reason, run search_tenders on the company's capabilities and name up to three open tenders it \
+should bid on instead, set_bid_stage qualify with a next step that starts "No bid:", and stop.
+  2. Clarify (stage clarify): write the clarification questions and the compliance matrix, every \
+requirement answered from the notice, the profile or a stated assumption. set_bid_stage draft.
+  3. Draft (stage draft): write the proposal itself ({doc_no}-proposal.md), not an outline: every \
+section in full prose an evaluator could score, built from the profile's capabilities and past \
+work and the notice's requirements. Write the cover letter, and pricing notes with a recommended \
+price for each item to respond, worked out from the market band (the median and middle half of \
+similar awards) and the scope, with the method shown. set_bid_stage review.
+  4. Review and pack (stage review): read your documents against the notice and the compliance \
+matrix as an evaluator would; fix every gap and contradiction in place; write the risk register; \
+date every task in the checklist. Then write the submission pack ({doc_no}-submission-pack.md): \
+what is ready and in what order it goes in, the deadline, what to re-check against the tender \
+documents once they are uploaded, and a short list headed "Only you can do" holding only what \
+needs the company itself: signing, facts the profile lacks (such as its UEN), approving the \
+price, and submitting on GeBIZ with CorpPass. set_bid_stage submit, with the GeBIZ submission \
+date as the next step.
+- No [placeholder]s anywhere. Fill every field from the notice, the profile, the market data or an \
+assumption stated in-line as "Assumed: ... (why)". Facts only the company holds go once into the \
+pack's "Only you can do" list, not across the documents.
+"""
+
+
+def bid_prompt(profile: Profile, today: datetime, workspace: Path, doc_no: str, memory: BidMemory, documents: list[tuple[str, int]], autopilot: bool = False) -> str:
     """The playbook for one bid, with the bid's memory and documents, so a turn never depends on the transcript."""
-    return BID.format(
+    prompt = BID.format(
         company=profile.name,
         today=f"{today:%A %d %B %Y}",
         doc_no=doc_no,
@@ -132,6 +168,7 @@ def bid_prompt(profile: Profile, today: datetime, workspace: Path, doc_no: str, 
         memory_file=workspace / "memory.json",
         state=bid_state(memory, documents),
     )
+    return prompt + AUTOPILOT.format(doc_no=doc_no) if autopilot else prompt
 
 
 def bid_state(memory: BidMemory, documents: list[tuple[str, int]]) -> str:

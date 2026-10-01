@@ -34,7 +34,7 @@ export function StageLine({ memory, working, brief = false }: { memory: BidMemor
               <span className="font-medium">{STAGES[current]!.label}</span>
               <span className="text-muted-foreground">
                 {" "}
-                · {!brief && `${STAGES[current]!.hint.toLowerCase()} · `}
+                · {!brief && `${STAGES[current]!.hint.charAt(0).toLowerCase()}${STAGES[current]!.hint.slice(1)} · `}
                 stage {current + 1} of {STAGES.length}
               </span>
             </>

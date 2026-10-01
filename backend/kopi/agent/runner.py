@@ -1,7 +1,7 @@
 """Run one copilot turn and print what happens as JSON lines (one ChatEvent each).
 
     python -m kopi.agent.runner --message "…" [--profile-file profile.json] [--workspace /workspace]
-        [--resume <session>] [--doc <doc_no> [--bid]] [--model <model>]
+        [--resume <session>] [--doc <doc_no> [--bid [--autopilot]]] [--model <model>]
 
 Environment: KOPI_API and KOPI_SESSION_TOKEN (the scoped token the tools use),
 KOPI_PROFILE_JSON unless --profile-file is given, and CLAUDE_CODE_OAUTH_TOKEN or
@@ -91,7 +91,7 @@ def documents(workspace: Path) -> list[tuple[str, int]]:
     return [(str(path), path.stat().st_size) for path in found]
 
 
-def options(profile: Profile, client: KopiClient, workspace: Path, model: str, resume: str | None, doc_no: str | None, bid: bool = False) -> ClaudeAgentOptions:
+def options(profile: Profile, client: KopiClient, workspace: Path, model: str, resume: str | None, doc_no: str | None, bid: bool = False, autopilot: bool = False) -> ClaudeAgentOptions:
     drafts = workspace / "drafts"
     drafts.mkdir(parents=True, exist_ok=True)
     # An empty inputs/ rather than a missing one: looking for uploads before any exist is not a failure.
@@ -102,7 +102,7 @@ def options(profile: Profile, client: KopiClient, workspace: Path, model: str, r
             raise ValueError("a bid session works one tender: pass its doc_no")
         memory_file = workspace / "memory.json"
         server, tool_names = build_server(client, profile, memory_file)
-        prompt = bid_prompt(profile, today, workspace, doc_no, read_memory(memory_file), documents(workspace))
+        prompt = bid_prompt(profile, today, workspace, doc_no, read_memory(memory_file), documents(workspace), autopilot)
     else:
         server, tool_names = build_server(client, profile)
         prompt = system_prompt(profile, today, str(drafts), doc_no)
@@ -244,12 +244,13 @@ def main() -> None:
     parser.add_argument("--resume")
     parser.add_argument("--doc")
     parser.add_argument("--bid", action="store_true", help="work the bid on --doc, with the bid memory and its tools")
+    parser.add_argument("--autopilot", action="store_true", help="with --bid: take the next step without stopping to ask")
     parser.add_argument("--model", default=os.environ.get("KOPI_MODEL", "claude-opus-5-5"))
     args = parser.parse_args()
 
     profile = Profile.model_validate_json(args.profile_file.read_text() if args.profile_file else os.environ["KOPI_PROFILE_JSON"])
     client = KopiClient(os.environ["KOPI_API"], os.environ.get("KOPI_SESSION_TOKEN"))
-    opts = options(profile, client, args.workspace, args.model, args.resume, args.doc, args.bid)
+    opts = options(profile, client, args.workspace, args.model, args.resume, args.doc, args.bid, args.bid and args.autopilot)
 
     async def stream() -> None:
         async for event in run_turn(args.message, opts, args.workspace / "drafts"):

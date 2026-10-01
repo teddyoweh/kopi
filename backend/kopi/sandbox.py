@@ -239,6 +239,8 @@ class Copilot:
             argv += ["--doc", request.doc_no]
         if bid:
             argv.append("--bid")
+            if request.autopilot:
+                argv.append("--autopilot")
         if self.model:
             argv += ["--model", self.model]
         return argv, env

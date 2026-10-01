@@ -29,7 +29,8 @@ import type {
 import { ApiError } from "./api";
 import { buildChecklist } from "./checklist";
 import { closingLabel, dateTime } from "./format";
-import { scriptTurn } from "./mock-copilot";
+import { autopilotTurn } from "./mock-autopilot";
+import { scriptTurn, type Beat, type MockTools } from "./mock-copilot";
 import { addNote, dropNote, keepUpload, listUploads, readMemory, uploadBody } from "./mock-memory";
 
 type AwardRow = {
@@ -137,6 +138,14 @@ const UNVERIFIED_RISK = "Some cited evidence could not be found in the notice; t
 /** Mirrors kopi.sources.awards: placeholder supplier names and $0/$1 panel amounts are not market data. */
 const PLACEHOLDER_SUPPLIERS = new Set(["", "na", "unknown"]);
 const UNVERIFIED_QUOTE = "Vendors must have delivered at least three projects of a similar scale in the past five years";
+
+
+/** An autopilot turn, ending like every scripted turn with its cost. */
+async function autopilotPlay(request: ChatRequest, tools: MockTools, files: Map<string, string>): Promise<Beat[]> {
+  const beats = await autopilotTurn(request, tools, files);
+  const steps = beats.filter((b) => b.event.type === "tool_call").length;
+  return [...beats, { event: { type: "done", cost_usd: Math.round((0.05 + steps * 0.034) * 100) / 100 }, pause: 0 }];
+}
 
 export class MockApi implements KopiApi {
   readonly mode = "mock" as const;
@@ -352,7 +361,8 @@ export class MockApi implements KopiApi {
     const session = request.session_id ?? `mock-${Date.now().toString(36)}`;
     if (request.doc_no) find(request.doc_no);
     const files = new Map<string, string>();
-    const beats = await scriptTurn(
+    const play = request.bid && request.autopilot && request.doc_no ? autopilotPlay : scriptTurn;
+    const beats = await play(
       { ...request, session_id: session },
       {
         notice: find,

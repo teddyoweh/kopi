@@ -12,7 +12,14 @@ import { useStored } from "./stored";
  * not started yet. The session's memory and documents live on the API; this record only
  * remembers which session belongs to which tender, and for which company.
  */
-export type Bid = Tracked & { session_id?: string | null; profile_id?: string | null };
+export type Bid = Tracked & { session_id?: string | null; profile_id?: string | null; autopilot?: Autopilot | null };
+
+/**
+ * Whether Kopi is running the bid on its own. "on" chains the playbook's four steps (qualify,
+ * clarify, draft, review and pack) while the bid page is open, and picks up again when it is
+ * reopened; "paused" waits for the person; "done" means it reached submit, or a no-bid call.
+ */
+export type Autopilot = "on" | "paused" | "done";
 
 const NO_BIDS: Bid[] = [];
 
@@ -47,10 +54,15 @@ export function useBids() {
     [update],
   );
 
+  const setAutopilot = useCallback(
+    (doc: string, autopilot: Autopilot | null) => update((list) => list.map((b) => (b.doc_no === doc ? { ...b, autopilot } : b))),
+    [update],
+  );
+
   const dropBid = useCallback((doc: string) => update((list) => list.filter((b) => b.doc_no !== doc)), [update]);
 
   /** Put a dropped bid back, session and all (the toast's Undo). */
   const restoreBid = useCallback((bid: Bid) => update((list) => [...list.filter((b) => b.doc_no !== bid.doc_no), bid]), [update]);
 
-  return { bids, bidFor, startBid, attachSession, dropBid, restoreBid };
+  return { bids, bidFor, startBid, attachSession, setAutopilot, dropBid, restoreBid };
 }

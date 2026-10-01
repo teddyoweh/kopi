@@ -292,6 +292,7 @@ class ChatRequest(BaseModel):
     profile: Profile
     doc_no: str | None = Field(None, description="The tender the conversation is about, if any")
     bid: bool = Field(False, description="A bid session: the copilot works the bid on doc_no, with a bid memory")
+    autopilot: bool = Field(False, description="With bid: take the next step of the bid without stopping to ask the person")
 
 
 class SessionFile(BaseModel):

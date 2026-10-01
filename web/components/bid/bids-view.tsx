@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Briefcase, FileText, Play, Search, X } from "lucide-react";
+import { ArrowRight, Briefcase, FileText, Play, Search, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 
 import { stageLabel } from "@/components/bid/stage-stepper";
@@ -45,7 +45,14 @@ function BidRow({ bid, now, onRemove }: { bid: Bid; now: number; onRemove: () =>
             <Skeleton className="h-6 w-28 rounded-full" />
           ) : (
             <>
-              <span className="inline-flex h-6 items-center rounded-full bg-kopi-soft px-2.5 text-[12px] font-book text-kopi">{stageLabel(memory?.stage)}</span>
+              {bid.autopilot === "on" && (
+                <span className="inline-flex h-6 items-center gap-1 rounded-full bg-kopi px-2.5 text-[12px] font-book text-white">
+                  <Sparkles className="size-3" aria-hidden /> Autopilot
+                </span>
+              )}
+              <span className="inline-flex h-6 items-center rounded-full bg-kopi-soft px-2.5 text-[12px] font-book text-kopi">
+                {memory?.stage === "submit" ? "Ready to submit" : stageLabel(memory?.stage)}
+              </span>
               {status && status.drafts > 0 && (
                 <span className="inline-flex h-6 items-center gap-1.5 rounded-full border bg-card px-2.5 text-[12px] font-book text-foreground/70">
                   <FileText className="size-3.5" aria-hidden /> {status.drafts} {status.drafts === 1 ? "document" : "documents"}

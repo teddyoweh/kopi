@@ -410,6 +410,12 @@ export interface components {
              * @default false
              */
             bid: boolean;
+            /**
+             * Autopilot
+             * @description With bid: take the next step of the bid without stopping to ask the person
+             * @default false
+             */
+            autopilot: boolean;
         };
         /** ChecklistItem */
         ChecklistItem: {

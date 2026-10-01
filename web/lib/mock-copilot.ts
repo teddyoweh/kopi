@@ -38,7 +38,7 @@ function tally(checks: EligibilityCheck[]): string {
 
 // ---------------------------------------------------------------- tool results, worded like the live tools
 
-function noticeResult(n: Notice): string {
+export function noticeResult(n: Notice): string {
   const heads = (n.gra_heads ?? []).map((h) => `${h.code} ${h.label} (${h.grade ?? "no grade"})`).join("; ");
   return cut(
     `<notice doc_no="${n.doc_no}"> Title: ${n.title} Agency: ${n.agency} Type: ${n.type} · Method: ${n.procurement_method} · ` +
@@ -46,15 +46,15 @@ function noticeResult(n: Notice): string {
   );
 }
 
-function checksResult(profile: Profile, doc: string, checks: EligibilityCheck[]): string {
+export function checksResult(profile: Profile, doc: string, checks: EligibilityCheck[]): string {
   return cut(`Eligibility of ${profile.name} for ${doc}: ${checks.map((c) => `- [${c.status}] ${c.kind}: ${c.requirement}. ${c.reason}`).join(" ")}`);
 }
 
-function profileResult(profile: Profile): string {
+export function profileResult(profile: Profile): string {
   return cut(JSON.stringify({ id: profile.id, name: profile.name, uen: profile.uen, summary: profile.summary }));
 }
 
-function marketResult(m: MarketContext): string {
+export function marketResult(m: MarketContext): string {
   if (!m.similar_count) return "No similar past awards found.";
   const money = (v: number | null) => (v === null ? "n/a" : `S$${Math.round(v).toLocaleString("en-SG")}`);
   return cut(
@@ -163,7 +163,7 @@ export function checklistDraft(n: Notice, items: ChecklistItem[]): string {
 }
 
 /** The go/no-go call a bid plan opens with, from the checks the rules can run. */
-function bidCall(checks: EligibilityCheck[]): { call: string; why: string } {
+export function bidCall(checks: EligibilityCheck[]): { call: string; why: string } {
   const blocker = checks.find((c) => c.status === "unmet" && c.kind !== "closing");
   const open = checks.filter((c) => c.status === "unknown");
   if (blocker) return { call: "Bid only if the gap closes", why: `${blocker.requirement} is not on the profile. Without it, or a partner who holds it, the bid is not compliant.` };
@@ -172,7 +172,7 @@ function bidCall(checks: EligibilityCheck[]): { call: string; why: string } {
 }
 
 /** A date `days` before `iso`, or "As soon as possible" when that day has already gone. */
-function before(iso: string, days: number): string {
+export function before(iso: string, days: number): string {
   const at = new Date(new Date(iso).getTime() - days * 86400e3);
   return at.getTime() < Date.now() ? "As soon as possible" : shortDate(at.toISOString());
 }
@@ -243,14 +243,14 @@ export function proposalOutlineDraft(n: Notice, profile: Profile): string {
 
 // ---------------------------------------------------------------- the script
 
-function say(text: string): Beat[] {
+export function say(text: string): Beat[] {
   const words = text.match(/\S+\s*|\s+/g) ?? [];
   const beats: Beat[] = [];
   for (let i = 0; i < words.length; i += 3) beats.push({ event: { type: "text", text: words.slice(i, i + 3).join("") }, pause: 28 });
   return beats;
 }
 
-function call(tool: string, input: Record<string, unknown>, summary: string, ms = 650): Beat[] {
+export function call(tool: string, input: Record<string, unknown>, summary: string, ms = 650): Beat[] {
   return [
     { event: { type: "tool_call", tool, input }, pause: 120 },
     { event: { type: "tool_result", summary }, pause: ms },
@@ -258,7 +258,7 @@ function call(tool: string, input: Record<string, unknown>, summary: string, ms 
 }
 
 /** A draft written the way the live runner streams one: the text arrives in pieces, then the Write call. */
-function write(name: string, body: string, files: Map<string, string>): Beat[] {
+export function write(name: string, body: string, files: Map<string, string>): Beat[] {
   files.set(name, body);
   const pieces = body.match(/[\s\S]{1,48}/g) ?? [];
   return [

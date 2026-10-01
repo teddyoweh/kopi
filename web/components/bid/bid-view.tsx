@@ -1,10 +1,11 @@
 "use client";
 
-import { Briefcase, ExternalLink, FileText, MessageSquare, Play, Sparkles } from "lucide-react";
+import { Ban, Briefcase, ExternalLink, FileCheck2, FileText, MessageSquare, Pause, Play, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 import { ArtifactPanel, draftKind, rank, sameTab, type ShelfRow, type Tab } from "@/components/bid/artifact-panel";
+import { AutopilotBar, isNoBid } from "@/components/bid/autopilot-bar";
 import { StageLine } from "@/components/bid/stage-stepper";
 import { Countdown, useNow } from "@/components/bid/time";
 import { Composer } from "@/components/copilot/copilot-view";
@@ -15,10 +16,12 @@ import { AgencyDisc } from "@/components/search/result-card";
 import { EmptyState, ErrorState } from "@/components/states";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { BidMemory, ChatEvent, Notice, SessionFile } from "@/lib/api";
+import { toast } from "@/components/ui/toast";
+import type { BidMemory, BidStage, ChatEvent, Notice, SessionFile } from "@/lib/api";
 import { primeBidStatus } from "@/lib/bid-status";
 import { useBids } from "@/lib/bids";
 import { EMPTY, problemOf, reducer, restored, type Conversation } from "@/lib/copilot";
+import { shortTitle } from "@/lib/short-title";
 import { recordDraft, rememberTitle } from "@/lib/submissions";
 import { displayTitle } from "@/lib/title-case";
 import { useAsync } from "@/lib/use-async";
@@ -28,6 +31,13 @@ import { cn } from "@/lib/utils";
 /** The request that starts a bid. The bid playbook on the server (and the mock's script) take it from there. */
 export const kickoff = (doc: string) => `Start the bid for ${doc}: qualify it, plan it and draft what we need.`;
 const isKickoff = (ask: string, doc: string) => ask === kickoff(doc);
+
+/** The requests that run the bid on autopilot: the first one, then one per step until it is ready to submit. */
+export const autopilotStart = (doc: string) => `Run the bid for ${doc} on autopilot: qualify it, make the call, and take it all the way to a submission-ready pack.`;
+export const AUTOPILOT_NEXT = "Continue on autopilot: take the next step.";
+const isAutopilotAsk = (ask: string, doc: string) => ask === autopilotStart(doc) || ask === AUTOPILOT_NEXT;
+/** Four steps, with room for one that has to be redone; past that, autopilot stops rather than loop. */
+const MAX_AUTO_TURNS = 6;
 
 /** Tools whose results change the bid memory, so its tab refreshes after them. */
 const MEMORY_TOOLS = new Set(["remember", "set_bid_stage"]);
@@ -82,7 +92,7 @@ function ChatHeader({ notice, now, memory, working }: { notice: Notice | null; n
   );
 }
 
-function NotStarted({ onStart, disabled }: { onStart: () => void; disabled: boolean }) {
+function NotStarted({ onStart, onStep, disabled }: { onStart: () => void; onStep: () => void; disabled: boolean }) {
   return (
     <div className="flex flex-col items-start gap-4 rounded-xl border bg-card px-5 py-5">
       <span className="grid size-9 place-items-center rounded-full bg-kopi-soft">
@@ -91,14 +101,32 @@ function NotStarted({ onStart, disabled }: { onStart: () => void; disabled: bool
       <div className="flex flex-col gap-1">
         <p className="text-[15px] font-medium tracking-[-0.01em]">Kopi hasn&apos;t started on this bid</p>
         <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-          Start it and Kopi works it end to end: it qualifies the tender, plans the bid back from closing, and writes the clarification
-          questions, compliance matrix, checklist and proposal outline. Each document opens beside the chat as it is written.
+          On autopilot Kopi does the whole bid: it qualifies the tender and makes the call, writes the clarification questions and the
+          compliance matrix, the proposal, the cover letter and a price, then reviews it all and hands you a submission pack. Each
+          document opens beside the chat as it is written.
         </p>
       </div>
-      <Button onClick={onStart} disabled={disabled}>
-        <Play /> Start the bid
-      </Button>
+      <div className="flex flex-wrap gap-1.5">
+        <Button onClick={onStart} disabled={disabled}>
+          <Sparkles /> Run on autopilot
+        </Button>
+        <Button variant="ghost" onClick={onStep} disabled={disabled} className="text-muted-foreground">
+          Just qualify it
+        </Button>
+      </div>
     </div>
+  );
+}
+
+function AutopilotLine({ first, at }: { first: boolean; at: string }) {
+  const when = new Date(Number.parseInt(at, 36)).toLocaleString("en-SG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+  return (
+    <p className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+      <span className="grid size-5 place-items-center rounded-full bg-kopi-soft" aria-hidden>
+        <Sparkles className="size-3 text-kopi" />
+      </span>
+      {first ? `You put the bid on autopilot, ${when}. Kopi runs it to a submission pack.` : `Autopilot took the next step, ${when}.`}
+    </p>
   );
 }
 
@@ -119,8 +147,9 @@ function Workspace({ doc }: { doc: string }) {
   const { profile, signOut } = useKopi();
   const now = useNow();
   const [params, updateUrl] = useUrlParams();
-  const { bidFor, startBid, attachSession } = useBids();
+  const { bidFor, startBid, attachSession, setAutopilot } = useBids();
   const bid = bidFor(doc);
+  const bidRef = useRef(bid);
   const tender = useAsync(async () => (api ? api.tender(doc, profile) : null), [api, doc, profile]);
   const notice = tender.data?.notice ?? null;
 
@@ -146,6 +175,7 @@ function Workspace({ doc }: { doc: string }) {
 
   useEffect(() => {
     sessionRef.current = session;
+    bidRef.current = bid;
   });
   useEffect(() => {
     if (notice) rememberTitle(notice.doc_no, notice.title);
@@ -189,10 +219,49 @@ function Workspace({ doc }: { doc: string }) {
     setActive(tab);
   }, []);
 
+  const sendRef = useRef<((text: string, autopilot?: boolean) => Promise<void>) | null>(null);
+  const autoTurns = useRef(0);
+  const stageRef = useRef<BidStage | null>(null);
+  /** The stage a turn started from, so the autopilot bar names the step being worked, not the one it just moved to. */
+  const [workingStage, setWorkingStage] = useState<BidStage | null>(null);
+
+  /** After an autopilot step: run the next one, or stop at submit, a no-bid call, a stalled step or a pause. */
+  const advance = useCallback(
+    (after: BidMemory | null, before: BidStage | null) => {
+      if (bidRef.current?.autopilot !== "on") return;
+      const title = bidRef.current ? shortTitle(bidRef.current.title) : doc;
+      if (!after) {
+        setAutopilot(doc, "paused");
+        return;
+      }
+      if (after.stage === "submit") {
+        setAutopilot(doc, "done");
+        setActive({ kind: "doc", name: `${doc}-submission-pack.md` });
+        toast({ title: "Ready to submit", description: title, icon: FileCheck2 });
+        return;
+      }
+      if (isNoBid(after.next_step)) {
+        setAutopilot(doc, "done");
+        toast({ title: "Kopi's call: no bid", description: title, icon: Ban });
+        return;
+      }
+      if (after.stage === before || autoTurns.current >= MAX_AUTO_TURNS) {
+        setAutopilot(doc, "paused");
+        toast({ title: "Autopilot paused", description: "The last step didn't move the bid on. Ask Kopi what is missing, or resume.", icon: Pause });
+        return;
+      }
+      setTimeout(() => void sendRef.current?.(AUTOPILOT_NEXT, true), 400);
+    },
+    [doc, setAutopilot],
+  );
+
   const send = useCallback(
-    async (text: string) => {
+    async (text: string, autopilot = false) => {
       const message = text.trim();
       if (!message || !api || controller.current) return;
+      const before = stageRef.current;
+      setWorkingStage(before);
+      if (autopilot) autoTurns.current += 1;
       const turnId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
       const abort = new AbortController();
       controller.current = abort;
@@ -203,7 +272,7 @@ function Workspace({ doc }: { doc: string }) {
       let lastTool: string | undefined;
       try {
         await api.chat(
-          { message, session_id: sid, profile, doc_no: doc, bid: true },
+          { message, session_id: sid, profile, doc_no: doc, bid: true, autopilot },
           (event) => {
             if (!sid && event.session_id) {
               sid = event.session_id;
@@ -250,9 +319,16 @@ function Workspace({ doc }: { doc: string }) {
           abort.signal,
         );
         dispatch({ type: "end", turnId });
+        if (autopilot && sid) {
+          const after = await api.memory(sid).catch(() => null);
+          if (after) setMemory({ session: sid, value: after });
+          stageRef.current = after?.stage ?? before;
+          advance(after, before);
+        }
       } catch (error) {
         if (abort.signal.aborted) dispatch({ type: "stopped", turnId });
         else dispatch({ type: "problem", turnId, problem: problemOf(error) });
+        if (autopilot && !leaving.current && bidRef.current?.autopilot === "on") setAutopilot(doc, "paused");
       } finally {
         if (controller.current === abort) controller.current = null;
         setWriting(new Set());
@@ -263,25 +339,50 @@ function Workspace({ doc }: { doc: string }) {
         }
       }
     },
-    [api, profile, doc, attachSession, refreshMemory, refreshFiles],
+    [api, profile, doc, attachSession, refreshMemory, refreshFiles, advance, setAutopilot],
+  );
+  useEffect(() => {
+    sendRef.current = send;
+  });
+
+  /** Leaving the page ends the stream but not the autopilot, which picks up again when the bid is reopened. */
+  const leaving = useRef(false);
+  const stop = useCallback(() => controller.current?.abort(), []);
+  useEffect(
+    () => () => {
+      leaving.current = true;
+      controller.current?.abort();
+    },
+    [],
   );
 
-  const stop = useCallback(() => controller.current?.abort(), []);
-  useEffect(() => () => controller.current?.abort(), []);
+  /** Start the bid: on autopilot unless the person asked for the first step only. */
+  const start = useCallback(
+    (autopilot = true) => {
+      if (notice && !bid) startBid(notice, profile.id);
+      if (!autopilot) return void send(kickoff(doc));
+      autoTurns.current = 0;
+      setAutopilot(doc, "on");
+      void send(autopilotStart(doc), true);
+    },
+    [notice, bid, startBid, profile.id, send, doc, setAutopilot],
+  );
 
-  const start = useCallback(() => {
-    if (notice && !bid) startBid(notice, profile.id);
-    void send(kickoff(doc));
-  }, [notice, bid, startBid, profile.id, send, doc]);
+  /** Hand an existing bid to the autopilot, or pick it up again after a pause. */
+  const runAutopilot = useCallback(() => {
+    autoTurns.current = 0;
+    setAutopilot(doc, "on");
+    void send(AUTOPILOT_NEXT, true);
+  }, [doc, send, setAutopilot]);
 
-  // Arriving from Start bid (`&start=1`) kicks the bid off once; a reload doesn't start it again.
+  // Arriving from Start bid (`&start=1`) starts the bid on autopilot once; a reload doesn't start it again.
   const kicked = useRef(false);
   useEffect(() => {
     if (params.get("start") !== "1" || !api || kicked.current) return;
     kicked.current = true;
     updateUrl({ start: null });
-    if (!session && state.turns.length === 0) void send(kickoff(doc));
-  }, [params, api, session, state.turns.length, send, doc, updateUrl]);
+    if (!session && state.turns.length === 0) start(true);
+  }, [params, api, session, state.turns.length, start, updateUrl]);
 
   // Follow the answer as it streams, unless the reader has scrolled up to read.
   useEffect(() => {
@@ -306,6 +407,32 @@ function Workspace({ doc }: { doc: string }) {
   ].filter((row, i, all) => all.findIndex((r) => r.name === row.name) === i);
   const drafts = shelf.filter((r) => r.kind === "draft");
   const bidMemory = memory && memory.session === session ? memory.value : null;
+  useEffect(() => {
+    if (bidMemory && !busy) stageRef.current = bidMemory.stage ?? null;
+  }, [bidMemory, busy]);
+
+  // A bid left on autopilot picks up where it stopped when its page opens again.
+  const resumed = useRef(false);
+  useEffect(() => {
+    if (resumed.current || kicked.current || !api || busy || !session || !bidMemory) return;
+    resumed.current = true;
+    if (bid?.autopilot !== "on" || bidMemory.stage === "submit" || isNoBid(bidMemory.next_step)) return;
+    autoTurns.current = 0;
+    void send(AUTOPILOT_NEXT, true);
+  }, [api, busy, session, bidMemory, bid?.autopilot, send]);
+
+  const pack = `${doc}-submission-pack.md`;
+  const downloadAll = async () => {
+    if (!api || !session) return;
+    const names = [...drafts].sort((a, b) => rank(draftKind(a.name, doc)) - rank(draftKind(b.name, doc))).map((d) => d.name);
+    const texts = await Promise.all(names.map((name) => api.sessionFile(session, name).catch(() => "")));
+    const url = URL.createObjectURL(new Blob([texts.filter(Boolean).join("\n\n---\n\n")], { type: "text/markdown" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${doc}-bid-pack.md`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   // With nothing open, the panel shows the first document in reading order once there is one.
   const first = [...drafts].sort((a, b) => rank(draftKind(a.name, doc)) - rank(draftKind(b.name, doc)))[0]?.name;
@@ -360,14 +487,35 @@ function Workspace({ doc }: { doc: string }) {
           >
             <div className="shrink-0 border-b border-border/70 px-5 py-4">
               <ChatHeader notice={notice} now={now} memory={bidMemory} working={busy} />
+              <div className="mt-3 empty:hidden">
+                <AutopilotBar
+                  state={bid?.autopilot}
+                  stage={busy ? workingStage : (bidMemory?.stage ?? null)}
+                  next={bidMemory?.next_step}
+                  busy={busy}
+                  started={!!session}
+                  hasPack={drafts.some((d) => d.name === pack)}
+                  onRun={runAutopilot}
+                  onPause={() => setAutopilot(doc, "paused")}
+                  onResume={runAutopilot}
+                  onOpenPack={() => openFile(pack)}
+                  onDownloadAll={() => void downloadAll()}
+                />
+              </div>
             </div>
             <div ref={messages} className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
               {state.turns.length === 0 && !session ? (
-                <NotStarted onStart={start} disabled={!api || !notice} />
+                <NotStarted onStart={() => start(true)} onStep={() => start(false)} disabled={!api || !notice} />
               ) : (
                 state.turns.map((turn) => (
                   <div key={turn.id} className="flex flex-col gap-4">
-                    {isKickoff(turn.ask, doc) ? <KickoffLine at={turn.id.split("-")[0]!} /> : <UserMessage text={turn.ask} />}
+                    {isKickoff(turn.ask, doc) ? (
+                      <KickoffLine at={turn.id.split("-")[0]!} />
+                    ) : isAutopilotAsk(turn.ask, doc) ? (
+                      <AutopilotLine first={turn.ask === autopilotStart(doc)} at={turn.id.split("-")[0]!} />
+                    ) : (
+                      <UserMessage text={turn.ask} />
+                    )}
                     <AssistantTurn
                       turn={turn}
                       sessionId={session}
@@ -376,7 +524,8 @@ function Workspace({ doc }: { doc: string }) {
                       actions={{
                         onRetry: () => {
                           dispatch({ type: "remove", turnId: turn.id });
-                          void send(turn.ask);
+                          if (isAutopilotAsk(turn.ask, doc)) setAutopilot(doc, "on");
+                          void send(turn.ask, isAutopilotAsk(turn.ask, doc));
                         },
                         onNew: () => dispatch({ type: "remove", turnId: turn.id }),
                         onSignIn: signOut,

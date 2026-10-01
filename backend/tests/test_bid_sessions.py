@@ -337,6 +337,16 @@ def test_bid_turns_pass_bid_and_have_their_own_cap(boxes):
     assert "--bid" not in plain, "bid mode needs a tender"
 
 
+def test_autopilot_reaches_the_runner_only_with_a_bid(boxes):
+    c = Copilot(boxes, PickledStore(), lambda s: "t", "https://api.example", now=Clock())
+    session = start(c)
+    list(c.turn(bid(session).model_copy(update={"autopilot": True}), "a"))
+    list(c.turn(bid(session), "a"))
+    list(c.turn(ChatRequest(message="hi", profile=PROFILE, autopilot=True), "a"))
+    runs = [argv for box in boxes.made for argv, _ in box.calls if argv[:3] == ["python", "-m", "kopi.agent.runner"]]
+    assert ["--autopilot" in argv for argv in runs[-3:]] == [True, False, False]
+
+
 def test_routes_reach_the_copilot(boxes, copilot):
     session = start(copilot)
     client = TestClient(create_app(LiveStore(db=None, embed_query=None, embed_document=None, copilot=copilot), Settings(access_codes=["code"], signing_key=KEY)))
@@ -388,6 +398,15 @@ def test_the_bid_prompt_carries_the_playbook_memory_and_documents():
         assert rule in prompt
     empty = bid_prompt(PROFILE, NOW, Path("/workspace"), DOC, BidMemory(), [])
     assert "Stage: not set yet" in empty and "(nothing remembered yet)" in empty and "- none yet" in empty
+    assert "Autopilot is on" not in prompt
+
+
+def test_the_autopilot_prompt_decides_runs_four_steps_and_leaves_no_placeholders():
+    prompt = bid_prompt(PROFILE, NOW, Path("/workspace"), DOC, BidMemory(), [], autopilot=True)
+    assert prompt.startswith(bid_prompt(PROFILE, NOW, Path("/workspace"), DOC, BidMemory(), []))
+    for rule in ("Autopilot is on", "Never end a turn asking the person", "No bid:", "search_tenders",
+                 f"{DOC}-proposal.md", f"{DOC}-submission-pack.md", "Only you can do", "No [placeholder]s", "set_bid_stage submit"):
+        assert rule in prompt
 
 
 def test_bid_options_raise_the_caps_and_add_the_memory_tools(tmp_path, monkeypatch):
@@ -399,6 +418,8 @@ def test_bid_options_raise_the_caps_and_add_the_memory_tools(tmp_path, monkeypat
 
     opts = options(PROFILE, client, tmp_path, "claude-opus-5-5", None, DOC, bid=True)
     assert (opts.max_turns, opts.max_budget_usd) == (40, 5.0)
+    assert "Autopilot is on" in options(PROFILE, client, tmp_path, "m", None, DOC, bid=True, autopilot=True).system_prompt
+    assert "Autopilot is on" not in opts.system_prompt
     assert {"mcp__kopi__remember", "mcp__kopi__set_bid_stage", "mcp__kopi__get_tender"} <= set(opts.allowed_tools)
     assert "Bid bond S$5k" in opts.system_prompt and str(tmp_path / "inputs" / "spec.pdf") in opts.system_prompt
 
