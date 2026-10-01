@@ -21,6 +21,8 @@ Around it is a workspace:
 
 **Launch film (0:59):** https://kopi.unv.run/demo/kopi-film.mp4
 
+[![The launch film: one product covering every kind of AI tool in the brief](docs/images/film-poster.jpg)](https://kopi.unv.run/demo/kopi-film.mp4)
+
 **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
 
 ![A bid run on autopilot, ready to submit: the submission pack and what only the company can do](docs/images/autopilot.png)
