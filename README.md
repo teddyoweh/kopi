@@ -223,8 +223,8 @@ behind it (D1–D32) are in [planning/02-decisions.md](planning/02-decisions.md)
 ## How AI built this
 
 - **The tools:**
-  - Claude Code (Claude Opus 5.5) running inside **Universe**, my agent workspace, on its
-    Software Factory board;
+  - a swarm of Claude Code agents (Claude Opus 5.5) working in parallel inside **Universe**,
+    my agent workspace, coordinated on its Software Factory board;
   - parallel task agents in git worktrees, and an independent reviewer agent on each of the
     five milestone-1 tasks (it found four real bugs the authors' checks had passed); later
     tasks were proven by their tests, the retrieval eval and live runs on the deployed API;
