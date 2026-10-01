@@ -183,6 +183,14 @@ The author's own check passed every time. The reviewer's rerun from `main` did n
 - **A company name under the icons.** "BrightClean Services Pte. Ltd." ran under the
   sidebar's search and new-chat buttons. The sidebar is wider now and the name truncates.
 
+### Caught by the person, again (Autopilot, KP-43 to KP-45)
+- **The copilot did the work, then handed it back.** A real bid ended with `[placeholder]`s
+  and "Person to make go/no-go call". I wanted it to "just do it all". The agents had built
+  what the brief said, "Kopi prepares, the person decides", too literally. Autopilot makes the
+  call and states its assumptions, and keeps for the person only what legally needs the
+  company. The first live run went from start to *Ready to submit* in 4 min 39 s for US$2.25,
+  with no one touching it.
+
 ### Mistakes in the agents' own reports
 - **"A reviewer on every task" (KP-15).** The README and this journal first said an
   independent reviewer read every task. Reviewers ran only on milestone 1; the claim was

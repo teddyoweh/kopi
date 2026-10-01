@@ -2,10 +2,14 @@
 
 Kopi reads every open opportunity on GeBIZ, Singapore's procurement portal, and tells a
 supplier's bid team what fits, whether they can bid, what licences they need, and what
-similar tenders were actually awarded for. Start a bid and its copilot works the bid for
-you. It qualifies the tender and writes a bid plan with a timeline back from closing. It
-drafts clarification questions, a compliance matrix, a submission checklist and a proposal
-outline, and keeps what it learns in a bid memory that it reads on every later turn.
+similar tenders were actually awarded for. Start a bid and Kopi runs it on **autopilot**:
+- it qualifies the tender and makes the call;
+- it writes the clarification questions and a filled compliance matrix;
+- it writes the proposal in full, a cover letter and a priced recommendation;
+- it reviews its own work and hands over a submission pack.
+
+The only things left for the person are signing, approving the price and submitting with
+CorpPass. Everything Kopi learns goes into a bid memory that it reads on every later turn.
 Around it is a workspace:
 - Home, built around your bids;
 - an Inbox of what needs you;
@@ -17,7 +21,7 @@ Around it is a workspace:
 
 **Demo (3:56):** https://kopi.unv.run/demo/kopi-demo.mp4
 
-![A bid Kopi is working: stage, activity, documents, memory and checklist](docs/images/bid.png)
+![A bid run on autopilot, ready to submit: the submission pack and what only the company can do](docs/images/autopilot.png)
 
 Built in a day for the Pragnition Labs AI-Native Builder assessment, with coding agents
 doing the work and me directing it. How that went, mistakes included, is in
@@ -58,6 +62,7 @@ cd backend && MODAL_PROFILE=<workspace> uv run --extra deploy modal deploy modal
 | **Overview** | All ~730 open GeBIZ opportunities, searchable by meaning. Results are cards: eligibility for your company (blockers named), why it matched, what similar work sold for, closing, method; Start bid in one click; a preview pane and j/k keys. Per tender: an AI brief with a BID / MAYBE / NO BID call | Qwen3 embeddings in NeedleDB, with a light BM25 boost. Card insights load after the hits (25 in about 1–2 s, cached). Claude Opus 5.5 structured output, **every quote checked against the notice by code** |
 | **Permits & licences** | Can we bid? Met / not met / unknown for the closing date, GRA supply head and grade, BCA workhead and grade, and named or implied licences, each with a reason and a source. Plus 324 licences searchable by activity | Deterministic rules over the GRA and BCA tables and the GoBusiness catalogue. Live register lookups by company registration number (UEN) |
 | **Drafting** | A copilot that searches, checks eligibility, reads notices and writes drafts you can download | Claude Agent SDK with Kopi's own MCP tools, in a locked-down Modal Sandbox |
+| **Autopilot** | Start bid and Kopi runs the bid to a submission pack on its own: it qualifies and makes the go / no-go call; writes questions and a filled compliance matrix; writes the proposal in full, a cover letter and a price from the market band; then reviews it all and writes the pack, whose **Only you can do** list holds signing, missing company facts, price approval and the CorpPass submission. No `[placeholder]`s: unknowns are stated assumptions. A no-bid stops with three tenders to bid on instead. Pause, resume, or hand any existing bid to it | The bid playbook's AUTOPILOT section, four steps keyed by the bid's stage, one agent turn each, chained by the bid page until submit, a no-bid, a stall or a pause; it resumes when the bid is reopened |
 | **Bids** (submissions) | Start a bid and Kopi works it, as a chat with an artifacts panel on one page. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. **Each document types itself into the panel as the model writes it.** Upload the tender documents (PDFs preview in place) and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission tasks and deadline in Singapore time | A bid playbook for the same agent, with `remember` and `set_bid_stage` tools. The memory, drafts and uploads live outside the sandbox and are restored into a fresh one, so a bid survives the copilot restarting |
 | **Workspace** | Home: your bids with their stage and next step, a 14-day strip of GeBIZ closings with your deadlines marked, a get-started checklist, then the market. An **Inbox** of what needs you (bid deadlines, the next step Kopi set, bids not started, new tenders matching your company or a view) with a preview pane and j/k/e keys. A sidebar with **your bids** (stage ring, days left) and **saved views** that count what was published since you last looked. **⌘K** searches tenders by meaning, plus bids, licences, pages and actions for the tender you're on. `?` lists every shortcut, and toasts offer Undo | Worked out in the browser from the bids, their session memory and the same searches; no feed and no new service. Only views and read/done state are stored. A view's "match" is a hit within 0.12 of its best, and never below 0.30, which on live data drops the long tail every vector search returns |
 
@@ -89,7 +94,7 @@ GoBusiness licences (324) ──────────────────
 ```
 
 The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
-behind it (D1–D30) are in [planning/02-decisions.md](planning/02-decisions.md).
+behind it (D1–D31) are in [planning/02-decisions.md](planning/02-decisions.md).
 
 ## Numbers
 
@@ -122,6 +127,15 @@ behind it (D1–D30) are in [planning/02-decisions.md](planning/02-decisions.md)
     restored drafts. It caught that the ITT requires the Tenderer itself to hold S6, moved
     the clarification deadline to the ITT's 5 Oct, and rewrote the plan, questions and
     matrix. That turn took 87 s and cost US$0.36.
+- **A whole bid on autopilot, on the published site** (MAS000ETT26000053, real Opus, no
+  human input):
+  - **Steps:** four, in 4 min 39 s. Qualify and the go call took 57 s, questions and the
+    matrix 49 s, the proposal, cover letter and price 78 s, and the review and pack 56 s.
+  - **Cost:** US$2.25 in all, over 41 tool steps.
+  - **Result:** it made the go call with reasons, priced the two items from the market band
+    (A1 S$1,380,000, B1 S$745,200), and ended at *Ready to submit* with a pack whose "Only you
+    can do" list holds the GRA check, the UEN, price approval, signing and the CorpPass
+    submission.
 - **A bid on the published site** (MAS000ETT26000053, real Opus in the Modal sandbox, started
   from kopi.unv.run): the first event came after 16 s and the turn took 240 s, 23 steps and
   US$0.39. It saved 9 facts, wrote all five documents, and moved the bid to *clarify* with
@@ -216,7 +230,7 @@ behind it (D1–D30) are in [planning/02-decisions.md](planning/02-decisions.md)
   - for the workspace pass: a background agent built the ⌘K palette, shortcuts and toasts
     in its own worktree while the main agent built the sidebar, Home and Inbox.
 - **Planning:** [`planning/`](planning/) holds the brief, the discovery research (every
-  source probed with real requests), the decisions D1–D30, the superseded v1 plan, and one
+  source probed with real requests), the decisions D1–D31, the superseded v1 plan, and one
   handoff per task.
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the

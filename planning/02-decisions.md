@@ -334,3 +334,34 @@ which is what makes it feel like one.
 - A view's "match" is a hit within 0.12 of its best, and never below 0.30. On live data
   that turned a view counting 25 "new" matches (mostly manpower tenders) into the 2 that
   fit.
+
+## D31 — Autopilot: Kopi runs the bid to a submission pack (KP-43 to KP-45)
+**Picked:**
+- **Start bid runs on autopilot.** `ChatRequest.autopilot` adds an AUTOPILOT section to the bid
+  playbook. Kopi makes the go / no-go call itself instead of asking, and works in four steps,
+  one turn each, keyed by the bid's stage:
+  1. qualify and decide;
+  2. clarification questions and a filled compliance matrix;
+  3. the proposal in full, the cover letter and a priced recommendation from the market band;
+  4. a review as an evaluator would, a risk register, a dated checklist, and a submission pack.
+- **No `[placeholder]`s.** Unknowns are stated in-line as "Assumed: … (why)". Facts only the
+  company holds go once into the pack's **Only you can do** list: signing, a missing UEN,
+  price approval, and submitting with CorpPass.
+- **A hard no-go stops** with the reason and up to three open tenders to bid on instead.
+- **The bid page drives the steps.** After each turn it reads the bid memory, then sends the
+  next step. It stops at submit, a no-bid, a step that didn't move the stage, a pause, or six
+  turns.
+- Leaving the page is not a pause: the bid picks up where it stopped when it is reopened.
+
+**Rejected:**
+- One long agent turn for the whole bid. The API allows 600 s a request, a full bid takes
+  longer, and one turn can't be paused or resumed.
+- A server-side job runner. It needs a queue and a place to stream progress to, which is the
+  accounts and storage work that is out of scope.
+
+**Why:**
+- Teddy, 1 Oct: "it needs to have the autopilot stuff that just does it all". The step-by-step
+  bid still ended every turn handing decisions and placeholders back to the person.
+- Four bounded steps keep each turn inside the API's limit and make progress visible.
+- The stage in the bid memory is the step counter, so a resumed bid never repeats finished
+  work.
