@@ -5,14 +5,13 @@ import Link from "next/link";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 import { ArtifactPanel, draftKind, rank, sameTab, type ShelfRow, type Tab } from "@/components/bid/artifact-panel";
-import { AutopilotBar, isNoBid } from "@/components/bid/autopilot-bar";
-import { StageLine } from "@/components/bid/stage-stepper";
-import { Countdown, useNow } from "@/components/bid/time";
+import { AutopilotControl, isNoBid } from "@/components/bid/autopilot-bar";
+import { STAGES, stageLabel } from "@/components/bid/stage-stepper";
+import { useNow } from "@/components/bid/time";
 import { Composer } from "@/components/copilot/copilot-view";
 import { AssistantTurn, UserMessage } from "@/components/copilot/turn";
 import { useApi, useKopi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
-import { AgencyDisc } from "@/components/search/result-card";
 import { EmptyState, ErrorState } from "@/components/states";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +25,7 @@ import { recordDraft, rememberTitle } from "@/lib/submissions";
 import { displayTitle } from "@/lib/title-case";
 import { useAsync } from "@/lib/use-async";
 import { useUrlParams } from "@/lib/use-url-query";
+import { dateTime, timeLeft } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /** The request that starts a bid. The bid playbook on the server (and the mock's script) take it from there. */
@@ -69,25 +69,44 @@ function draftOf(event: ChatEvent): string | null {
   return /\/drafts\/[^/]+\.md$/.test(path) ? path.split("/").pop()! : null;
 }
 
-function ChatHeader({ notice, now, memory, working }: { notice: Notice | null; now: number; memory: BidMemory | null; working: boolean }) {
+/**
+ * The bid in two lines: its title with the autopilot beside it, then who, how long is left and
+ * the stage. The next step is the stage's tooltip; the documents and memory hold the rest.
+ */
+function ChatHeader({ notice, now, memory, control }: { notice: Notice | null; now: number; memory: BidMemory | null; control: React.ReactNode }) {
   if (!notice) {
     return (
-      <div className="flex flex-col gap-2.5" aria-busy="true" aria-label="Loading">
-        <Skeleton className="h-3.5 w-40 rounded-full" />
+      <div className="flex flex-col gap-2" aria-busy="true" aria-label="Loading">
         <Skeleton className="h-5 w-full rounded-full" />
         <Skeleton className="h-3.5 w-56 rounded-full" />
       </div>
     );
   }
+  const left = timeLeft(notice.closing, now);
+  const urgent = !left.closed && left.hours < 48;
+  const current = STAGES.findIndex((s) => s.id === memory?.stage);
   return (
-    <header className="flex flex-col gap-2.5">
-      <div className="flex items-center gap-2">
-        <AgencyDisc agency={notice.agency} />
-        <p className="min-w-0 flex-1 truncate text-[12.5px] text-muted-foreground">{notice.agency}</p>
-        <Countdown closing={notice.closing} now={now} />
+    <header className="flex flex-col gap-1.5">
+      <div className="flex items-start gap-3">
+        <h1 className="line-clamp-2 min-w-0 flex-1 text-[15.5px] leading-snug font-medium tracking-[-0.015em] text-pretty">{displayTitle(notice.title)}</h1>
+        {control}
       </div>
-      <h1 className="line-clamp-2 text-[16px] leading-snug font-medium tracking-[-0.015em] text-pretty">{displayTitle(notice.title)}</h1>
-      <StageLine memory={memory} working={working} />
+      <p className="flex min-w-0 items-center gap-1.5 text-[12.5px] text-muted-foreground">
+        <span className="truncate">{notice.agency}</span>
+        <span aria-hidden>·</span>
+        <span className={cn("shrink-0 tabular-nums", urgent && "text-unmet")} title={`Closes ${dateTime(notice.closing)}`}>
+          {left.closed ? "Closed" : `${left.lead} left`}
+        </span>
+        <span aria-hidden>·</span>
+        <span className="flex shrink-0 items-center gap-1.5" title={memory?.next_step ? `Next: ${memory.next_step}` : undefined}>
+          <span className="flex gap-0.5" aria-hidden>
+            {STAGES.map((stage, i) => (
+              <span key={stage.id} className={cn("h-1 w-2.5 rounded-full", current >= i ? "bg-kopi" : "bg-foreground/12")} />
+            ))}
+          </span>
+          {current >= 0 ? stageLabel(memory?.stage) : "Not started"}
+        </span>
+      </p>
     </header>
   );
 }
@@ -101,9 +120,7 @@ function NotStarted({ onStart, onStep, disabled }: { onStart: () => void; onStep
       <div className="flex flex-col gap-1">
         <p className="text-[15px] font-medium tracking-[-0.01em]">Kopi hasn&apos;t started on this bid</p>
         <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-          On autopilot Kopi does the whole bid: it qualifies the tender and makes the call, writes the clarification questions and the
-          compliance matrix, the proposal, the cover letter and a price, then reviews it all and hands you a submission pack. Each
-          document opens beside the chat as it is written.
+          On autopilot Kopi does the whole bid and hands you a submission pack. You sign and submit.
         </p>
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -118,14 +135,14 @@ function NotStarted({ onStart, onStep, disabled }: { onStart: () => void; onStep
   );
 }
 
-function AutopilotLine({ first, at }: { first: boolean; at: string }) {
+function AutopilotLine({ at }: { at: string }) {
   const when = new Date(Number.parseInt(at, 36)).toLocaleString("en-SG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
   return (
     <p className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
       <span className="grid size-5 place-items-center rounded-full bg-kopi-soft" aria-hidden>
         <Sparkles className="size-3 text-kopi" />
       </span>
-      {first ? `You put the bid on autopilot, ${when}. Kopi runs it to a submission pack.` : `Autopilot took the next step, ${when}.`}
+      You put the bid on autopilot, {when}. Kopi runs it to a submission pack.
     </p>
   );
 }
@@ -485,23 +502,24 @@ function Workspace({ doc }: { doc: string }) {
               view === "chat" ? "flex" : "hidden",
             )}
           >
-            <div className="shrink-0 border-b border-border/70 px-5 py-4">
-              <ChatHeader notice={notice} now={now} memory={bidMemory} working={busy} />
-              <div className="mt-3 empty:hidden">
-                <AutopilotBar
-                  state={bid?.autopilot}
-                  stage={busy ? workingStage : (bidMemory?.stage ?? null)}
-                  next={bidMemory?.next_step}
-                  busy={busy}
-                  started={!!session}
-                  hasPack={drafts.some((d) => d.name === pack)}
-                  onRun={runAutopilot}
-                  onPause={() => setAutopilot(doc, "paused")}
-                  onResume={runAutopilot}
-                  onOpenPack={() => openFile(pack)}
-                  onDownloadAll={() => void downloadAll()}
-                />
-              </div>
+            <div className="shrink-0 border-b border-border/70 px-5 py-3.5">
+              <ChatHeader
+                notice={notice}
+                now={now}
+                memory={bidMemory}
+                control={
+                  <AutopilotControl
+                    state={bid?.autopilot}
+                    stage={busy ? workingStage : (bidMemory?.stage ?? null)}
+                    next={bidMemory?.next_step}
+                    busy={busy}
+                    started={!!session}
+                    onRun={runAutopilot}
+                    onPause={() => setAutopilot(doc, "paused")}
+                    onOpenPack={() => openFile(pack)}
+                  />
+                }
+              />
             </div>
             <div ref={messages} className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
               {state.turns.length === 0 && !session ? (
@@ -511,12 +529,15 @@ function Workspace({ doc }: { doc: string }) {
                   <div key={turn.id} className="flex flex-col gap-4">
                     {isKickoff(turn.ask, doc) ? (
                       <KickoffLine at={turn.id.split("-")[0]!} />
+                    ) : turn.ask === AUTOPILOT_NEXT ? (
+                      <hr className="border-border/70" aria-label="Autopilot took the next step" />
                     ) : isAutopilotAsk(turn.ask, doc) ? (
-                      <AutopilotLine first={turn.ask === autopilotStart(doc)} at={turn.id.split("-")[0]!} />
+                      <AutopilotLine at={turn.id.split("-")[0]!} />
                     ) : (
                       <UserMessage text={turn.ask} />
                     )}
                     <AssistantTurn
+                      docName={(file) => draftKind(file, doc)}
                       turn={turn}
                       sessionId={session}
                       titles={titles}
@@ -569,6 +590,7 @@ function Workspace({ doc }: { doc: string }) {
                 if (!api || !session) return;
                 setMemory({ session, value: await api.forget(session, id) });
               }}
+              onDownloadAll={drafts.length > 1 ? () => void downloadAll() : undefined}
               onUpload={async (file) => {
                 if (!api || !session) return;
                 await api.upload(session, file);

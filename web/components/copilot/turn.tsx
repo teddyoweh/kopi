@@ -353,19 +353,94 @@ export function UserMessage({ text }: { text: string }) {
   );
 }
 
+/**
+ * A bid turn, kept quiet: one line for the work (open it to see every step), the answer, and
+ * the documents it wrote as chips that open them. The documents themselves are in the panel.
+ */
+function CompactTurn({ turn, onOpenFile, docName, actions }: { turn: Turn; onOpenFile: (name: string) => void; docName: (file: string) => string; actions: ProblemActions }) {
+  const [open, setOpen] = useState(false);
+  const steps = turn.blocks.flatMap((b) => (b.kind === "step" ? [b.step] : []));
+  const texts = turn.blocks.flatMap((b) => (b.kind === "text" ? [b.text] : []));
+  const files = [...new Set(turn.blocks.flatMap((b) => (b.kind === "file" ? [b.name] : [])))];
+  const streaming = turn.status === "streaming";
+  const running = steps.findLast((s) => s.summary === undefined);
+  const failed = steps.filter((s) => s.failed).length;
+  const label = streaming
+    ? running
+      ? describeStep(running.tool, running.input, true)
+      : steps.length
+        ? "Thinking"
+        : "Kopi is starting"
+    : `Worked through ${steps.length} ${steps.length === 1 ? "step" : "steps"}`;
+  return (
+    <div className="flex flex-col gap-3">
+      {(streaming || steps.length > 0) && (
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            disabled={!steps.length}
+            aria-expanded={open}
+            className="group flex w-fit max-w-full items-center gap-1.5 text-[13px] text-muted-foreground transition-colors enabled:hover:text-foreground"
+          >
+            {streaming ? <Loader2 className="size-3.5 shrink-0 animate-spin text-kopi" aria-hidden /> : <ListChecks className="size-3.5 shrink-0" aria-hidden />}
+            <span className="truncate">{label}</span>
+            {streaming && steps.length > 0 && <span className="shrink-0 tabular-nums">· {steps.length}</span>}
+            {!streaming && turn.cost !== undefined && <span className="shrink-0 tabular-nums">· {usd(turn.cost)}</span>}
+            {failed > 0 && <span className="shrink-0 text-unmet">· {failed} failed</span>}
+            {steps.length > 0 && <ChevronRight className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-90")} aria-hidden />}
+          </button>
+          {open && (
+            <ul className="flex flex-col divide-y divide-border/70 overflow-hidden rounded-xl border bg-card" aria-label="What Kopi did">
+              {steps.map((step) => (
+                <StepRow key={step.id} step={step} />
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+      {texts.map((text, i) => (
+        <Markdown key={i} text={text} className="text-[15px] leading-[1.6]" />
+      ))}
+      {files.length > 0 && (
+        <div className="flex flex-wrap gap-1.5" aria-label="Documents written">
+          {files.map((name) => (
+            <button
+              key={name}
+              type="button"
+              onClick={() => onOpenFile(name)}
+              title={name}
+              className="inline-flex h-7 items-center gap-1.5 rounded-full bg-muted/70 px-3 text-[12.5px] font-book transition-colors hover:bg-muted"
+            >
+              {streaming ? <Loader2 className="size-3 animate-spin text-kopi" aria-hidden /> : <FileText className="size-3.5 text-kopi" aria-hidden />}
+              {docName(name)}
+            </button>
+          ))}
+        </div>
+      )}
+      {turn.problem && <ProblemCard problem={turn.problem} actions={actions} />}
+      {turn.status === "stopped" && <p className="text-xs text-muted-foreground">Stopped. Anything Kopi wrote before that is in the panel.</p>}
+    </div>
+  );
+}
+
 export function AssistantTurn({
   turn,
   sessionId,
   titles,
   onOpenFile,
   actions,
+  docName,
 }: {
   turn: Turn;
   sessionId: string | null;
   titles: Map<string, string>;
   onOpenFile: (name: string) => void;
   actions: ProblemActions;
+  /** Set on the bid page: the turn renders compact, naming each document it wrote. */
+  docName?: (file: string) => string;
 }) {
+  if (docName) return <CompactTurn turn={turn} onOpenFile={onOpenFile} docName={docName} actions={actions} />;
   const groups = grouped(turn.blocks);
   const streaming = turn.status === "streaming";
   const last = turn.blocks[turn.blocks.length - 1];

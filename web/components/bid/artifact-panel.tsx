@@ -1,6 +1,6 @@
 "use client";
 
-import { Brain, Check, Copy, Download, FileText, ListChecks, Loader2, Paperclip, Upload } from "lucide-react";
+import { Brain, Check, ChevronDown, Copy, Download, FileDown, FileText, ListChecks, Loader2, Paperclip, Upload } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { ChecklistPane, useChecklist } from "@/components/bid/checklist-pane";
@@ -9,6 +9,15 @@ import { downloadDraft } from "@/components/draft-preview";
 import { useApi } from "@/components/kopi-provider";
 import { Markdown } from "@/components/markdown";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
 import { UPLOAD_LIMIT, UPLOAD_TYPES, type BidMemory } from "@/lib/api";
@@ -29,23 +38,6 @@ export function draftKind(file: string, doc: string): string {
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : file;
 }
 
-/** What a tab calls each document the playbook writes; the full name is in its tooltip. */
-const SHORT: Record<string, string> = {
-  "bid plan": "Plan",
-  "clarification questions": "Questions",
-  "compliance matrix": "Matrix",
-  checklist: "Checklist",
-  "proposal outline": "Outline",
-  proposal: "Proposal",
-  "submission pack": "Pack",
-  "cover letter": "Cover letter",
-  "pricing notes": "Pricing",
-  "risk register": "Risks",
-};
-const tabName = (file: string, doc: string) => {
-  const kind = draftKind(file, doc);
-  return SHORT[kind.toLowerCase()] ?? kind;
-};
 
 /** The order a bid team reads its documents in; anything else follows. */
 const ORDER = ["submission pack", "bid plan", "clarification questions", "compliance matrix", "proposal", "cover letter", "pricing notes", "checklist", "risk register", "proposal outline"];
@@ -60,6 +52,67 @@ function refusal(file: File): string | null {
   if (file.size > UPLOAD_LIMIT) return `${file.name} is over 8 MB.`;
   if (!file.size) return `${file.name} is empty.`;
   return null;
+}
+
+/** Every document on one switch: what Kopi wrote, in reading order, then the files the person added. */
+function DocPicker({
+  doc,
+  drafts,
+  uploads,
+  active,
+  writing,
+  onSelect,
+}: {
+  doc: string;
+  drafts: ShelfRow[];
+  uploads: ShelfRow[];
+  active: Tab | null;
+  writing: Set<string>;
+  onSelect: (tab: Tab) => void;
+}) {
+  const open = active?.kind === "doc" || active?.kind === "upload" ? active : null;
+  const label = open ? (open.kind === "doc" ? draftKind(open.name, doc) : open.name) : "Documents";
+  const item = (row: ShelfRow, kind: "doc" | "upload") => {
+    const busy = kind === "doc" && writing.has(row.name);
+    const Icon = kind === "upload" ? Paperclip : FileText;
+    return (
+      <DropdownMenuItem key={row.name} onClick={() => onSelect({ kind, name: row.name })} className="gap-2.5 py-1.5" title={row.name}>
+        {busy ? <Loader2 className="animate-spin text-kopi" aria-hidden /> : <Icon className={kind === "doc" ? "text-kopi" : undefined} aria-hidden />}
+        <span className="min-w-0 flex-1 truncate">{kind === "doc" ? draftKind(row.name, doc) : row.name}</span>
+        {sameTab(active, { kind, name: row.name }) && <Check className="text-kopi" aria-label="Open" />}
+      </DropdownMenuItem>
+    );
+  };
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          "flex h-8 min-w-24 items-center gap-1.5 rounded-full px-3 text-[13px] transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/40",
+          open ? "bg-muted font-medium text-foreground" : "font-book text-muted-foreground",
+        )}
+      >
+        {open && writing.has(open.name) ? <Loader2 className="size-3.5 shrink-0 animate-spin text-kopi" aria-hidden /> : <FileText className="size-3.5 shrink-0 text-kopi" aria-hidden />}
+        <span className="truncate">{label}</span>
+        <span className="shrink-0 font-normal text-muted-foreground tabular-nums">{drafts.length + uploads.length}</span>
+        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-72 p-1">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Kopi wrote</DropdownMenuLabel>
+          {drafts.map((row) => item(row, "doc"))}
+        </DropdownMenuGroup>
+        {uploads.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Your files</DropdownMenuLabel>
+              {uploads.map((row) => item(row, "upload"))}
+            </DropdownMenuGroup>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
 
 function TabButton({
@@ -187,8 +240,8 @@ function EmptyPanel({ started }: { started: boolean }) {
       </span>
       <p className="text-[15px] font-medium tracking-[-0.01em]">{started ? "Kopi is getting to the documents" : "The bid's documents open here"}</p>
       <p className="text-[13px] leading-relaxed text-muted-foreground">
-        As Kopi works the bid it writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. Each one
-        opens here as it is written. Add the tender documents from GeBIZ and Kopi reads them too.
+        Kopi writes the plan, the questions, the compliance matrix, the proposal, the price and the submission pack. Add the tender
+        documents from GeBIZ and it reads them too.
       </p>
     </div>
   );
@@ -214,7 +267,9 @@ export function ArtifactPanel({
   now,
   started,
   reveal,
+  onDownloadAll,
 }: {
+  onDownloadAll?: () => void;
   doc: string;
   sessionId: string | null;
   rows: ShelfRow[];
@@ -285,36 +340,25 @@ export function ArtifactPanel({
   return (
     <section aria-label="Documents" className="flex h-full min-h-0 flex-col bg-card">
       <div className="flex shrink-0 items-center gap-2 border-b border-border/70 px-3 py-2">
-        <div role="tablist" aria-label="Bid documents" className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto [scrollbar-width:none]">
-          {drafts.map((row) => (
-            <TabButton
-              key={row.name}
-              active={sameTab(active, { kind: "doc", name: row.name })}
-              onClick={() => onSelect({ kind: "doc", name: row.name })}
-              busy={writing.has(row.name)}
-              reveal={reveal}
-              title={`${draftKind(row.name, doc)} · ${row.name}`}
-            >
-              {tabName(row.name, doc)}
+        <div className="flex min-w-0 flex-1 items-center gap-0.5">
+          {(drafts.length > 0 || uploads.length > 0) && (
+            <DocPicker doc={doc} drafts={drafts} uploads={uploads} active={active} writing={writing} onSelect={onSelect} />
+          )}
+          <div role="tablist" aria-label="Bid" className="flex items-center gap-0.5">
+            <TabButton active={active?.kind === "memory"} onClick={() => onSelect({ kind: "memory" })} icon={Brain} reveal={reveal}>
+              <span className="sr-only sm:not-sr-only">Memory</span>
+              {memory?.notes.length ? <span className="tabular-nums sm:ml-0.5">{memory.notes.length}</span> : null}
             </TabButton>
-          ))}
-          {uploads.map((row) => (
-            <TabButton key={row.name} active={sameTab(active, { kind: "upload", name: row.name })} onClick={() => onSelect({ kind: "upload", name: row.name })} icon={Paperclip} title={row.name}>
-              {row.name}
+            <TabButton active={active?.kind === "checklist"} onClick={() => onSelect({ kind: "checklist" })} icon={ListChecks} reveal={reveal}>
+              <span className="sr-only sm:not-sr-only">Tasks</span>
+              {checklist.items.length ? <span className="tabular-nums sm:ml-0.5">{`${checklist.done}/${checklist.items.length}`}</span> : null}
             </TabButton>
-          ))}
-          {(drafts.length > 0 || uploads.length > 0) && <span className="mx-1.5 h-4 w-px shrink-0 bg-border" aria-hidden />}
-          <TabButton active={active?.kind === "memory"} onClick={() => onSelect({ kind: "memory" })} icon={Brain}>
-            Memory{memory?.notes.length ? ` ${memory.notes.length}` : ""}
-          </TabButton>
-          <TabButton active={active?.kind === "checklist"} onClick={() => onSelect({ kind: "checklist" })} icon={ListChecks}>
-            Tasks{checklist.items.length ? ` ${checklist.done}/${checklist.items.length}` : ""}
-          </TabButton>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           {current && sessionId && !writing.has(current) && (
             <>
-              <Button variant="ghost" size="icon-sm" onClick={() => void copy()} aria-label="Copy the document" title="Copy">
+              <Button variant="ghost" size="icon-sm" onClick={() => void copy()} aria-label="Copy the document" title="Copy" className="hidden sm:inline-flex">
                 {copied ? <Check /> : <Copy />}
               </Button>
               <Button variant="ghost" size="icon-sm" onClick={() => api && void downloadDraft(api, sessionId, current, text)} aria-label="Download the document" title="Download .md">
@@ -322,16 +366,21 @@ export function ArtifactPanel({
               </Button>
             </>
           )}
+          {onDownloadAll && (
+            <Button variant="ghost" size="icon-sm" onClick={onDownloadAll} aria-label="Download every document as one file" title="Download all, as one file">
+              <FileDown />
+            </Button>
+          )}
           <input ref={input} type="file" accept={UPLOAD_TYPES.join(",")} multiple className="sr-only" onChange={(e) => void add(e.target.files)} tabIndex={-1} aria-hidden />
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            size="icon-sm"
             onClick={() => input.current?.click()}
             disabled={!sessionId || uploading !== null}
-            title={sessionId ? "PDF, Markdown, text or CSV, up to 8 MB each" : "Start the bid first"}
+            aria-label="Add tender documents"
+            title={sessionId ? "Add tender documents: PDF, Markdown, text or CSV, up to 8 MB each" : "Start the bid first"}
           >
             {uploading ? <Loader2 className="animate-spin" /> : <Upload />}
-            <span className="hidden 2xl:inline">{uploading ? "Adding…" : "Add tender documents"}</span>
           </Button>
         </div>
       </div>
