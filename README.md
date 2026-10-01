@@ -42,7 +42,7 @@ NEXT_PUBLIC_KOPI_API=http://127.0.0.1:8000 npm run dev   # (in web/) the UI agai
 ```
 
 **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): the backend suite, then web lint and build. Run
-step for step on a fresh clone of this repo at `e1912f6` (30 Sep 2026): 345 passed, lint
+step for step on a fresh clone of this repo at `6a12616` (1 Oct 2026): 345 passed, lint
 clean, build clean.
 
 **Live stack.** Modal, NeedleDB, GeBIZ, Claude. See [docs/architecture.md](docs/architecture.md) and `backend/modal_app.py`.
