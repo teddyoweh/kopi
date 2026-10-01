@@ -27,7 +27,7 @@ Around it is a workspace:
 
 ![A bid run on autopilot, ready to submit: the submission pack and what only the company can do](docs/images/autopilot.png)
 
-Built over three days (29 Sep to 1 Oct 2026) for the Pragnition Labs AI-Native Builder assessment, with coding agents
+Built in two days for the Pragnition Labs AI-Native Builder assessment, with coding agents
 doing the work and me directing it. How that went, mistakes included, is in
 [`planning/`](planning/) and [`logs/`](logs/).
 

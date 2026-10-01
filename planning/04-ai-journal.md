@@ -1,6 +1,6 @@
 # 04 — Where the AI helped, where it failed, and how it was caught
 
-Kopi was built in one day, 29 Sep 2026, by coding agents working inside Universe, my
+Kopi was built in two days, starting 29 Sep 2026, by coding agents working inside Universe, my
 agent workspace, on its Software Factory board (`artifacts/builds/kopi.json` in the
 session). I set the goal and the stack, approved the plan, made the calls that needed a
 person (the Modal workspace, the Claude credential), and read the results. The agents
