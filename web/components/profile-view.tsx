@@ -1,10 +1,11 @@
 "use client";
 
-import { Check, ChevronDown, Plus, RotateCcw, X } from "lucide-react";
+import { Check, ChevronDown, Plus, RotateCcw, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 
 import { useKopi } from "@/components/kopi-provider";
 import { PageHeader } from "@/components/page-header";
+import { ResearchCard, sourceLabel } from "@/components/profile/research-card";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import type { Profile } from "@/lib/api";
+import type { Profile, ProfileDraft } from "@/lib/api";
 import { SEEDED_PROFILES } from "@/lib/profiles";
 import { cn } from "@/lib/utils";
 
@@ -79,16 +80,26 @@ function Segmented<T extends string | null>({
   );
 }
 
-function Field({ label, hint, htmlFor, children }: { label: string; hint?: React.ReactNode; htmlFor?: string; children: React.ReactNode }) {
+function Field({ label, hint, htmlFor, filled, children }: { label: string; hint?: React.ReactNode; htmlFor?: string; filled?: string | null; children: React.ReactNode }) {
+  const name = htmlFor ? (
+    <label htmlFor={htmlFor} className="text-[13px] font-book">
+      {label}
+    </label>
+  ) : (
+    <p className="text-[13px] font-book">{label}</p>
+  );
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5">
-        {htmlFor ? (
-          <label htmlFor={htmlFor} className="text-[13px] font-book">
-            {label}
-          </label>
+        {filled ? (
+          <div className="flex items-center gap-2">
+            {name}
+            <span className="inline-flex h-5 items-center gap-1 rounded-full bg-kopi-soft px-2 text-[11.5px] font-book text-kopi">
+              <Sparkles className="size-3" aria-hidden /> {filled}
+            </span>
+          </div>
         ) : (
-          <p className="text-[13px] font-book">{label}</p>
+          name
         )}
         {hint && <p className="text-[13px] leading-relaxed text-muted-foreground">{hint}</p>}
       </div>
@@ -271,6 +282,9 @@ function ProfileForm({
   const [lists, setLists] = useState<Lists>(() => listsOf(saved));
   const [justSaved, setJustSaved] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  /** Kopi's last research: the fields it changed are tagged with where it found them, until the person saves. */
+  const [found, setFound] = useState<ProfileDraft | null>(null);
+  const filled = (field: string) => (found?.filled.includes(field) ? sourceLabel(found, field) : null);
 
   const listed = (kind: keyof Modes, clean: unknown[]) => (modes[kind] === "unknown" ? null : modes[kind] === "none" ? [] : clean);
   const built: Profile = {
@@ -317,6 +331,17 @@ function ProfileForm({
     if (!valid) return;
     onSave(built);
     setJustSaved(true);
+    setFound(null);
+  }
+
+  /** Kopi's reading of the website, registers and GeBIZ, laid over the form for the person to review. */
+  function apply(research: ProfileDraft) {
+    const next = { ...research.profile, id: draft.id };
+    setDraft(next);
+    setModes(modesOf(next));
+    setLists(listsOf(next));
+    setFound(research);
+    setJustSaved(false);
   }
 
   const band = draft.value_band_sgd ?? {};
@@ -350,14 +375,19 @@ function ProfileForm({
       }}
       className="flex flex-col gap-4"
     >
+      <Section title="Website" description="Kopi fills the profile from it: the site, the registers its UEN opens, and the GeBIZ contracts you have won.">
+        <ResearchCard website={draft.website ?? ""} onWebsite={(v) => setField("website", v || null)} profile={built} onDraft={apply} />
+      </Section>
+
       <Section title="Company" description="Who is bidding. Kopi reads every tender against this.">
-        <Field label="Name" htmlFor="name">
+        <Field label="Name" htmlFor="name" filled={filled("name")}>
           <Input id="name" value={draft.name} onChange={(e) => setField("name", e.target.value)} aria-invalid={Boolean(problems.name)} />
           {problems.name && <p className="text-[13px] text-unmet">{problems.name}</p>}
         </Field>
         <Field
           label="UEN"
           htmlFor="uen"
+          filled={filled("uen")}
           hint="Optional. With a UEN, the live service checks GRA, BCA, bizSAFE and ACRA's public registers itself."
         >
           <Input
@@ -368,7 +398,7 @@ function ProfileForm({
             className="max-w-xs tabular-nums"
           />
         </Field>
-        <Field label="What the company does" htmlFor="summary" hint="Two or three sentences. Search and fit start from this.">
+        <Field label="What the company does" htmlFor="summary" hint="Two or three sentences. Search and fit start from this." filled={filled("summary")}>
           <textarea
             id="summary"
             value={draft.summary}
@@ -382,7 +412,7 @@ function ProfileForm({
       </Section>
 
       <Section title="Work" description="What you can deliver, and what you have delivered.">
-        <Field label="Capabilities" hint="One per line, in your own words.">
+        <Field label="Capabilities" hint="One per line, in your own words." filled={filled("capabilities")}>
           <TextList
             values={draft.capabilities ?? []}
             onChange={(v) => setField("capabilities", v)}
@@ -391,7 +421,7 @@ function ProfileForm({
             noun="Capability"
           />
         </Field>
-        <Field label="Past work">
+        <Field label="Past work" filled={filled("past_work")}>
           <TextList
             values={draft.past_work ?? []}
             onChange={(v) => setField("past_work", v)}
@@ -400,7 +430,7 @@ function ProfileForm({
             noun="Past work"
           />
         </Field>
-        <Field label="Contract values you bid for" hint="Optional. Kopi uses it to judge fit, not to hide tenders.">
+        <Field label="Contract values you bid for" hint="Optional. Kopi uses it to judge fit, not to hide tenders." filled={filled("value_band_sgd")}>
           <div className="grid max-w-sm grid-cols-2 gap-3">
             {bandInput("min_sgd", "From")}
             {bandInput("max_sgd", "Up to")}
@@ -409,12 +439,12 @@ function ProfileForm({
       </Section>
 
       <Section title="Registrations" description="GeBIZ tenders name GRA supply heads and BCA workheads, each at a grade.">
-        <Field label="GRA supply heads" hint="Government Registration of suppliers, e.g. EPU/SER/46 at S4.">
+        <Field label="GRA supply heads" hint="Government Registration of suppliers, e.g. EPU/SER/46 at S4." filled={filled("gra_registrations")}>
           <Known label="GRA supply heads" thing="a GRA registration" mode={modes.gra} onMode={(m) => setMode("gra", m)} invalid={problems.gra}>
             <RegistrationList rows={lists.gra} onChange={(v) => setList("gra", v)} codePlaceholder="EPU/SER/46" gradePlaceholder="S4" noun="supply head" />
           </Known>
         </Field>
-        <Field label="BCA workheads" hint="Building and Construction Authority, e.g. CW01 at B2.">
+        <Field label="BCA workheads" hint="Building and Construction Authority, e.g. CW01 at B2." filled={filled("bca_registrations")}>
           <Known label="BCA workheads" thing="a BCA registration" mode={modes.bca} onMode={(m) => setMode("bca", m)} invalid={problems.bca}>
             <RegistrationList rows={lists.bca} onChange={(v) => setList("bca", v)} codePlaceholder="CW01" gradePlaceholder="B2" noun="workhead" />
           </Known>
@@ -422,7 +452,7 @@ function ProfileForm({
       </Section>
 
       <Section title="Licences and safety" description="Licences a tender may require, and your bizSAFE level.">
-        <Field label="Licences held" hint="As the issuing agency names them, e.g. Cleaning Business Licence.">
+        <Field label="Licences held" hint="As the issuing agency names them, e.g. Cleaning Business Licence." filled={filled("licences_held")}>
           <Known label="Licences held" thing="a licence" mode={modes.licences} onMode={(m) => setMode("licences", m)} invalid={problems.licences}>
             <TextList
               values={lists.licences}
@@ -435,6 +465,7 @@ function ProfileForm({
         </Field>
         <Field
           label="bizSAFE level"
+          filled={filled("bizsafe_level")}
           hint={
             bizsafeValue(draft.bizsafe_level)
               ? "Kopi compares this with the level a tender asks for."

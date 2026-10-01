@@ -858,6 +858,46 @@
     }
    }
   },
+  "/profile/research": {
+   "post": {
+    "summary": "Research Profile",
+    "description": "Fill a profile from the company's website, its registers and its GeBIZ wins, step by step.",
+    "operationId": "research_profile_profile_research_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ResearchRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "ResearchEvent per SSE message",
+      "content": {
+       "text/event-stream": {},
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResearchEvent"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/sessions/{session_id}/files": {
    "get": {
     "summary": "Session Files",
@@ -2236,6 +2276,17 @@
       ],
       "title": "Uen"
      },
+     "website": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Website"
+     },
      "summary": {
       "type": "string",
       "title": "Summary"
@@ -2323,6 +2374,93 @@
     "title": "Profile",
     "description": "The company Kopi works for. `None` means \"we do not know\", never \"no\"."
    },
+   "ProfileDraft": {
+    "properties": {
+     "profile": {
+      "$ref": "#/components/schemas/Profile"
+     },
+     "filled": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Filled"
+     },
+     "sources": {
+      "items": {
+       "$ref": "#/components/schemas/ProfileSource"
+      },
+      "type": "array",
+      "title": "Sources"
+     },
+     "pages": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Pages"
+     },
+     "awards": {
+      "type": "integer",
+      "title": "Awards"
+     }
+    },
+    "type": "object",
+    "required": [
+     "profile",
+     "filled",
+     "sources",
+     "pages",
+     "awards"
+    ],
+    "title": "ProfileDraft"
+   },
+   "ProfileSource": {
+    "properties": {
+     "field": {
+      "type": "string",
+      "title": "Field"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "website",
+       "register",
+       "gebiz"
+      ],
+      "title": "Kind"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Url"
+     },
+     "verified": {
+      "type": "boolean",
+      "title": "Verified",
+      "description": "For a quote: found word for word on a page Kopi read itself",
+      "default": true
+     }
+    },
+    "type": "object",
+    "required": [
+     "field",
+     "kind",
+     "text"
+    ],
+    "title": "ProfileSource",
+    "description": "Where a filled field came from: a quote found on the website, a register's answer, or GeBIZ awards."
+   },
    "Reason": {
     "properties": {
      "point": {
@@ -2408,6 +2546,78 @@
     ],
     "title": "Registration",
     "description": "A registration the company holds: a GRA supply head or a BCA workhead, with grade."
+   },
+   "ResearchEvent": {
+    "properties": {
+     "type": {
+      "type": "string",
+      "enum": [
+       "step",
+       "done",
+       "error"
+      ],
+      "title": "Type"
+     },
+     "text": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Text"
+     },
+     "draft": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ProfileDraft"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "type"
+    ],
+    "title": "ResearchEvent",
+    "description": "One step of the research as it happens, then `done` with the draft, or `error`."
+   },
+   "ResearchRequest": {
+    "properties": {
+     "website": {
+      "type": "string",
+      "maxLength": 300,
+      "minLength": 3,
+      "title": "Website"
+     },
+     "uen": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 12
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Uen"
+     },
+     "profile": {
+      "$ref": "#/components/schemas/Profile"
+     }
+    },
+    "type": "object",
+    "required": [
+     "website",
+     "profile"
+    ],
+    "title": "ResearchRequest",
+    "description": "Fill `profile` from the company's website, the registers its UEN opens, and its GeBIZ awards."
    },
    "SearchHit": {
     "properties": {

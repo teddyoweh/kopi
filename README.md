@@ -63,6 +63,7 @@ cd backend && MODAL_PROFILE=<workspace> uv run --extra deploy modal deploy modal
 | **Permits & licences** | Can we bid? Met / not met / unknown for the closing date, GRA supply head and grade, BCA workhead and grade, and named or implied licences, each with a reason and a source. Plus 324 licences searchable by activity | Deterministic rules over the GRA and BCA tables and the GoBusiness catalogue. Live register lookups by company registration number (UEN) |
 | **Drafting** | A copilot that searches, checks eligibility, reads notices and writes drafts you can download | Claude Agent SDK with Kopi's own MCP tools, in a locked-down Modal Sandbox |
 | **Autopilot** | Start bid and Kopi runs the bid to a submission pack on its own: it qualifies and makes the go / no-go call; writes questions and a filled compliance matrix; writes the proposal in full, a cover letter and a price from the market band; then reviews it all and writes the pack, whose **Only you can do** list holds signing, missing company facts, price approval and the CorpPass submission. No `[placeholder]`s: unknowns are stated assumptions. A no-bid stops with three tenders to bid on instead. Pause, resume, or hand any existing bid to it | The bid playbook's AUTOPILOT section, four steps keyed by the bid's stage, one agent turn each, chained by the bid page until submit, a no-bid, a stall or a pause; it resumes when the bid is reopened |
+| **Company profile** | Type the website and press **Fill with Kopi**. It reads the site, researches the company on the web, checks ACRA, GRA, BCA and bizSAFE by UEN, and adds the GeBIZ contracts the company has won. Each filled field says where it came from; nothing saves until you do. NCS (a site that refuses readers) filled in 51 s: UEN, 12 GRA heads, 198 GeBIZ contracts | Kopi's own reader, then a Claude agent with only WebSearch and WebFetch. Code checks it: quotes against the pages Kopi read, the UEN against ACRA, registrations from the registers, past work from data.gov.sg (D32) |
 | **Bids** (submissions) | Start a bid and Kopi works it, as a chat with an artifacts panel on one page. It reads the notice, the rules and the market, saves the key facts, moves the stage (qualify → clarify → draft → review → submit), and writes a bid plan, clarification questions, a compliance matrix, a checklist and a proposal outline. **Each document types itself into the panel as the model writes it.** Upload the tender documents (PDFs preview in place) and it reads them. A bid memory holds its notes and yours. Every bid keeps its submission tasks and deadline in Singapore time | A bid playbook for the same agent, with `remember` and `set_bid_stage` tools. The memory, drafts and uploads live outside the sandbox and are restored into a fresh one, so a bid survives the copilot restarting |
 | **Workspace** | Home: your bids with their stage and next step, a 14-day strip of GeBIZ closings with your deadlines marked, a get-started checklist, then the market. An **Inbox** of what needs you (bid deadlines, the next step Kopi set, bids not started, new tenders matching your company or a view) with a preview pane and j/k/e keys. A sidebar with **your bids** (stage ring, days left) and **saved views** that count what was published since you last looked. **⌘K** searches tenders by meaning, plus bids, licences, pages and actions for the tender you're on. `?` lists every shortcut, and toasts offer Undo | Worked out in the browser from the bids, their session memory and the same searches; no feed and no new service. Only views and read/done state are stored. A view's "match" is a hit within 0.12 of its best, and never below 0.30, which on live data drops the long tail every vector search returns |
 
@@ -94,7 +95,7 @@ GoBusiness licences (324) ──────────────────
 ```
 
 The full data flow is in [docs/architecture.md](docs/architecture.md), and the decisions
-behind it (D1–D31) are in [planning/02-decisions.md](planning/02-decisions.md).
+behind it (D1–D32) are in [planning/02-decisions.md](planning/02-decisions.md).
 
 ## Numbers
 
@@ -230,7 +231,7 @@ behind it (D1–D31) are in [planning/02-decisions.md](planning/02-decisions.md)
   - for the workspace pass: a background agent built the ⌘K palette, shortcuts and toasts
     in its own worktree while the main agent built the sidebar, Home and Inbox.
 - **Planning:** [`planning/`](planning/) holds the brief, the discovery research (every
-  source probed with real requests), the decisions D1–D31, the superseded v1 plan, and one
+  source probed with real requests), the decisions D1–D32, the superseded v1 plan, and one
   handoff per task.
 - **Mistakes:** [`planning/04-ai-journal.md`](planning/04-ai-journal.md) sorts every
   mistake by what caught it: the reviewer agent, tests, the eval, live runs (where the

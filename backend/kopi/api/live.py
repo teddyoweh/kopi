@@ -11,7 +11,7 @@ import json
 import logging
 import threading
 import time
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Iterator
 from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
@@ -42,12 +42,15 @@ from kopi.models import (
     Profile,
     Reason,
     Recommendation,
+    ResearchEvent,
+    ResearchRequest,
     SearchHit,
     SearchResponse,
     SessionFile,
     TenderDetail,
 )
-from kopi.overview import generate_overview
+from kopi.overview import DEFAULT_MODEL, generate_overview
+from kopi.profile_research import NoRegistry, WebResearcher, research
 from kopi.sandbox import Copilot, CopilotUnavailable
 from kopi.search import (
     BM25,
@@ -196,6 +199,20 @@ class LiveStore:
         except Exception as error:  # the page still gets the notice's own words, and the log says why
             log.warning("overview for %s fell back to extractive: %s", doc_no, error)
             return extractive_overview(notice, profile)
+
+    # ------------------------------------------------------------ profile research
+
+    def research_profile(self, request: ResearchRequest) -> Iterator[ResearchEvent]:
+        """The company's website, its registers and its GeBIZ wins, read into a profile draft."""
+        import os
+
+        import httpx
+
+        from kopi.sources.licences import BROWSER_UA
+
+        agent = WebResearcher(os.environ.get("KOPI_MODEL", DEFAULT_MODEL)) if self.claude else None
+        with httpx.Client(headers={"User-Agent": BROWSER_UA}, timeout=15) as http:
+            yield from research(request, http=http, registry=self.registry or NoRegistry(), agent=agent)
 
     # ------------------------------------------------------------ awards and licences
 

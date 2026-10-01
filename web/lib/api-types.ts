@@ -242,6 +242,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/profile/research": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Research Profile
+         * @description Fill a profile from the company's website, its registers and its GeBIZ wins, step by step.
+         */
+        post: operations["research_profile_profile_research_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessions/{session_id}/files": {
         parameters: {
             query?: never;
@@ -814,6 +834,8 @@ export interface components {
             name: string;
             /** Uen */
             uen?: string | null;
+            /** Website */
+            website?: string | null;
             /** Summary */
             summary: string;
             /**
@@ -836,6 +858,41 @@ export interface components {
             bizsafe_level?: string | null;
             /** @default {} */
             value_band_sgd: components["schemas"]["ValueBand"];
+        };
+        /** ProfileDraft */
+        ProfileDraft: {
+            profile: components["schemas"]["Profile"];
+            /** Filled */
+            filled: string[];
+            /** Sources */
+            sources: components["schemas"]["ProfileSource"][];
+            /** Pages */
+            pages: string[];
+            /** Awards */
+            awards: number;
+        };
+        /**
+         * ProfileSource
+         * @description Where a filled field came from: a quote found on the website, a register's answer, or GeBIZ awards.
+         */
+        ProfileSource: {
+            /** Field */
+            field: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "website" | "register" | "gebiz";
+            /** Text */
+            text: string;
+            /** Url */
+            url?: string | null;
+            /**
+             * Verified
+             * @description For a quote: found word for word on a page Kopi read itself
+             * @default true
+             */
+            verified: boolean;
         };
         /** Reason */
         Reason: {
@@ -873,6 +930,31 @@ export interface components {
             grade?: string | null;
             /** Expires */
             expires?: string | null;
+        };
+        /**
+         * ResearchEvent
+         * @description One step of the research as it happens, then `done` with the draft, or `error`.
+         */
+        ResearchEvent: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "step" | "done" | "error";
+            /** Text */
+            text?: string | null;
+            draft?: components["schemas"]["ProfileDraft"] | null;
+        };
+        /**
+         * ResearchRequest
+         * @description Fill `profile` from the company's website, the registers its UEN opens, and its GeBIZ awards.
+         */
+        ResearchRequest: {
+            /** Website */
+            website: string;
+            /** Uen */
+            uen?: string | null;
+            profile: components["schemas"]["Profile"];
         };
         /** SearchHit */
         SearchHit: {
@@ -1431,6 +1513,40 @@ export interface operations {
                 };
                 content: {
                     "text/event-stream": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    research_profile_profile_research_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResearchRequest"];
+            };
+        };
+        responses: {
+            /** @description ResearchEvent per SSE message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": unknown;
+                    "application/json": components["schemas"]["ResearchEvent"];
                 };
             };
             /** @description Validation Error */

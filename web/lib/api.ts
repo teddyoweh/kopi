@@ -21,6 +21,10 @@ export type MarketBand = Schemas["MarketBand"];
 export type BidMemory = Schemas["BidMemory"];
 export type MemoryNote = Schemas["MemoryNote"];
 export type BidStage = NonNullable<BidMemory["stage"]>;
+export type ResearchRequest = Schemas["ResearchRequest"];
+export type ResearchEvent = Schemas["ResearchEvent"];
+export type ProfileDraft = Schemas["ProfileDraft"];
+export type ProfileSource = Schemas["ProfileSource"];
 
 /** The file types a bid accepts as uploads, and the API's size cap. */
 export const UPLOAD_TYPES = [".pdf", ".md", ".txt", ".csv"] as const;
@@ -78,6 +82,8 @@ export interface KopiApi {
   remember(sessionId: string, text: string): Promise<BidMemory>;
   forget(sessionId: string, noteId: string): Promise<BidMemory>;
   upload(sessionId: string, file: File): Promise<SessionFile>;
+  /** Fill a profile from the company's website, its registers and its GeBIZ wins, one step at a time. */
+  researchProfile(request: ResearchRequest, onEvent: (event: ResearchEvent) => void, signal?: AbortSignal): Promise<void>;
 }
 
 export class ApiError extends Error {
@@ -199,6 +205,13 @@ class LiveApi implements KopiApi {
     await readEventStream(response.body, onEvent);
   }
 
+  async researchProfile(request: ResearchRequest, onEvent: (event: ResearchEvent) => void, signal?: AbortSignal) {
+    const response = await fetch(`${this.base}/profile/research`, { method: "POST", headers: this.headers(true), body: JSON.stringify(request), signal });
+    if (!response.ok) throw await errorOf(response);
+    if (!response.body) throw new ApiError(response.status, "the research sent no stream");
+    await readEventStream<ResearchEvent>(response.body, onEvent);
+  }
+
   sessionFiles(sessionId: string) {
     return this.get<SessionFile[]>(`/sessions/${encodeURIComponent(sessionId)}/files`);
   }
@@ -246,8 +259,8 @@ async function errorOf(response: Response): Promise<ApiError> {
   return new ApiError(response.status, typeof body?.detail === "string" ? body.detail : response.statusText);
 }
 
-/** Parse a text/event-stream body into ChatEvents (one JSON object per `data:` line). */
-export async function readEventStream(body: ReadableStream<Uint8Array>, onEvent: (event: ChatEvent) => void) {
+/** Parse a text/event-stream body into events (one JSON object per `data:` line): ChatEvents, unless told otherwise. */
+export async function readEventStream<T = ChatEvent>(body: ReadableStream<Uint8Array>, onEvent: (event: T) => void) {
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -258,9 +271,9 @@ export async function readEventStream(body: ReadableStream<Uint8Array>, onEvent:
       .map((line) => line.slice(5).trimStart())
       .join("\n");
     if (!data) return;
-    let event: ChatEvent;
+    let event: T;
     try {
-      event = JSON.parse(data) as ChatEvent;
+      event = JSON.parse(data) as T;
     } catch {
       return; // a malformed message is skipped, not fatal to the turn
     }

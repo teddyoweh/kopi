@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import re
 import uuid
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 from datetime import UTC, datetime
 from functools import cached_property
 from typing import Protocol
@@ -36,8 +36,11 @@ from kopi.models import (
     NoticeSummary,
     Overview,
     Profile,
+    ProfileDraft,
     Reason,
     Recommendation,
+    ResearchEvent,
+    ResearchRequest,
     SearchHit,
     SearchResponse,
     SessionFile,
@@ -80,6 +83,7 @@ class Store(Protocol):
     def remember(self, session_id: str, text: str) -> BidMemory: ...
     def forget(self, session_id: str, note_id: str) -> BidMemory: ...
     def upload(self, session_id: str, name: str, body: bytes) -> SessionFile: ...
+    def research_profile(self, request: ResearchRequest) -> Iterator[ResearchEvent]: ...
 
 
 def tokens(text: str) -> list[str]:
@@ -278,6 +282,11 @@ class FixtureStore:
         self._uploads.setdefault(session_id, {})[name] = body
         return SessionFile(name=name, title=name, size=len(body), modified=datetime.now(UTC), kind="upload")
 
+    def research_profile(self, request: ResearchRequest) -> Iterator[ResearchEvent]:
+        """Fixtures never touch the network: the draft keeps the profile and records the website."""
+        yield ResearchEvent(type="step", text="Fixture mode reads no websites, registers or awards")
+        draft = ProfileDraft(profile=request.profile.model_copy(update={"website": request.website}), filled=["website"], sources=[], pages=[], awards=0)
+        yield ResearchEvent(type="done", text="Recorded the website. The live service fills the rest.", draft=draft)
 
 class _NoFilters:
     status = NoticeStatus.OPEN

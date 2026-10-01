@@ -20,6 +20,8 @@ import type {
   NoticeSummary,
   Overview,
   Profile,
+  ResearchEvent,
+  ResearchRequest,
   SearchResponse,
   SessionFile,
   TenderDetail,
@@ -461,5 +463,55 @@ export class MockApi implements KopiApi {
   async upload(sessionId: string, file: File): Promise<SessionFile> {
     await pause(400);
     return keepUpload(sessionId, file);
+  }
+
+  /**
+   * Demo mode reads no websites: the steps are the live service's, and the draft is a synthetic
+   * reading built from the profile itself and the fixture awards, so the page can be shown end to end.
+   */
+  async researchProfile(request: ResearchRequest, onEvent: (event: ResearchEvent) => void, signal?: AbortSignal) {
+    const host = request.website.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+    const current = request.profile;
+    const uen = current.uen ?? "201912345K";
+    const step = async (text: string, ms = 700) => {
+      onEvent({ type: "step", text });
+      await pause(ms, signal);
+    };
+    await step(`Reading ${host}`, 900);
+    await step(`Read 5 pages: Home, About us, Services, Projects, Contact`);
+    await step("Researching the company on the web", 900);
+    await step(`Searched the web: ${current.name} Singapore UEN`, 1100);
+    await step(`Read opengovsg.com/corporate/${uen}`, 900);
+    await step(`Checking UEN ${uen} against ACRA`);
+    await step(`ACRA: ${current.name.toUpperCase()}, live company`);
+    await step(`GRA: ${(current.gra_registrations ?? []).map((r) => `${r.code} at ${r.grade}`).join(", ") || "none"}`);
+    await step("bizSAFE: Level 3");
+    await step(`Looking for ${current.name}'s GeBIZ contracts`);
+    await step(`GeBIZ: 3 contracts won, S$1,240,000 in all`, 900);
+    const profile: Profile = {
+      ...current,
+      uen,
+      website: request.website,
+      summary: `${current.summary.replace(/\.$/, "")}, with work for ministries, schools and statutory boards since 2012.`,
+      capabilities: [...new Set([...(current.capabilities ?? []), "Term contracts for public agencies", "Service-level reporting"])].slice(0, 10),
+      past_work: ["Term contract for the agency's main campus, for Ministry of Education (2025, S$620,000)", "Services for 3 polyclinics, for SingHealth (2024, S$410,000)", ...(current.past_work ?? [])].slice(0, 10),
+      bizsafe_level: "3",
+    };
+    onEvent({
+      type: "done",
+      text: "Filled 5 fields. Review them, then save.",
+      draft: {
+        profile,
+        filled: ["uen", "summary", "capabilities", "past_work", "bizsafe_level"],
+        pages: [`https://${host}`, `https://${host}/about-us`, `https://${host}/services`, `https://${host}/projects`, `https://${host}/contact`],
+        awards: 3,
+        sources: [
+          { field: "summary", kind: "website", text: "Since 2012 we have served ministries, schools and statutory boards.", url: `https://${host}/about-us`, verified: true },
+          { field: "uen", kind: "website", text: `UEN ${uen}`, url: `https://${host}/contact`, verified: true },
+          { field: "bizsafe_level", kind: "register", text: "bizSAFE register: Level 3", url: null, verified: true },
+          { field: "past_work", kind: "gebiz", text: "3 GeBIZ awards on data.gov.sg", url: null, verified: true },
+        ],
+      },
+    });
   }
 }

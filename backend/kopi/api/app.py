@@ -34,6 +34,8 @@ from kopi.models import (
     NoticeSummary,
     Overview,
     OverviewRequest,
+    ResearchEvent,
+    ResearchRequest,
     SearchResponse,
     SessionFile,
     TenderDetail,
@@ -201,6 +203,14 @@ def create_app(store: Store | None = None, settings: Settings | None = None) -> 
                 yield sse(event)
 
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
+
+    @app.post("/profile/research", dependencies=[AppOnly, limited("overview")], response_class=StreamingResponse,
+              responses={200: {"model": ResearchEvent, "content": {"text/event-stream": {}}, "description": "ResearchEvent per SSE message"}})
+    def research_profile(request: Request, body: ResearchRequest) -> StreamingResponse:
+        """Fill a profile from the company's website, its registers and its GeBIZ wins, step by step."""
+        events = db(request).research_profile(body)
+        stream = (f"event: {event.type}\ndata: {event.model_dump_json(exclude_none=True)}\n\n" for event in events)
+        return StreamingResponse(stream, media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 
     @app.get("/sessions/{session_id}/files", response_model=list[SessionFile], dependencies=[AppOnly])
     def session_files(request: Request, session_id: str) -> list[SessionFile]:

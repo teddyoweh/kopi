@@ -129,6 +129,7 @@ class Profile(BaseModel):
     id: str
     name: str
     uen: str | None = None
+    website: str | None = None
     summary: str
     capabilities: list[str] = []
     past_work: list[str] = []
@@ -362,3 +363,40 @@ class BidMemory(BaseModel):
 
 class MemoryRequest(BaseModel):
     text: str = Field(min_length=1, max_length=1000)
+
+
+# ---------------------------------------------------------------- profile research (KP-47)
+
+
+class ResearchRequest(BaseModel):
+    """Fill `profile` from the company's website, the registers its UEN opens, and its GeBIZ awards."""
+
+    website: str = Field(min_length=3, max_length=300)
+    uen: str | None = Field(None, max_length=12)
+    profile: Profile
+
+
+class ProfileSource(BaseModel):
+    """Where a filled field came from: a quote found on the website, a register's answer, or GeBIZ awards."""
+
+    field: str
+    kind: Literal["website", "register", "gebiz"]
+    text: str
+    url: str | None = None
+    verified: bool = Field(True, description="For a quote: found word for word on a page Kopi read itself")
+
+
+class ProfileDraft(BaseModel):
+    profile: Profile
+    filled: list[str]
+    sources: list[ProfileSource]
+    pages: list[str]
+    awards: int
+
+
+class ResearchEvent(BaseModel):
+    """One step of the research as it happens, then `done` with the draft, or `error`."""
+
+    type: Literal["step", "done", "error"]
+    text: str | None = None
+    draft: ProfileDraft | None = None

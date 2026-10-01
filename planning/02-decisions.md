@@ -365,3 +365,27 @@ which is what makes it feel like one.
 - Four bounded steps keep each turn inside the API's limit and make progress visible.
 - The stage in the bid memory is the step counter, so a resumed bid never repeats finished
   work.
+
+## D32 — A web research agent fills the company profile (KP-47)
+**Picked:** a separate agent, `WebResearcher`. It is Claude with only WebSearch and WebFetch,
+structured output, and 16 turns at most. It runs in the API container, given the website, the
+name and UEN the person typed, and the pages Kopi read itself. Its answer is checked by code
+before anyone sees it:
+- quotes are verified against the pages Kopi read;
+- the UEN must belong to the company according to ACRA;
+- registrations come from the registers, never the model;
+- past work and the value band come from GeBIZ awards.
+
+**Rejected:**
+- Reading only the website. NCS refuses readers (403), and many sites are built by JavaScript.
+- Giving the copilot web tools. The copilot reads untrusted notices next to the bid's memory
+  and drafts.
+- A headless browser in the API image. It is heavier, and still blocked by the same sites.
+
+**Why:**
+- Teddy, 1 Oct: "allow put website and agent search and fills company profile, essential".
+- The rule that "the agent never gets WebFetch or WebSearch" is about the copilot, whose
+  context holds notices, bids and the person's notes. This agent's context holds only what
+  is already public: the company's own name, address and UEN. It has no file, shell or Kopi
+  tools, so injected text on a page has nothing to reach and nothing to send.
+- Probed before building: NCS's UEN in 23 s for US$0.09. Live: 51 to 53 s a company.
