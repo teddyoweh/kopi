@@ -5,6 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import kopi.agent.tools
+import kopi.api.live
 import kopi.eligibility
 import kopi.overview
 import kopi.store
@@ -29,7 +30,7 @@ class FrozenDatetime(datetime):
 
 @pytest.fixture(autouse=True)
 def frozen_clock(monkeypatch):
-    for module in (kopi.store, kopi.eligibility, kopi.overview, kopi.agent.tools):
+    for module in (kopi.store, kopi.api.live, kopi.eligibility, kopi.overview, kopi.agent.tools):
         monkeypatch.setattr(module, "datetime", FrozenDatetime)
     return FROZEN_NOW
 
