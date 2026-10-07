@@ -44,7 +44,22 @@ type AwardRow = {
   awarded_amt: string | null;
 };
 
-const notices = noticesJson as unknown as Notice[];
+/**
+ * The fixtures are dated around 29 Sep 2026. Mock mode moves every notice forward by whole days, so the
+ * demo always looks like that morning: the same tenders open, the same ones closing this week.
+ */
+const FIXTURE_DAY = Date.UTC(2026, 8, 28, 16); // 29 Sep 2026, midnight in Singapore
+const DAY = 86_400_000;
+const shiftDays = Math.max(0, Math.floor((Date.now() - FIXTURE_DAY) / DAY));
+/** The same wall-clock time `days` later, kept in the fixtures' own +08:00 form so string comparisons still hold. */
+const later = (iso: string, days: number) =>
+  days ? `${new Date(Date.parse(iso) + days * DAY + 8 * 3600e3).toISOString().slice(0, 19)}+08:00` : iso;
+
+const notices = (noticesJson as unknown as Notice[]).map((n) => ({
+  ...n,
+  published: later(n.published, shiftDays),
+  closing: later(n.closing, shiftDays),
+}));
 const awards = awardsJson as AwardRow[];
 const licenceList = licencesJson as Licence[];
 
